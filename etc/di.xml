@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Magento\Framework\Console\CommandList">
+		<arguments>
+			<argument name="commands" xsi:type="array">
+				<item name="gr4vy_list_buyers" xsi:type="object">Gr4vy\Payment\Console\Command\Gr4vyListBuyers</item>
+			</argument>
+		</arguments>
+	</type>
+	<preference for="Gr4vy\Payment\Api\BuyerRepositoryInterface" type="Gr4vy\Payment\Model\BuyerRepository"/>
+	<preference for="Gr4vy\Payment\Api\Data\BuyerInterface" type="Gr4vy\Payment\Model\Data\Buyer"/>
+	<preference for="Gr4vy\Payment\Api\Data\BuyerSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Payment\Api\TransactionRepositoryInterface" type="Gr4vy\Payment\Model\TransactionRepository"/>
+	<preference for="Gr4vy\Payment\Api\Data\TransactionInterface" type="Gr4vy\Payment\Model\Data\Transaction"/>
+	<preference for="Gr4vy\Payment\Api\Data\TransactionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Payment\Api\MethodRepositoryInterface" type="Gr4vy\Payment\Model\MethodRepository"/>
+	<preference for="Gr4vy\Payment\Api\Data\MethodInterface" type="Gr4vy\Payment\Model\Data\Method"/>
+	<preference for="Gr4vy\Payment\Api\Data\MethodSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Payment\Api\ServiceRepositoryInterface" type="Gr4vy\Payment\Model\ServiceRepository"/>
+	<preference for="Gr4vy\Payment\Api\Data\ServiceInterface" type="Gr4vy\Payment\Model\Data\Service"/>
+	<preference for="Gr4vy\Payment\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<type name="Magento\Sales\Api\OrderManagementInterface">
+		<plugin name="Gr4vy_Payment_Plugin_Magento_Sales_Api_OrderManagementInterface" type="Gr4vy\Payment\Plugin\Magento\Sales\Api\OrderManagementInterface" sortOrder="10" disabled="false"/>
+	</type>
+</config>

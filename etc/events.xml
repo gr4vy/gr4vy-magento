@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+	<event name="callbackUpdateOrder">
+		<observer name="gr4vy_payment_observer_callbackupdateorder_callbackUpdateOrder" instance="Gr4vy\Payment\Observer\CallbackUpdateOrder"/>
+	</event>
+</config>

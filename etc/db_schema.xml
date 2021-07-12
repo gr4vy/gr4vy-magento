@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="gr4vy_buyers">
+        <column xsi:type="varchar" name="id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
+        <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records."/>
+        <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="A unique name for this buyer which is used in the Gr4vy admin panel to give a buyer a human readable name."/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was created in system."/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was last updated in system."/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="gr4vy_transactions">
+        <column xsi:type="varchar" name="id" nullable="false" length="50" comment="The unique identifier for this transaction."/>
+        <column xsi:type="varchar" name="method_id" nullable="false" length="50" comment="The payment method used for this transaction."/>
+        <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The buyer used for this transaction."/>
+        <column xsi:type="varchar" name="service_id" nullable="false" length="50" comment="The payment service used for this transaction."/>
+        <column xsi:type="varchar" name="status" nullable="false" length="50" comment="The status of the transaction being processed."/>
+        <column xsi:type="float" name="amount" unsigned="false" nullable="false" comment="The authorized amount for this transaction."/>
+        <column xsi:type="float" name="captured_amount" unsigned="false" nullable="false" comment="The captured amount for this transaction."/>
+        <column xsi:type="float" name="refunded_amount" unsigned="false" nullable="false" comment="The refunded amount for this transaction."/>
+        <column xsi:type="varchar" name="currency" nullable="false" length="5" comment="The currency code for this transaction."/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this transaction was created in system."/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="Defines when the transaction was last updated."/>
+        <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the transaction against your own records."/>
+        <column xsi:type="varchar" name="environment" nullable="false" length="20" comment="The environment this transaction has been created in."/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="GR4VY_BUYERS_ID_GR4VY_TRANSACTIONS_BUYER_ID" table="gr4vy_transactions" column="buyer_id" referenceTable="gr4vy_buyers" referenceColumn="id" onDelete="CASCADE"/>
+    </table>
+    <table name="gr4vy_methods">
+        <column xsi:type="varchar" name="id" nullable="false" length="50" comment="The unique ID of the payment method."/>
+        <column xsi:type="varchar" name="status" nullable="false" length="50" comment="The state of the payment method."/>
+        <column xsi:type="varchar" name="method" nullable="false" length="50" comment="The type of this payment method."/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="A label for the card or the account."/>
+        <column xsi:type="varchar" name="scheme" nullable="false" length="255" comment="The scheme of the card. Only applies to card payments."/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this payment method was first created in system."/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this payment method was last updated in system."/>
+        <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the payment method against your own records."/>
+        <column xsi:type="varchar" name="expiration_date" nullable="false" length="10" comment="The expiration date for the payment method."/>
+        <column xsi:type="text" name="approval_url" comment="The optional URL that the buyer needs to be redirected to to further authorize their payment"/>
+        <column xsi:type="varchar" name="environment" nullable="false" length="20" comment="The environment this payment method has been stored for. This will be null of the payment method was not stored."/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="gr4vy_services">
+        <column xsi:type="varchar" name="id" nullable="false" length="50" comment="The ID of this payment service."/>
+        <column xsi:type="varchar" name="payment_service_definition_id" nullable="false" length="50" comment="The ID of the payment service definition used to create this service."/>
+        <column xsi:type="varchar" name="method" nullable="false" length="50" comment="Defines the ID of the payment method that this service handles."/>
+        <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="The custom name set for this service."/>
+        <column xsi:type="varchar" name="status" nullable="false" length="50" comment="The current status of this service. This will start off as pending, move to created, and might eventually move to an error status if and when the credentials are no longer valid."/>
+        <column xsi:type="varchar" name="accepted_currencies" nullable="false" length="255" comment="A list of currencies for which this service is enabled, in ISO 4217 three-letter code format."/>
+        <column xsi:type="varchar" name="accepted_countries" nullable="false" length="255" comment="A list of countries for which this service is enabled, in ISO two-letter code format."/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this service was created."/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this service was last updated."/>
+        <column xsi:type="boolean" name="active" comment="Defines if this service is currently active or not"/>
+        <column xsi:type="int" name="position" nullable="false" comment="Defines if this service is currently active or not"/>
+        <column xsi:type="varchar" name="environment" nullable="false" length="20" comment="Determines the Gr4vy environments in which this service should be available."/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

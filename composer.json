@@ -1,0 +1,33 @@
+{
+    "name": "gr4vy/payment",
+    "description": "Magento 2 Payment module from Gr4vy",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "email": "rowandburgess+th@gmail.com",
+            "name": "Rowan Burgess"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "~7.1.3||^7.2",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "magento/framework": "~102.0.0",
+        "magento/module-backend": "~101.0.0",
+        "magento/module-catalog": "~103.0.0",
+        "magento/module-checkout": "~100.3.0",
+        "magento/module-config": "~101.1.0",
+        "magento/module-payment": "~100.3.0",
+        "psr/log": "^1.1",
+        "gr4vy/gr4vy-php": "^0.2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Pay360\\Payments\\": ""
+        }
+    }
+}

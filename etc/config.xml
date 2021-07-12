@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<payment>
+			<gr4vy>
+				<active>1</active>
+				<model>Gr4vy\Payment\Model\Payment\Gr4vy</model>
+				<order_status>pending</order_status>
+                <payment_action>AUTHORIZATION</payment_action>
+				<title>Gr4vy</title>
+				<allowspecific>0</allowspecific>
+			</gr4vy>
+		</payment>
+	</default>
+</config>

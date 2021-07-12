@@ -1,0 +1,72 @@
+{
+    "gr4vy_buyers": {
+        "column": {
+            "id": true,
+            "external_identifier": true,
+            "display_name": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "gr4vy_transactions": {
+        "column": {
+            "id": true,
+            "method_id": true,
+            "buyer_id": true,
+            "service_id": true,
+            "status": true,
+            "amount": true,
+            "captured_amount": true,
+            "refunded_amount": true,
+            "currency": true,
+            "created_at": true,
+            "updated_at": true,
+            "external_identifier": true,
+            "environment": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_ID": true
+        }
+    },
+    "gr4vy_methods": {
+        "column": {
+            "id": true,
+            "status": true,
+            "method": true,
+            "label": true,
+            "scheme": true,
+            "created_at": true,
+            "updated_at": true,
+            "external_identifier": true,
+            "expiration_date": true,
+            "approval_url": true,
+            "environment": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "gr4vy_services": {
+        "column": {
+            "id": true,
+            "payment_service_definition_id": true,
+            "method": true,
+            "display_name": true,
+            "status": true,
+            "accepted_currencies": true,
+            "accepted_countries": true,
+            "created_at": true,
+            "updated_at": true,
+            "active": true,
+            "position": true,
+            "environment": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

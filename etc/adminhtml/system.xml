@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+		<section id="payment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="1000" translate="label">
+			<group id="gr4vy" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+				<label>Gr4vy Payments</label>
+				<field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+					<label>Enabled</label>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+				<field id="payment_type" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label" type="select">
+					<label>Display Type</label>
+					<source_model>Gr4vy\Payments\Model\Source\PaymentType</source_model>
+				</field>
+				<field id="api_user" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="26" translate="label" type="text">
+					<label>API Username</label>
+				</field>
+				<field id="api_password" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="27" translate="label" type="password">
+					<label>API Password</label>
+				</field>
+				<field id="installation_id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="28" translate="label" type="text">
+					<label>Installation ID</label>
+				</field>
+				<field id="test" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="29" translate="label" type="select">
+					<label>Test / Debug Mode</label>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+				<field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
+					<label>Payment Action</label>
+					<source_model>Gr4vy\Payments\Model\Source\PaymentAction</source_model>
+				</field>
+				<field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="31" translate="label" type="text">
+					<label>Title</label>
+				</field>
+				<field id="description" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="32" translate="label" type="text">
+					<label>Description</label>
+				</field>
+				<field id="order_status" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="33" translate="label" type="select">
+					<label>New Order Status</label>
+					<source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+				</field>
+				<field id="skin_code" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="34" translate="label" type="select">
+					<label>Skin Code</label>
+					<source_model>Gr4vy\Payments\Model\Source\SkinCodes</source_model>
+				</field>
+				<field id="custom_skin_code" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="text">
+					<label>Custom Skin Code</label>
+					<comment>Custom Skin Code will override skin code selected from the dropdown</comment>
+				</field>
+				<field id="allowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="allowspecific">
+					<label>Payment from Applicable Countries</label>
+					<source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+				</field>
+				<field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="multiselect">
+					<label>Payment from Applicable Countries</label>
+					<source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+					<can_be_empty>1</can_be_empty>
+				</field>
+				<field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="text">
+					<label>Sort Order</label>
+				</field>
+				<field id="instructions" type="textarea" sortOrder="70" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+					<label>Instructions</label>
+				</field>
+			</group>
+		</section>
+	</system>
+</config>

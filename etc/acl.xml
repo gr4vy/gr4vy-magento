@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Gr4vy_Payment::Buyer" title="Buyer" sortOrder="10">
+					<resource id="Gr4vy_Payment::Buyer_save" title="Save Buyer" sortOrder="10"/>
+					<resource id="Gr4vy_Payment::Buyer_delete" title="Delete Buyer" sortOrder="20"/>
+					<resource id="Gr4vy_Payment::Buyer_update" title="Update Buyer" sortOrder="30"/>
+					<resource id="Gr4vy_Payment::Buyer_view" title="View Buyer" sortOrder="40"/>
+				</resource>
+				<resource id="Gr4vy_Payment::Transaction" title="Transaction" sortOrder="10">
+					<resource id="Gr4vy_Payment::Transaction_save" title="Save Transaction" sortOrder="10"/>
+					<resource id="Gr4vy_Payment::Transaction_delete" title="Delete Transaction" sortOrder="20"/>
+					<resource id="Gr4vy_Payment::Transaction_update" title="Update Transaction" sortOrder="30"/>
+					<resource id="Gr4vy_Payment::Transaction_view" title="View Transaction" sortOrder="40"/>
+				</resource>
+				<resource id="Gr4vy_Payment::Method" title="Method" sortOrder="10">
+					<resource id="Gr4vy_Payment::Method_save" title="Save Method" sortOrder="10"/>
+					<resource id="Gr4vy_Payment::Method_delete" title="Delete Method" sortOrder="20"/>
+					<resource id="Gr4vy_Payment::Method_update" title="Update Method" sortOrder="30"/>
+					<resource id="Gr4vy_Payment::Method_view" title="View Method" sortOrder="40"/>
+				</resource>
+				<resource id="Gr4vy_Payment::Service" title="Service" sortOrder="10">
+					<resource id="Gr4vy_Payment::Service_save" title="Save Service" sortOrder="10"/>
+					<resource id="Gr4vy_Payment::Service_delete" title="Delete Service" sortOrder="20"/>
+					<resource id="Gr4vy_Payment::Service_update" title="Update Service" sortOrder="30"/>
+					<resource id="Gr4vy_Payment::Service_view" title="View Service" sortOrder="40"/>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

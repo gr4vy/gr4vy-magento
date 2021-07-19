@@ -3,7 +3,7 @@
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="gr4vy" xsi:type="object">Gr4vy\Payments\Model\PaymentFormProvider</item>
+                <item name="gr4vy" xsi:type="object">Gr4vy\Payment\Model\Payment\PaymentFormProvider</item>
             </argument>
         </arguments>
     </type>

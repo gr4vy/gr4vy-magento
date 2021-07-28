@@ -10,7 +10,7 @@ namespace Gr4vy\Payment\Api\Data;
 interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
 
-    const ID = 'id';
+    const EXTERNAL_IDENTIFIER = 'external_identifier';
     const BUYER_ID = 'buyer_id';
 
     /**
@@ -21,23 +21,23 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 
     /**
      * Set buyer_id
-     * @param string $buyerId
+     * @param string $buyer_id
      * @return \Gr4vy\Payment\Api\Data\BuyerInterface
      */
-    public function setBuyerId($buyerId);
+    public function setBuyerId($buyer_id);
 
     /**
-     * Get id
+     * Get external_identifier
      * @return string|null
      */
-    public function getId();
+    public function getExternalIdentifier();
 
     /**
-     * Set id
-     * @param string $id
+     * Set external_identifier
+     * @param string $external_identifier
      * @return \Gr4vy\Payment\Api\Data\BuyerInterface
      */
-    public function setId($id);
+    public function setExternalIdentifier($external_identifier);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

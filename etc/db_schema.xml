@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="gr4vy_buyers">
-        <column xsi:type="varchar" name="id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
-        <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records."/>
+        <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records - for Magento 2, it customer entity_id."/>
+        <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
         <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="A unique name for this buyer which is used in the Gr4vy admin panel to give a buyer a human readable name."/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was created in system."/>
         <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was last updated in system."/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
-            <column name="id"/>
+            <column name="external_identifier"/>
         </constraint>
+        <index referenceId="GR4VY_BUYERS_BUYER_ID" indexType="btree">
+            <column name="buyer_id"/>
+        </index>
     </table>
     <table name="gr4vy_transactions">
         <column xsi:type="varchar" name="id" nullable="false" length="50" comment="The unique identifier for this transaction."/>
@@ -27,7 +30,7 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
-        <constraint xsi:type="foreign" referenceId="GR4VY_BUYERS_ID_GR4VY_TRANSACTIONS_BUYER_ID" table="gr4vy_transactions" column="buyer_id" referenceTable="gr4vy_buyers" referenceColumn="id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="GR4VY_BUYERS_ID_GR4VY_TRANSACTIONS_BUYER_ID" table="gr4vy_transactions" column="buyer_id" referenceTable="gr4vy_buyers" referenceColumn="buyer_id" onDelete="CASCADE"/>
     </table>
     <table name="gr4vy_methods">
         <column xsi:type="varchar" name="id" nullable="false" length="50" comment="The unique ID of the payment method."/>
@@ -61,5 +64,11 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
+    </table>
+    <table name="quote" resource="checkout" engine="innodb" comment="Sales Flat Quote Address">
+        <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
+    </table>
+    <table name="sales_order" resource="sales" engine="innodb" comment="Sales Flat Order">
+        <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this order."/>
     </table>
 </schema>

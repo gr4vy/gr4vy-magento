@@ -8,17 +8,24 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Data extends AbstractHelper
 {
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      */
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($context);
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -27,6 +34,15 @@ class Data extends AbstractHelper
     public function isEnabled()
     {
         return true;
+    }
+
+    /**
+     * retrieve relative path of private key
+     *
+     * @return string
+     */
+    public function getPrivateKey()
+    {
     }
 }
 

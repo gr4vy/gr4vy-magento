@@ -38,6 +38,8 @@ class Client extends Base
 
     public function createBuyer($data)
     {
-        $this->sdkBuyerApi->addBuyer();
+        $buyer = $this->sdkBuyerApi->addBuyer();
+
+        // save buyer to gr4vy_buyers table
     }
 }

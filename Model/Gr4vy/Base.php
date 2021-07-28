@@ -9,11 +9,15 @@ namespace Gr4vy\Payment\Model\Gr4vy;
 
 use Gr4vy\Payment\Api\Data\BuyerInterface;
 use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
+use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Base
 {
-
+    /**
+     * @var Gr4vyHelper
+     */
+    protected $gr4vy_helper;
 
     /**
      * @param array $data
@@ -25,10 +29,25 @@ class Base
         DataObjectHelper $dataObjectHelper,
         \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
         \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
+        Gr4vyHelper $gr4vy_helper,
         array $data = []
     ) {
         $this->buyerDataFactory = $buyerDataFactory;
         $this->dataObjectHelper = $dataObjectHelper;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->gr4vy_helper = $gr4vy_helper;
+    }
+
+    /**
+     * generate token for current quote
+     */
+    public function generateToken()
+    {
+    }
+
+    /**
+     * prepare configuration values and assign to gr4vy configuration
+     */
+    private function initializeConfig()
+    {
     }
 }

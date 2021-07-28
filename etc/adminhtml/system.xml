@@ -17,9 +17,11 @@
 				</field>
                 <field id="private_key" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="25" showInDefault="1" showInWebsite="1" >
                     <label>Private Key</label>
+                    <backend_model>Gr4vy\Payment\Model\Source\PrivateKey</backend_model>
+                    <upload_dir config="system" scope_info="1">gr4vy</upload_dir>
                 </field>
-				<field id="test" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
-					<label>Test / Debug Mode</label>
+				<field id="debug" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
+					<label>Enable Debug</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
 				<field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">

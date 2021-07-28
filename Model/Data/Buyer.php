@@ -32,22 +32,22 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Get id
+     * Get external_identifier
      * @return string|null
      */
-    public function getId()
+    public function getExternalIdentifier()
     {
-        return $this->_get(self::ID);
+        return $this->_get(self::EXTERNAL_IDENTIFIER);
     }
 
     /**
-     * Set id
-     * @param string $id
+     * Set external_identifier
+     * @param string $external_identifier
      * @return \Gr4vy\Payment\Api\Data\BuyerInterface
      */
-    public function setId($id)
+    public function setExternalIdentifier($external_identifier)
     {
-        return $this->setData(self::ID, $id);
+        return $this->setData(self::EXTERNAL_IDENTIFIER, $external_identifier);
     }
 
     /**

@@ -12,7 +12,7 @@
 					<label>Display Type</label>
 					<source_model>Gr4vy\Payment\Model\Source\PaymentType</source_model>
 				</field>
-				<field id="gr4vy_id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
+				<field id="id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
 					<label>Gr4vy ID</label>
 				</field>
                 <field id="private_key" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="25" showInDefault="1" showInWebsite="1" >

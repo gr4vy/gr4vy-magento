@@ -9,9 +9,12 @@ namespace Gr4vy\Payment\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
+    const GR4VY_PRIVATE_KEY = 'payment/gr4vy/private_key';
+    const GR4VY_ID = 'payment/gr4vy/id';
     /**
      * @var ScopeConfigInterface
      */
@@ -43,6 +46,17 @@ class Data extends AbstractHelper
      */
     public function getPrivateKey()
     {
+        return $this->scopeConfig->getValue(self::GR4VY_PRIVATE_KEY, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve relative path of private key
+     *
+     * @return string
+     */
+    public function getGr4vyId()
+    {
+        return $this->scopeConfig->getValue(self::GR4VY_ID, ScopeInterface::SCOPE_STORE);
     }
 }
 

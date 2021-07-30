@@ -10,6 +10,7 @@ namespace Gr4vy\Payment\Model\Gr4vy;
 use Gr4vy\Payment\Api\Data\BuyerInterface;
 use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
 use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Payment\Model\Source\PrivateKey;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Base
@@ -18,6 +19,11 @@ class Base
      * @var Gr4vyHelper
      */
     protected $gr4vy_helper;
+
+    /**
+     * @var PrivateKey
+     */
+    protected $source_privatekey;
 
     /**
      * @param array $data
@@ -30,11 +36,13 @@ class Base
         \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
         \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
         Gr4vyHelper $gr4vy_helper,
+        PrivateKey $source_privatekey,
         array $data = []
     ) {
         $this->buyerDataFactory = $buyerDataFactory;
         $this->dataObjectHelper = $dataObjectHelper;
         $this->gr4vy_helper = $gr4vy_helper;
+        $this->source_privatekey = $source_privatekey;
     }
 
     /**
@@ -49,5 +57,15 @@ class Base
      */
     private function initializeConfig()
     {
+    }
+    
+    /**
+     * retrieve private key
+     *
+     * @return string
+     */
+    public function getPrivateKey()
+    {
+        return $this->source_privatekey->getPrivateKeyDirAbsolutePath().DIRECTORY_SEPARATOR.$this->gr4vy_helper->getPrivateKey()
     }
 }

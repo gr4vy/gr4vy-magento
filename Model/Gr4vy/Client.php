@@ -16,30 +16,42 @@ use Gr4vy\model\BuyerRequest;
 
 class Client extends Base
 {
-    /**
-     * @param array $data
-     */
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        BuyerInterfaceFactory $buyerDataFactory,
-        DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
-        BuyersApi $sdkBuyerApi,
-        array $data = []
-    ) {
-        $this->buyerDataFactory = $buyerDataFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
-        $this->sdkBuyerApi = $sdkBuyerApi;
-        $this->sdkBuyerRequest = $sdkBuyerRequest;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-    }
+    ///**
+    // * @param array $data
+    // */
+    //public function __construct(
+    //    \Magento\Framework\Model\Context $context,
+    //    \Magento\Framework\Registry $registry,
+    //    BuyerInterfaceFactory $buyerDataFactory,
+    //    DataObjectHelper $dataObjectHelper,
+    //    \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
+    //    \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
+    //    BuyersApi $sdkBuyerApi,
+    //    array $data = []
+    //) {
+    //    $this->buyerDataFactory = $buyerDataFactory;
+    //    $this->dataObjectHelper = $dataObjectHelper;
+    //    $this->sdkBuyerApi = $sdkBuyerApi;
+    //    parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+    //}
 
-    public function createBuyer($data)
+    /**
+     * create new Gr4vy buyer with display_name and external_identifier 
+     *
+     * @param string
+     * @param string
+     * @return Buyer
+     */
+    public function createBuyer($external_identifier, $display_name)
     {
-        $buyer = $this->sdkBuyerApi->addBuyer();
+        // debug start
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($this->source_privatekey->getPrivateKeyDirAbsolutePath().DIRECTORY_SEPARATOR.$this->gr4vy_helper->getPrivateKey());
+        //$buyer = $this->sdkBuyerApi->addBuyer();
 
         // save buyer to gr4vy_buyers table
+        return 1;
     }
 }

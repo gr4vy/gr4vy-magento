@@ -44,7 +44,8 @@ class CartRepositoryInterface
         \Magento\Quote\Api\Data\CartInterface $quote
     ) {
         //var_dump($quote->getData()); die;
-        if ($gr4vy_buyer_id = $this->buyerRepository->get($quote->getCustomerId())->getGr4vyBuyerId()) {
+        $buyer_id = $quote->getCustomerId();
+        if (!empty($buyer_id) && $gr4vy_buyer_id = $this->buyerRepository->get($quote->getCustomerId())->getGr4vyBuyerId()) {
             // check for customer in gr4vy_buyers table
             $quote->setGr4vyBuyerId($gr4vy_buyer_id);
         }

@@ -51,6 +51,25 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
+     * Get display_name
+     * @return string|null
+     */
+    public function getDisplayName()
+    {
+        return $this->_get(self::DISPLAY_NAME);
+    }
+
+    /**
+     * Set display_name
+     * @param string $display_name
+     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     */
+    public function setDisplayName($display_name)
+    {
+        return $this->setData(self::DISPLAY_NAME, $display_name);
+    }
+
+    /**
      * Retrieve existing extension attributes object or create a new one.
      * @return \Gr4vy\Payment\Api\Data\BuyerExtensionInterface|null
      */

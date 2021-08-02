@@ -20,6 +20,8 @@
 	<preference for="Gr4vy\Payment\Api\Data\ServiceInterface" type="Gr4vy\Payment\Model\Data\Service"/>
 	<preference for="Gr4vy\Payment\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
+    <!--override quote data model-->
+
     <!--plugins-->
 	<type name="Magento\Quote\Api\CartRepositoryInterface">
 		<plugin name="Gr4vy_Payment_Plugin_Magento_Quote_Api_CartRepositoryInterface" type="Gr4vy\Payment\Plugin\Magento\Quote\Api\CartRepositoryInterface" sortOrder="10" disabled="false"/>

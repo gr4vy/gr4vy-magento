@@ -43,7 +43,7 @@ class Info extends \Magento\Payment\Block\Info\Cc
     /**
      * @return string
      */
-    public function _prepareSpecificInformation()
+    public function _prepareSpecificInformation($transport = null)
     {
         $transport = parent::_prepareSpecificInformation($transport);
         $payment = $this->getInfo();

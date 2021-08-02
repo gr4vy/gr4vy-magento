@@ -20,5 +20,33 @@ class Logger extends AbstractHelper
     ) {
         parent::__construct($context);
     }
+
+    /**
+     * custom logger to log exception content to log file
+     *
+     * @return void
+     */
+    public function logException(\Exception $e)
+    {
+        // debug start
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($e->getMessage());
+    }
+
+    /**
+     * custom logger to log exception content to log file
+     *
+     * @return void
+     */
+    public function logMixed($mixed_data)
+    {
+        // debug start
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($mixed_data);
+    }
 }
 

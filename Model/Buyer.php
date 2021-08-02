@@ -18,7 +18,7 @@ class Buyer extends \Magento\Framework\Model\AbstractModel
 
     protected $dataObjectHelper;
 
-    protected $_eventPrefix = 'gr4vy_payment_buyer';
+    protected $_eventPrefix = 'gr4vy_buyers';
 
     /**
      * @param \Magento\Framework\Model\Context $context

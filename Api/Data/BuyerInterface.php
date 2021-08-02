@@ -12,6 +12,7 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 
     const EXTERNAL_IDENTIFIER = 'external_identifier';
     const BUYER_ID = 'buyer_id';
+    const DISPLAY_NAME = 'display_name';
 
     /**
      * Get buyer_id
@@ -38,6 +39,19 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Gr4vy\Payment\Api\Data\BuyerInterface
      */
     public function setExternalIdentifier($external_identifier);
+
+    /**
+     * Get display_name
+     * @return string|null
+     */
+    public function getDisplayName();
+
+    /**
+     * Set display_name
+     * @param string $display_name
+     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     */
+    public function setDisplayName($display_name);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

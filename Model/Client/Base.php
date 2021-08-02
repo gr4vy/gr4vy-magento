@@ -5,13 +5,11 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Gr4vy;
+namespace Gr4vy\Payment\Model\Client;
 
-use Gr4vy\Payment\Api\Data\BuyerInterface;
-use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
 use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Payment\Model\Source\PrivateKey;
-use Magento\Framework\Api\DataObjectHelper;
 
 class Base
 {
@@ -19,6 +17,11 @@ class Base
      * @var Gr4vyHelper
      */
     protected $gr4vy_helper;
+
+    /**
+     * @var Gr4vyLogger
+     */
+    protected $gr4vy_logger;
 
     /**
      * @var PrivateKey
@@ -31,32 +34,27 @@ class Base
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        BuyerInterfaceFactory $buyerDataFactory,
-        DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
         Gr4vyHelper $gr4vy_helper,
+        Gr4vyLogger $gr4vy_logger,
         PrivateKey $source_privatekey,
         array $data = []
     ) {
-        $this->buyerDataFactory = $buyerDataFactory;
-        $this->dataObjectHelper = $dataObjectHelper;
         $this->gr4vy_helper = $gr4vy_helper;
+        $this->gr4vy_logger = $gr4vy_logger;
         $this->source_privatekey = $source_privatekey;
     }
 
     /**
-     * generate token for current quote
-     */
-    public function generateToken()
-    {
-    }
-
-    /**
      * prepare configuration values and assign to gr4vy configuration
+     *
+     * @return \Gr4vy\Gr4vyConfig
      */
-    private function initializeConfig()
+    protected function getGr4vyConfig()
     {
+        $gr4vy_id = $this->gr4vy_helper->getGr4vyId();
+        $private_key = $this->getPrivateKey();
+
+        return new \Gr4vy\Gr4vyConfig($gr4vy_id, $private_key);
     }
     
     /**
@@ -66,6 +64,8 @@ class Base
      */
     public function getPrivateKey()
     {
-        return $this->source_privatekey->getPrivateKeyDirAbsolutePath().DIRECTORY_SEPARATOR.$this->gr4vy_helper->getPrivateKey()
+        return $this->source_privatekey->getPrivateKeyDirAbsolutePath()
+            .DIRECTORY_SEPARATOR
+            .$this->gr4vy_helper->getPrivateKey();
     }
 }

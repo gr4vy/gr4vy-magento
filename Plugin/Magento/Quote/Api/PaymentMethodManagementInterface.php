@@ -29,7 +29,7 @@ class PaymentMethodManagementInterface
         Gr4vyEmbed $embedApi,
         Gr4vyLogger $gr4vy_logger
     ) {
-        $this->embedApi = $buyerApi;
+        $this->embedApi = $embedApi;
         $this->gr4vy_logger = $gr4vy_logger;
     }
 

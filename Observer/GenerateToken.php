@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Payment\Observer;
 
-class CallbackUpdateOrder implements \Magento\Framework\Event\ObserverInterface
+class GenerateToken implements \Magento\Framework\Event\ObserverInterface
 {
 
     /**

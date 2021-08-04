@@ -17,7 +17,7 @@ class Buyer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('gr4vy_buyers', 'external_identifier');
+        $this->_init('gr4vy_buyers', 'id');
     }
 }
 

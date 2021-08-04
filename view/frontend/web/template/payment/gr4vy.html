@@ -30,7 +30,10 @@
         <div class="container"></div>
         <div class="actions-toolbar">
             <div class="primary">
-                <button class="action primary checkout"
+                <button class="action primary checkout" >
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+                <!--<button class="action primary checkout"
                         type="submit"
                         data-bind="
                         click: placeOrder,
@@ -40,7 +43,7 @@
                         "
                         disabled>
                     <span data-bind="i18n: 'Place Order'"></span>
-                </button>
+                </button>-->
             </div>
         </div>
         <div class="initializer" data-bind="text: initEmbedPayment()"></div>

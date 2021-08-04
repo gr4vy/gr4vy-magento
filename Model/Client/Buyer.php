@@ -16,6 +16,12 @@ use Gr4vy\model\BuyerRequest;
 
 class Buyer extends Base
 {
+    const ERROR_CODE_GENERIC = '400';
+    const ERROR_CODE_UNAUTHORIZED = '409';
+    const ERROR_CODE_DUPLICATE = '409';
+
+    const ERROR_DUPLICATE = 'duplicate';
+
     public function getApiIstance()
     {
         try {
@@ -35,13 +41,33 @@ class Buyer extends Base
      */
     public function createBuyer($external_identifier, $display_name)
     {
-        $buyer_request = array('external_identifier' => $external_identifier, 'display_name' => $display_name);
+        $display_name = strval($display_name);
+        $external_identifier = strval($external_identifier);
+        $buyer_request = array('display_name' => $display_name, 'external_identifier' => $external_identifier);
         try {
-            $this->gr4vy_logger->logMixed($buyer_request);
+            //$this->gr4vy_logger->logMixed($buyer_request);
             $buyer = $this->getApiIstance()->addBuyer($buyer_request);
 
-            $this->gr4vy_logger->logMixed($buyer->getId());
             return $buyer->getId();
+        }
+        catch (\Exception $e) {
+            $this->gr4vy_logger->logException($e);
+            if ($e->getCode() == self::ERROR_CODE_DUPLICATE) {
+                return self::ERROR_DUPLICATE;
+            }
+        }
+    }
+
+    /**
+     * list gr4vy buyers
+     *
+     * @param mixed string|null
+     * @return array
+     */
+    public function listBuyers($id = null)
+    {
+        try {
+            return $this->getApiIstance()->listBuyers($id);
         }
         catch (\Exception $e) {
             $this->gr4vy_logger->logException($e);
@@ -49,17 +75,15 @@ class Buyer extends Base
     }
 
     /**
-     * list buyers for current Gr4vy_Id
+     * get buyer by Gr4vy_Id or external_identifier
      *
+     * @param string - can be either gr4vy_buyer_id or external_identifier
      * @return array
      */
-    public function listBuyers()
+    public function getBuyer($id)
     {
-        try {
-            return $this->getApiIstance()->listBuyers();
-        }
-        catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
-        }
+        $id = strval($id);
+        $buyers = $this->listBuyers($id)->getItems();
+        return $buyers[0];
     }
 }

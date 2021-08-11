@@ -120,16 +120,17 @@ class CartRepositoryInterface
      */
     public function getBuyerByExternalIdentifier($external_identifier)
     {
-        $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->create();
-        $buyerSearchResults = $this->buyerRepository->getList($buyerSearchCriteria);
+        if (!empty($external_identifier)) {
+            $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->create();
+            $buyerSearchResults = $this->buyerRepository->getList($buyerSearchCriteria);
 
-        if ($buyerSearchResults->getTotalCount() === 0) {
-            return null;
+            if ($buyerSearchResults->getTotalCount() > 0) {
+                list($item) = $buyerSearchResults->getItems();
+                return $item;
+            }
         }
-        else {
-            list($item) = $buyerSearchResults->getItems();
-            return $item;
-        }
+
+        return null;
     }
 
     /**
@@ -142,6 +143,10 @@ class CartRepositoryInterface
      */
     public function saveBuyerData($external_identifier, $display_name, $buyer_id)
     {
+        if (empty($external_identifier) || empty($display_name)) {
+            return false;
+        }
+
         $this->buyerData
              ->setExternalIdentifier($external_identifier)
              ->setDisplayName($display_name)

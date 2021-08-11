@@ -18,7 +18,7 @@ class Method extends \Magento\Framework\Model\AbstractModel
 
     protected $dataObjectHelper;
 
-    protected $_eventPrefix = 'gr4vy_payment_method';
+    protected $_eventPrefix = 'gr4vy_methods';
 
     /**
      * @param \Magento\Framework\Model\Context $context

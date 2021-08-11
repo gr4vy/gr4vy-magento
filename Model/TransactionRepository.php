@@ -117,6 +117,13 @@ class TransactionRepository implements TransactionRepositoryInterface
     }
 
     /**
+     * associate transaction payment detail with magento payment object
+     */
+    public function associatePayment()
+    {
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function get($transactionId)

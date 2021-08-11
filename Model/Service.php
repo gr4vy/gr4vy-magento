@@ -18,7 +18,7 @@ class Service extends \Magento\Framework\Model\AbstractModel
 
     protected $dataObjectHelper;
 
-    protected $_eventPrefix = 'gr4vy_payment_service';
+    protected $_eventPrefix = 'gr4vy_services';
 
     /**
      * @param \Magento\Framework\Model\Context $context

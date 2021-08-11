@@ -18,7 +18,7 @@ class Transaction extends \Magento\Framework\Model\AbstractModel
 
     protected $dataObjectHelper;
 
-    protected $_eventPrefix = 'gr4vy_payment_transaction';
+    protected $_eventPrefix = 'gr4vy_transactions';
 
     /**
      * @param \Magento\Framework\Model\Context $context

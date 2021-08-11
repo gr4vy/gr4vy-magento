@@ -32,8 +32,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     }
 
     /**
-     * Get id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -41,9 +40,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     }
 
     /**
-     * Set id
-     * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * {@inheritdoc}
      */
     public function setId($id)
     {
@@ -51,8 +48,183 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     }
 
     /**
-     * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\TransactionExtensionInterface|null
+     * {@inheritdoc}
+     */
+    public function getMethodId()
+    {
+        return $this->_get(self::METHOD_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMethodId($method_id)
+    {
+        return $this->setData(self::METHOD_ID, $method_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBuyerId()
+    {
+        return $this->_get(self::BUYER_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBuyerId($buyer_id)
+    {
+        return $this->setData(self::BUYER_ID, $buyer_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getServiceId()
+    {
+        return $this->_get(self::SERVICE_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setServiceId($service_id)
+    {
+        return $this->setData(self::SERVICE_ID, $service_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStatus()
+    {
+        return $this->_get(self::STATUS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStatus($status)
+    {
+        return $this->setData(self::STATUS, $status);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAmount()
+    {
+        return $this->_get(self::AMOUNT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAmount($amount)
+    {
+        return $this->setData(self::AMOUNT, $amount);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCapturedAmount()
+    {
+        return $this->_get(self::CAPTURED_AMOUNT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCapturedAmount($captured_amount)
+    {
+        return $this->setData(self::CAPTURED_AMOUNT, $captured_amount);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRefundedAmount()
+    {
+        return $this->_get(self::REFUNDED_AMOUNT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRefundedAmount($refunded_amount)
+    {
+        return $this->setData(self::REFUNDED_AMOUNT, $refunded_amount);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCurrency()
+    {
+        return $this->_get(self::CURRENCY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCurrency($currency)
+    {
+        return $this->setData(self::CURRENCY, $currency);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExternalIdentifier()
+    {
+        return $this->_get(self::EXTERNAL_IDENTIFIER);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExternalIdentifier($external_identifier)
+    {
+        return $this->setData(self::EXTERNAL_IDENTIFIER, $external_identifier);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnvironment()
+    {
+        return $this->_get(self::ENVIRONMENT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEnvironment($environment)
+    {
+        return $this->setData(self::ENVIRONMENT, $environment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGr4vyTransactionId()
+    {
+        return $this->_get(self::GR4VY_TRANSACTION_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setGr4vyTransactionId($gr4vy_transaction_id)
+    {
+        return $this->setData(self::GR4VY_TRANSACTION_ID, $gr4vy_transaction_id);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getExtensionAttributes()
     {
@@ -60,9 +232,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     }
 
     /**
-     * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\TransactionExtensionInterface $extensionAttributes
-     * @return $this
+     * {@inheritdoc}
      */
     public function setExtensionAttributes(
         \Gr4vy\Payment\Api\Data\TransactionExtensionInterface $extensionAttributes

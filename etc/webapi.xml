@@ -33,7 +33,7 @@
 	<route url="/V1/gr4vy-payment/transaction" method="POST">
 		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Transaction_save"/>
+            <resource ref="anonymous" />
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/search" method="GET">

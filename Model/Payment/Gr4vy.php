@@ -23,24 +23,6 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     /**
-     * retrieve params to embed gr4vy checkout webform
-     *
-     * @return array
-     */
-    public function gr4vyWebCheckoutParams()
-    {
-    }
-
-    /**
-     * authorise payment request
-     *
-     * @return boolean
-     */
-    public function authorise()
-    {
-    }
-
-    /**
      * Void payment
      *
      * @param \Magento\Framework\DataObject|\Magento\Payment\Model\InfoInterface|Payment $payment
@@ -66,6 +48,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         $order = $payment->getOrder();
+        $gr4vy_transaction_id = $payment->getGr4vyTransactionId();
         //$transaction = $this->transactionFactory->create()->load($order->getIncrementId());
         // send capture request and retrieve response
         //$response = ..

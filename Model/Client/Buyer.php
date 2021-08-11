@@ -7,12 +7,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Payment\Model\Client;
 
-use Gr4vy\Payment\Api\Data\BuyerInterface;
-use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
-use Magento\Framework\Api\DataObjectHelper;
 use Gr4vy\Api\BuyersApi;
-use Gr4vy\model\BuyerRequest;
 
 class Buyer extends Base
 {
@@ -22,7 +17,7 @@ class Buyer extends Base
 
     const ERROR_DUPLICATE = 'duplicate';
 
-    public function getApiIstance()
+    public function getApiInstance()
     {
         try {
             return new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
@@ -46,7 +41,7 @@ class Buyer extends Base
         $buyer_request = array('display_name' => $display_name, 'external_identifier' => $external_identifier);
         try {
             //$this->gr4vy_logger->logMixed($buyer_request);
-            $buyer = $this->getApiIstance()->addBuyer($buyer_request);
+            $buyer = $this->getApiInstance()->addBuyer($buyer_request);
 
             return $buyer->getId();
         }
@@ -67,7 +62,7 @@ class Buyer extends Base
     public function listBuyers($id = null)
     {
         try {
-            return $this->getApiIstance()->listBuyers($id);
+            return $this->getApiInstance()->listBuyers($id);
         }
         catch (\Exception $e) {
             $this->gr4vy_logger->logException($e);
@@ -83,7 +78,8 @@ class Buyer extends Base
     public function getBuyer($id)
     {
         $id = strval($id);
-        $buyers = $this->listBuyers($id)->getItems();
-        return $buyers[0];
+        list($buyer) = $this->listBuyers($id)->getItems();
+
+        return $buyer;
     }
 }

@@ -127,8 +127,8 @@ class CartRepositoryInterface
             return null;
         }
         else {
-            $items = $buyerSearchResults->getItems();
-            return reset($items);
+            list($item) = $buyerSearchResults->getItems();
+            return $item;
         }
     }
 

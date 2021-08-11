@@ -13,15 +13,13 @@
         <constraint xsi:type="unique" referenceId="GR4VY_BUYERS_EXTERNAL_IDENTIFIER_UNIQUE">
             <column name="external_identifier"/>
         </constraint>
-        <index referenceId="GR4VY_BUYERS_EXTERNAL_IDENTIFIER" indexType="btree">
-            <column name="external_identifier"/>
-        </index>
         <index referenceId="GR4VY_BUYERS_BUYER_ID" indexType="btree">
             <column name="buyer_id"/>
         </index>
     </table>
     <table name="gr4vy_transactions">
         <column xsi:type="int" name="id" nullable="false" identity="true" padding="10" unsigned="true" comment="The unique identifier for this transaction."/>
+        <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy ID for this transaction."/>
         <column xsi:type="varchar" name="method_id" nullable="false" length="50" comment="The payment method used for this transaction."/>
         <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The buyer used for this transaction."/>
         <column xsi:type="varchar" name="service_id" nullable="false" length="50" comment="The payment service used for this transaction."/>
@@ -38,6 +36,9 @@
             <column name="id"/>
         </constraint>
         <constraint xsi:type="foreign" referenceId="GR4VY_BUYERS_ID_GR4VY_TRANSACTIONS_BUYER_ID" table="gr4vy_transactions" column="buyer_id" referenceTable="gr4vy_buyers" referenceColumn="buyer_id" onDelete="CASCADE"/>
+        <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
+            <column name="gr4vy_transaction_id"/>
+        </index>
     </table>
     <table name="gr4vy_methods">
         <column xsi:type="int" name="id" nullable="false" identity="true" padding="10" unsigned="true" comment="The unique ID of the payment method."/>
@@ -72,7 +73,10 @@
             <column name="id"/>
         </constraint>
     </table>
-    <table name="quote" resource="checkout" engine="innodb" comment="Sales Flat Quote Address">
+    <table name="quote" resource="checkout" engine="innodb" comment="Sales Quote">
+        <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
+    </table>
+    <table name="quote_payment" resource="checkout" engine="innodb" comment="Sales Flat Quote Payment">
         <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
     </table>
     <table name="sales_order" resource="sales" engine="innodb" comment="Sales Flat Order">

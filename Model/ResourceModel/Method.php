@@ -17,7 +17,7 @@ class Method extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('gr4vy_payment_method', 'method_id');
+        $this->_init('gr4vy_methods', 'id');
     }
 }
 

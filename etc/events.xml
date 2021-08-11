@@ -1,9 +1,6 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-	<event name="callbackUpdateOrder">
-		<observer name="gr4vy_payment_observer_callbackupdateorder_callbackUpdateOrder" instance="Gr4vy\Payment\Observer\CallbackUpdateOrder"/>
-    </event>
-    <event name="sales_order_address_save_after">
-		<observer name="gr4vy_payment_observer_order_address_save_after" instance="Gr4vy\Payment\Observer\GenerateToken"/>
+    <event name="sales_order_payment_save_before">
+        <observer name="gr4vy_order_payment_save_before" instance="Gr4vy\Payment\Observer\OrderPaymentSaveBefore" />
     </event>
 </config>

@@ -23,16 +23,19 @@ class Logger extends AbstractHelper
 
     /**
      * custom logger to log exception content to log file
+     * TODO: this is not logging proper error message from Gr4vy because it is array of json objects. need to fix
      *
      * @return void
      */
     public function logException(\Exception $e)
     {
-        // debug start
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
         $logger->info($e->getMessage());
+        if (method_exists($e, 'getResponseBody')) {
+            $logger->info($e->getResponseBody());
+        }
     }
 
     /**

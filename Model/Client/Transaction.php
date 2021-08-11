@@ -61,10 +61,10 @@ class Transaction extends Base
      * @throws \InvalidArgumentException
      * @return \Gr4vy\model\Transaction|\Gr4vy\model\ErrorGeneric|\Gr4vy\model\Error401Unauthorized|\Gr4vy\model\ErrorGeneric
      */
-    public function capture($transaction_id)
+    public function capture($transaction_id, $transaction_capture_request = null)
     {
         try {
-            return $this->getApiInstance()->captureTransaction($transaction_id);
+            return $this->getApiInstance()->captureTransaction($transaction_id, $transaction_capture_request);
         }
         catch (\Exception $e) {
             $this->gr4vy_logger->logException($e);

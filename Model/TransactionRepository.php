@@ -12,6 +12,8 @@ use Gr4vy\Payment\Api\Data\TransactionSearchResultsInterfaceFactory;
 use Gr4vy\Payment\Api\TransactionRepositoryInterface;
 use Gr4vy\Payment\Model\ResourceModel\Transaction as ResourceTransaction;
 use Gr4vy\Payment\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
+use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
@@ -48,6 +50,21 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $extensibleDataObjectConverter;
 
     /**
+     * @var Gr4vyLogger
+     */
+    protected $gr4vy_logger;
+
+    /**
+     * @var \Magento\Quote\Api\PaymentMethodManagementInterface
+     */
+    protected $paymentMethodManagement;
+
+    /**
+     * @var \Magento\Quote\Api\CartRepositoryInterface
+     */
+    private $cartRepository;
+
+    /**
      * @param ResourceTransaction $resource
      * @param TransactionFactory $transactionFactory
      * @param TransactionInterfaceFactory $dataTransactionFactory
@@ -59,6 +76,8 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param CollectionProcessorInterface $collectionProcessor
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
+     * @param Gr4vyLogger $gr4vy_logger
+     * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      */
     public function __construct(
         ResourceTransaction $resource,
@@ -71,7 +90,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         StoreManagerInterface $storeManager,
         CollectionProcessorInterface $collectionProcessor,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
-        ExtensibleDataObjectConverter $extensibleDataObjectConverter
+        ExtensibleDataObjectConverter $extensibleDataObjectConverter,
+        Gr4vyLogger $gr4vy_logger,
+        \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
     ) {
         $this->resource = $resource;
         $this->transactionFactory = $transactionFactory;
@@ -84,6 +105,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->collectionProcessor = $collectionProcessor;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
+        $this->paymentMethodManagement = $paymentMethodManagement;
+        $this->gr4vy_logger = $gr4vy_logger;
     }
 
     /**
@@ -119,8 +142,42 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * associate transaction payment detail with magento payment object
      */
-    public function associatePayment()
+    public function setPaymentInformation(
+        $cartId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Payment\Api\Data\TransactionInterface $transactionData
+    )
     {
+        // 1. save transaction data
+        $this->save($transactionData);
+
+        // 2. set payment information
+        /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+        $quoteRepository = $this->getCartRepository();
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $quoteRepository->getActive($cartId);
+        $payment = $quote->getPayment();
+        $payment->setData('gr4vy_transaction_id', $transactionData->getGr4vyTransactionId())->save();
+        $this->gr4vy_logger->logMixed($payment->getData());
+
+        $quote_payment_id = $this->paymentMethodManagement->set($cartId, $paymentMethod);
+
+        return true;
+    }
+
+    /**
+     * Get Cart repository
+     *
+     * @return \Magento\Quote\Api\CartRepositoryInterface
+     * @deprecated 100.2.0
+     */
+    private function getCartRepository()
+    {
+        if (!$this->cartRepository) {
+            $this->cartRepository = ObjectManager::getInstance()
+                ->get(\Magento\Quote\Api\CartRepositoryInterface::class);
+        }
+        return $this->cartRepository;
     }
 
     /**

@@ -23,6 +23,21 @@ interface TransactionRepositoryInterface
     );
 
     /**
+     * Set Payment Information
+     * @param string
+     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
+     * @param \Gr4vy\Payment\Api\Data\TransactionInterface $transaction
+     *
+     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function setPaymentInformation(
+        $cartId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Payment\Api\Data\TransactionInterface $transactionData
+    );
+
+    /**
      * Retrieve Transaction
      * @param string $transactionId
      * @return \Gr4vy\Payment\Api\Data\TransactionInterface

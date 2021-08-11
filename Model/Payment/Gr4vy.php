@@ -8,13 +8,133 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Model\Payment;
 
 use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Payment\Model\Client\Transaction as TransactionApi;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 
 class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
 {
     const PAYMENT_TYPE_AUTH = 'AUTHONLY';
     const PAYMENT_TYPE_AUCAP = 'AUTHNCAPTURE';
 
+    /**
+     * @var string
+     */
     protected $_code = "gr4vy";
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_isGateway = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canCapture = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canCapturePartial = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canCaptureOnce = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canRefund = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canRefundInvoicePartial = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canVoid = true;
+
+    /**
+     * @var Gr4vyHelper
+     */
+    protected $gr4vyHelper;
+
+    /**
+     * @var Gr4vyLogger
+     */
+    protected $gr4vyLogger;
+
+    /**
+     * @var TransactionApi
+     */
+    protected $transactionApi;
+
+    /**
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
+     * @param \Magento\Payment\Helper\Data $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param Logger $logger
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param array $data
+     * @param DirectoryHelper $directory
+     * @param Gr4vyHelper $gr4vyHelper
+     * @param Gr4vyLogger $gr4vyLogger
+     * @param TransactionApi $transactionApi
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
+        \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
+        \Magento\Payment\Helper\Data $paymentData,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Payment\Model\Method\Logger $logger,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = [],
+        DirectoryHelper $directory = null,
+        Gr4vyHelper $gr4vyHelper,
+        Gr4vyLogger $gr4vyLogger,
+        TransactionApi $transactionApi
+    ) {
+        parent::__construct(
+            $context,
+            $registry,
+            $extensionFactory,
+            $customAttributeFactory,
+            $paymentData,
+            $scopeConfig,
+            $logger,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+        $this->gr4vyHelper = $gr4vyHelper;
+        $this->gr4vyLogger = $gr4vyLogger;
+        $this->transactionApi = $transactionApi;
+    }
 
     public function isAvailable(
         \Magento\Quote\Api\Data\CartInterface $quote = null
@@ -48,21 +168,19 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         $order = $payment->getOrder();
-        $gr4vy_transaction_id = $payment->getGr4vyTransactionId();
-        //$transaction = $this->transactionFactory->create()->load($order->getIncrementId());
-        // send capture request and retrieve response
-        //$response = ..
+        $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
+        $transaction_capture_request = array(
+            'amount' => intval($order->getGrandTotal() * 100)
+        );
 
-        //$payment->setTransactionId($response['transactionId']);
-        //if ($response['status'] == self::PAYMENT_STATUS_SUCCESS) {
-        //    return $this;
-        //} else {
-        //    if (!empty($outcome) && !empty($response['reasonMessage'])) {
-        //        throw new \Exception($response['reasonMessage']);
-        //    } else {
-        //        throw new \Exception(__("Gr4vy capturing error."));
-        //    }
-        //}
+        // send capture request and retrieve response
+        $response = $this->transactionApi->capture($gr4vy_transaction_id, $transaction_capture_request);
+
+        if ($response->getStatus() != 'capture_failed') {
+            return $this;
+        } else {
+            throw new \Exception("Gr4vy capturing error.");
+        }
     }
 
     /**

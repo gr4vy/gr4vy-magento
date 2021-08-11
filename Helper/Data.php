@@ -15,6 +15,7 @@ class Data extends AbstractHelper
 {
     const GR4VY_PRIVATE_KEY = 'payment/gr4vy/private_key';
     const GR4VY_ID = 'payment/gr4vy/id';
+    const GR4VY_ENV = 'payment/gr4vy/environment';
     /**
      * @var ScopeConfigInterface
      */
@@ -50,13 +51,23 @@ class Data extends AbstractHelper
     }
 
     /**
-     * retrieve relative path of private key
+     * retrieve Gr4vy Id
      *
      * @return string
      */
     public function getGr4vyId()
     {
         return $this->scopeConfig->getValue(self::GR4VY_ID, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve Gr4vy Environment
+     *
+     * @return string
+     */
+    public function getGr4vyEnvironment()
+    {
+        return $this->scopeConfig->getValue(self::GR4VY_ENV, ScopeInterface::SCOPE_STORE);
     }
 }
 

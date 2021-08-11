@@ -4,6 +4,7 @@
 		<payment>
 			<gr4vy>
 				<active>1</active>
+				<environment>development</environment>
 				<model>Gr4vy\Payment\Model\Payment\Gr4vy</model>
 				<order_status>pending</order_status>
                 <payment_action>AUTHORIZATION</payment_action>

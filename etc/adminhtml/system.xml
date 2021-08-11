@@ -20,14 +20,18 @@
                     <backend_model>Gr4vy\Payment\Model\Source\PrivateKey</backend_model>
                     <upload_dir config="system" scope_info="1">gr4vy</upload_dir>
                 </field>
+				<field id="environment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label" type="select">
+					<label>Environment</label>
+                    <source_model>Gr4vy\Payment\Model\Source\Environment</source_model>
+				</field>
 				<field id="debug" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
 					<label>Enable Debug</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
+				<!--<field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
 					<label>Payment Action</label>
 					<source_model>Gr4vy\Payment\Model\Source\PaymentAction</source_model>
-				</field>
+				</field>-->
 				<field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
 					<label>Title</label>
 				</field>

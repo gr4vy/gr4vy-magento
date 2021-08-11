@@ -20,6 +20,7 @@ define(
                 gr4vy.setup({
                     gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
                     buyerId: window.checkoutConfig.payment.gr4vy.buyer_id,
+                    environment: window.checkoutConfig.payment.gr4vy.environment,
                     element: ".container",
                     form: "#co-payment-form",
                     amount: parseInt(parseFloat(window.checkoutConfig.quoteData.grand_total)*100),
@@ -43,33 +44,24 @@ define(
                     onComplete: (transaction) => {
                         var This = this;
                         // send api requests to transaction web api
-                        var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/transaction', {});
-                        var transaction_params = {
-                            transaction: {
-                                method_id: transaction.paymentMethod.id,
-                                buyer_id: transaction.buyer.id,
-                                service_id: transaction.paymentService.id,
-                                status: transaction.status,
-                                amount: transaction.amount,
-                                captured_amount: transaction.captured_amount,
-                                refunded_amount: transaction.refunded_amount,
-                                currency: transaction.currency,
-                                gr4vy_transaction_id: transaction.id,
-                                environment: transaction.environment
-                            }
+                        var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
+                        console.log(transaction);
+                        var payload = {
+                            cartId: quote.getQuoteId(),
+                            paymentMethod: this.getPaymentMethodData(transaction.paymentMethod),
+                            transactionData: this.getGr4vyTransactionData(transaction)
                         };
                         return storage.post(
                             serviceUrl,
-                            JSON.stringify(transaction_params)
+                            JSON.stringify(payload)
                         ).done(
                             function (response) {
                                 // success - trigger default placeorder request from magento library
-                                console.log(response);
+                                //console.log(response);
                                 This.placeOrder();
                             }
                         ).fail(
                             function (response) {
-                                console.log(response);
                                 errorProcessor.process(response);
                                 fullScreenLoader.stopLoader(true);
                             }
@@ -77,11 +69,52 @@ define(
                     }
                 });
             },
+            /**
+             * @returns {Object}
+             */
+            getGr4vyTransactionData: function (transaction) {
+                var data = {
+                    method_id: transaction.paymentMethod.id,
+                        buyer_id: transaction.buyer.id,
+                        service_id: transaction.paymentService.id,
+                        status: transaction.status,
+                        amount: transaction.amount,
+                        captured_amount: transaction.captured_amount,
+                        refunded_amount: transaction.refunded_amount,
+                        currency: transaction.currency,
+                        gr4vy_transaction_id: transaction.id,
+                        environment: transaction.environment
+                }
+
+                return data;
+            },
+            /**
+             * @returns {Object}
+             */
+            getPaymentMethodData: function (payment) {
+                var data = {
+                    'method': this.getCode(),
+                    'additional_data': {
+                        'cc_type': payment.scheme,
+                        'cc_exp_year': payment.expirationDate.substr(-2),
+                        'cc_exp_month': payment.expirationDate.substr(0,2),
+                        'cc_last_4': payment.label
+                    }
+                };
+
+                return data;
+            },
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.gr4vy.mailingAddress;
             },
             getInstructions: function () {
                 return window.checkoutConfig.payment.gr4vy.description;
+            },
+            /**
+             * @returns {String}
+             */
+            getCode: function () {
+                return 'gr4vy';
             },
         });
     }

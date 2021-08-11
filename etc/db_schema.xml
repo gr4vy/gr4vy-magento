@@ -77,9 +77,9 @@
         <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
     </table>
     <table name="quote_payment" resource="checkout" engine="innodb" comment="Sales Flat Quote Payment">
-        <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
+        <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this quote payment."/>
     </table>
-    <table name="sales_order" resource="sales" engine="innodb" comment="Sales Flat Order">
-        <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this order."/>
+    <table name="sales_order_payment" resource="sales" engine="innodb" comment="Sales Flat Order">
+        <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this order payment."/>
     </table>
 </schema>

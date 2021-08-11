@@ -30,10 +30,18 @@
 			<resource ref="Gr4vy_Payment::Buyer_delete"/>
 		</resources>
 	</route>
+    <!--custom set-payment-information-->
+	<route url="/V1/gr4vy-payment/set-payment-information" method="POST">
+		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="setPaymentInformation"/>
+		<resources>
+            <resource ref="anonymous" />
+		</resources>
+	</route>
+    <!--end of custom api-->
 	<route url="/V1/gr4vy-payment/transaction" method="POST">
 		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="save"/>
 		<resources>
-            <resource ref="anonymous" />
+            <resource ref="Gr4vy_Payment::Transaction_save" />
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/search" method="GET">

@@ -20,7 +20,7 @@ class Logger extends AbstractHelper
     /**
      * @var Data
      */
-    private $helper;
+    private $gr4vyHelper;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
@@ -61,7 +61,7 @@ class Logger extends AbstractHelper
     public function logMixed($mixed_data)
     {
         if ($this->gr4vyHelper->isDebugOn()) {
-            $this->logger->info($mixed_data);
+            $this->logger->info(serialize($mixed_data));
         }
     }
 }

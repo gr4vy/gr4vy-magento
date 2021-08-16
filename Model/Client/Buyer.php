@@ -23,7 +23,7 @@ class Buyer extends Base
             return new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 
@@ -47,13 +47,13 @@ class Buyer extends Base
         }
 
         try {
-            //$this->gr4vy_logger->logMixed($buyer_request);
+            //$this->gr4vyLogger->logMixed($buyer_request);
             $buyer = $this->getApiInstance()->addBuyer($buyer_request);
 
             return $buyer->getId();
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
             if ($e->getCode() == self::ERROR_CODE_DUPLICATE) {
                 return self::ERROR_DUPLICATE;
             }
@@ -72,7 +72,7 @@ class Buyer extends Base
             return $this->getApiInstance()->listBuyers($id);
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 

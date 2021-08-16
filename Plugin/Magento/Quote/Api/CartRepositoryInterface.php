@@ -44,7 +44,7 @@ class CartRepositoryInterface
     /**
      * @var Gr4vyLogger
      */
-    protected $gr4vy_logger;
+    protected $gr4vyLogger;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
@@ -55,14 +55,14 @@ class CartRepositoryInterface
         BuyerRepositoryInterface $buyerRepository,
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
-        Gr4vyLogger $gr4vy_logger
+        Gr4vyLogger $gr4vyLogger
     ) {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->quoteRepository = $quoteRepository;
         $this->buyerRepository = $buyerRepository;
         $this->buyerData = $buyerData;
         $this->buyerApi = $buyerApi;
-        $this->gr4vy_logger = $gr4vy_logger;
+        $this->gr4vyLogger = $gr4vyLogger;
     }
 
     /**
@@ -81,7 +81,7 @@ class CartRepositoryInterface
         }
         catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             // if quote object not initialized, set quoteModel to null to prevent add to cart error
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
             $quoteModel = null;
         }
 
@@ -156,7 +156,7 @@ class CartRepositoryInterface
             return $this->buyerRepository->save($this->buyerData);
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 }

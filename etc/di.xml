@@ -29,4 +29,26 @@
 	<type name="Magento\Quote\Api\PaymentMethodManagementInterface">
 		<plugin name="Gr4vy_Payment_Plugin_Magento_Quote_Api_PaymentMethodManagementInterface" type="Gr4vy\Payment\Plugin\Magento\Quote\Api\PaymentMethodManagementInterface" sortOrder="10" disabled="false"/>
 	</type>
+
+    <!--logger-->
+    <virtualType name="Gr4vy\Payment\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+            <argument name="fileName" xsi:type="string">/var/log/gr4vy_debug.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Gr4vy\Payment\Logger\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">Gr4vy Payment Logger</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Gr4vy\Payment\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Gr4vy\Payment\Helper\Logger">
+        <arguments>
+            <argument name="logger" xsi:type="object">Gr4vy\Payment\Logger\Logger</argument>
+        </arguments>
+    </type>
 </config>

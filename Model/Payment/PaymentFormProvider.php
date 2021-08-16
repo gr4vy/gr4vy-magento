@@ -25,11 +25,6 @@ class PaymentFormProvider implements ConfigProviderInterface
     protected $urlBuilder;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
      * @var Cart
      */
     protected $cart;
@@ -46,11 +41,9 @@ class PaymentFormProvider implements ConfigProviderInterface
 
     /**
      * @param CurrentCustomer $currentCustomer
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         CurrentCustomer $currentCustomer,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         UrlInterface $urlBuilder,
         Cart $cart,
         Gr4vyHelper $gr4vyHelper,
@@ -58,7 +51,6 @@ class PaymentFormProvider implements ConfigProviderInterface
     ) {
         $this->currentCustomer = $currentCustomer;
         $this->urlBuilder = $urlBuilder;
-        $this->scopeConfig = $scopeConfig;
         $this->cart = $cart;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->embedApi = $embedApi;
@@ -79,9 +71,9 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'gr4vy_id' => $this->gr4vyHelper->getGr4vyId(),
                     'environment' => $this->gr4vyHelper->getGr4vyEnvironment(),
                     'buyer_id' => $buyer_id,
-                    'description' => $this->scopeConfig->getValue('payment/gr4vy/instructions'),
+                    'description' => $this->gr4vyHelper->getPaymentInstructions(),
                     'token' => $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id),
-                    'isActive' => $this->scopeConfig->getValue('payment/gr4vy/active')
+                    'isActive' => $this->gr4vyHelper->isEnabled()
                 ]
             ]
         ];

@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-	<body>
-		<referenceContainer name="content">
-			<block name="index.submit" class="Gr4vy\Payment\Block\Index\Submit" template="Gr4vy_Payment::index/submit.phtml"/>
-		</referenceContainer>
-	</body>
-</page>

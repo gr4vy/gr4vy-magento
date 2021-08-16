@@ -5,10 +5,15 @@
             "external_identifier": true,
             "display_name": true,
             "created_at": true,
-            "updated_at": true
+            "updated_at": true,
+            "buyer_id": true
         },
         "constraint": {
-            "PRIMARY": true
+            "PRIMARY": true,
+            "GR4VY_BUYERS_EXTERNAL_IDENTIFIER": true
+        },
+        "index": {
+            "GR4VY_BUYERS_BUYER_ID": true
         }
     },
     "gr4vy_transactions": {
@@ -25,11 +30,16 @@
             "created_at": true,
             "updated_at": true,
             "external_identifier": true,
-            "environment": true
+            "environment": true,
+            "gr4vy_transaction_id": true
         },
         "constraint": {
             "PRIMARY": true,
-            "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_ID": true
+            "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_ID": true,
+            "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_BUYER_ID": true
+        },
+        "index": {
+            "GR4VY_TRANSACTIONS_GR4VY_TRANSACTION_ID": true
         }
     },
     "gr4vy_methods": {
@@ -67,6 +77,21 @@
         },
         "constraint": {
             "PRIMARY": true
+        }
+    },
+    "quote": {
+        "column": {
+            "gr4vy_buyer_id": true
+        }
+    },
+    "quote_payment": {
+        "column": {
+            "gr4vy_transaction_id": true
+        }
+    },
+    "sales_order_payment": {
+        "column": {
+            "gr4vy_transaction_id": true
         }
     }
 }

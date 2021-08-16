@@ -8,48 +8,61 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
+use Psr\Log\LoggerInterface;
 
 class Logger extends AbstractHelper
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var Data
+     */
+    private $helper;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        LoggerInterface $logger,
+        Data $gr4vyHelper
     ) {
         parent::__construct($context);
+        $this->logger = $logger;
+        $this->gr4vyHelper = $gr4vyHelper;
     }
 
     /**
      * custom logger to log exception content to log file
-     * TODO: this is not logging proper error message from Gr4vy because it is array of json objects. need to fix
      *
+     * @param Exception
      * @return void
      */
     public function logException(\Exception $e)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($e->getMessage());
-        if (method_exists($e, 'getResponseBody')) {
-            $logger->info($e->getResponseBody());
+        if ($this->gr4vyHelper->isDebugOn()) {
+            $this->logger->error($e->getMessage());
+            if (method_exists($e, 'getResponseBody')) {
+                $this->logger->info($e->getResponseBody());
+            }
         }
     }
 
     /**
      * custom logger to log exception content to log file
      *
+     * @param array
      * @return void
      */
     public function logMixed($mixed_data)
     {
-        // debug start
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/gr4vy.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($mixed_data);
+        if ($this->gr4vyHelper->isDebugOn()) {
+            $this->logger->info($mixed_data);
+        }
     }
 }
 

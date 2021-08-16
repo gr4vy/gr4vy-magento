@@ -76,5 +76,11 @@ class Transaction extends Base
      */
     public function refund()
     {
+        try {
+            return $this->getApiInstance()->refundTransaction($transaction_id, $transaction_capture_request);
+        }
+        catch (\Exception $e) {
+            $this->gr4vy_logger->logException($e);
+        }
     }
 }

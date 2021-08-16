@@ -143,7 +143,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     /**
-     * Void payment
+     * Void payment - If the transaction was not yet captured the authorization will instead be voided.
      *
      * @param \Magento\Framework\DataObject|\Magento\Payment\Model\InfoInterface|Payment $payment
      * @return $this
@@ -151,9 +151,21 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function void(\Magento\Payment\Model\InfoInterface $payment)
     {
-        // method to void payment
+        $order = $payment->getOrder();
 
-        return $this;
+        $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
+        $transaction_request = array(
+            'amount' => intval($order->getGrandTotal() * 100)
+        );
+
+        // send refund request and retrieve response
+        $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_request);
+
+        if ($response->getStatus() != 'refund_failed') {
+            return $this;
+        } else {
+            throw new \Exception("Gr4vy voiding error.");
+        }
     }
 
     /**
@@ -170,7 +182,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         $order = $payment->getOrder();
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
         $transaction_capture_request = array(
-            'amount' => intval($order->getGrandTotal() * 100)
+            'amount' => intval($amount * 100)
         );
 
         // send capture request and retrieve response
@@ -195,19 +207,19 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     {
         $order = $payment->getOrder();
 
-        // send refund request and retrieve response
-        //$response = ..
+        $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
+        $transaction_refund_request = array(
+            'amount' => intval($amount * 100)
+        );
 
-        //$payment->setTransactionId($response['transactionId']);
-        //if ($response['type'] == self::PAYMENT_TYPE_REFUND && $response['status'] == self::PAYMENT_STATUS_SUCCESS) {
-        //    return $this;
-        //} else {
-        //    if (!empty($outcome) && !empty($response['reasonMessage'])) {
-        //        throw new \Exception($response['reasonMessage']);
-        //    } else {
-        //        throw new \Exception(__("Gr4vy refunding error."));
-        //    }
-        //}
+        // send refund request and retrieve response
+        $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_refund_request);
+
+        if ($response->getStatus() != 'refund_failed') {
+            return $this;
+        } else {
+            throw new \Exception("Gr4vy refunding error.");
+        }
     }
 
 

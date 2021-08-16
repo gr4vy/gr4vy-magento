@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Payment\Model\Client;
 
-use Gr4vy\Api\TransactionsApi;
+use Gr4vy\api\TransactionsApi;
 
 class Transaction extends Base
 {

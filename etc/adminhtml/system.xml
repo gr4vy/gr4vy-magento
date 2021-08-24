@@ -28,10 +28,10 @@
 					<label>Enable Debug</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<!--<field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
-					<label>Payment Action</label>
-					<source_model>Gr4vy\Payment\Model\Source\PaymentAction</source_model>
-				</field>-->
+                <field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
+                    <label>Payment Action</label>
+                    <source_model>Gr4vy\Payment\Model\Source\PaymentAction</source_model>
+                </field>
 				<field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
 					<label>Title</label>
 				</field>

@@ -21,7 +21,7 @@ class Transaction extends Base
             return new TransactionsApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 
@@ -37,7 +37,7 @@ class Transaction extends Base
             return $this->getApiInstance()->getTransaction($transaction_id);
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 
@@ -67,7 +67,7 @@ class Transaction extends Base
             return $this->getApiInstance()->captureTransaction($transaction_id, $transaction_capture_request);
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 
@@ -80,7 +80,7 @@ class Transaction extends Base
             return $this->getApiInstance()->refundTransaction($transaction_id, $transaction_capture_request);
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 }

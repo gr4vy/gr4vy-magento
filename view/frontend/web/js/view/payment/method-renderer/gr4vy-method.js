@@ -27,6 +27,7 @@ define(
                     currency: window.checkoutConfig.quoteData.quote_currency_code,
                     country: window.checkoutConfig.originCountryCode,
                     token: window.checkoutConfig.payment.gr4vy.token,
+                    intent: window.checkoutConfig.payment.gr4vy.intent,
                     onEvent: (eventName, data) => {
                         if (eventName === 'agumentError') {
                             console.log(data)
@@ -49,6 +50,8 @@ define(
                         var payload = {
                             cartId: quote.getQuoteId(),
                             paymentMethod: this.getPaymentMethodData(transaction.paymentMethod),
+                            methodData: this.getGr4vyPaymentMethodData(transaction.paymentMethod),
+                            serviceData: this.getGr4vyPaymentServiceData(transaction.paymentService),
                             transactionData: this.getGr4vyTransactionData(transaction)
                         };
                         return storage.post(
@@ -72,26 +75,7 @@ define(
             /**
              * @returns {Object}
              */
-            getGr4vyTransactionData: function (transaction) {
-                var data = {
-                    method_id: transaction.paymentMethod.id,
-                        buyer_id: transaction.buyer.id,
-                        service_id: transaction.paymentService.id,
-                        status: transaction.status,
-                        amount: transaction.amount,
-                        captured_amount: transaction.captured_amount,
-                        refunded_amount: transaction.refunded_amount,
-                        currency: transaction.currency,
-                        gr4vy_transaction_id: transaction.id,
-                        environment: transaction.environment
-                }
-
-                return data;
-            },
-            /**
-             * @returns {Object}
-             */
-            getPaymentMethodData: function (payment) {
+            getPaymentMethodData: function (payment,service) {
                 var data = {
                     'method': this.getCode(),
                     'additional_data': {
@@ -99,7 +83,55 @@ define(
                         'cc_exp_year': payment.expirationDate.substr(-2),
                         'cc_exp_month': payment.expirationDate.substr(0,2),
                         'cc_last_4': payment.label
-                    }
+                    },
+                };
+
+                return data;
+            },
+            /**
+             * @returns {Object}
+             */
+            getGr4vyTransactionData: function (transaction) {
+                var data = {
+                    method_id: transaction.paymentMethod.id,
+                    buyer_id: transaction.buyer.id,
+                    service_id: transaction.paymentService.id,
+                    status: transaction.status,
+                    amount: transaction.amount,
+                    captured_amount: transaction.captured_amount,
+                    refunded_amount: transaction.refunded_amount,
+                    currency: transaction.currency,
+                    gr4vy_transaction_id: transaction.id,
+                    environment: transaction.environment
+                }
+
+                return data;
+            },
+            /**
+             * @returns {Object}
+             */
+            getGr4vyPaymentMethodData: function (payment) {
+                var data = {
+                    method_id: payment.id,
+                    method: payment.method,
+                    label: payment.label,
+                    scheme: payment.scheme,
+                    external_identifier: payment.externalIdentifier,
+                    expiration_date: payment.expirationDate,
+                    approval_url: payment.approvalUrlc
+                };
+
+                return data;
+            },
+            /**
+             * @returns {Object}
+             */
+            getGr4vyPaymentServiceData: function (service) {
+                var data = {
+                    service_id: service.id,
+                    method: service.method,
+                    payment_service_definition_id: service.payment_service_definition_id,
+                    display_name: service.type
                 };
 
                 return data;

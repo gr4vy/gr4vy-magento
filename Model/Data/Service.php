@@ -13,8 +13,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
 {
 
     /**
-     * Get service_id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getServiceId()
     {
@@ -22,9 +21,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
     }
 
     /**
-     * Set service_id
-     * @param string $serviceId
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * {@inheritdoc}
      */
     public function setServiceId($serviceId)
     {
@@ -32,8 +29,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
     }
 
     /**
-     * Get id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -41,13 +37,137 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
     }
 
     /**
-     * Set id
-     * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * {@inheritdoc}
      */
     public function setId($id)
     {
         return $this->setData(self::ID, $id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPaymentServiceDefinitionId() {
+        return $this->_get(self::PAYMENT_SERVICE_DEFINITION_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPaymentServiceDefinitionId($payment_service_definition_id) {
+        return $this->setData(self::PAYMENT_SERVICE_DEFINITION_ID, $payment_service_definition_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMethod() {
+        return $this->_get(self::METHOD);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMethod($method) {
+        return $this->setData(self::METHOD, $method);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDisplayName() {
+        return $this->_get(self::DISPLAY_NAME);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDisplayName($display_name) {
+        return $this->setData(self::DISPLAY_NAME, $display_name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStatus() {
+        return $this->_get(self::STATUS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStatus($status) {
+        return $this->setData(self::STATUS, $status);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAcceptedCurrencies() {
+        return $this->_get(self::ACCEPTED_CURRENCIES);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAcceptedCurrencies($accepted_currencies) {
+        return $this->setData(self::ACCEPTED_CURRENCIES, $accepted_currencies);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAcceptedCountries() {
+        return $this->_get(self::ACCEPTED_COUNTRIES);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAcceptedCountries($accepted_countries) {
+        return $this->setData(self::ACCEPTED_COUNTRIES, $accepted_countries);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getActive() {
+        return $this->_get(self::ACTIVE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActive($active) {
+        return $this->setData(self::ACTIVE, $active);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPosition() {
+        return $this->_get(self::POSITION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPosition($position) {
+        return $this->setData(self::POSITION, $position);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnvironment() {
+        return $this->_get(self::ENVIRONMENT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEnvironment($environment) {
+        return $this->setData(self::ENVIRONMENT, $environment);
     }
 
     /**

@@ -14,8 +14,8 @@ use Magento\Directory\Helper\Data as DirectoryHelper;
 
 class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
 {
-    const PAYMENT_TYPE_AUTH = 'AUTHONLY';
-    const PAYMENT_TYPE_AUCAP = 'AUTHNCAPTURE';
+    const PAYMENT_TYPE_AUTH = 'authorize';
+    const PAYMENT_TYPE_AUCAP = 'capture';
 
     /**
      * @var string

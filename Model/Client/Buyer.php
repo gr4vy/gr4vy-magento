@@ -47,7 +47,7 @@ class Buyer extends Base
         }
 
         try {
-            //$this->gr4vyLogger->logMixed($buyer_request);
+            $this->gr4vyLogger->logMixed($buyer_request);
             $buyer = $this->getApiInstance()->addBuyer($buyer_request);
 
             return $buyer->getId();

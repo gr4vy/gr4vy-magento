@@ -24,15 +24,16 @@ class Embed extends Base
             $embed_params = array(
                 "amount" => intval($amount*100), // amount must be integer , so we multiply float by 100 and cast type to integer
                 "currency" => $currency,
+                "environment" => $this->gr4vyHelper->getGr4vyEnvironment(),
                 "buyer_id" => $buyer_id
             );
             $token = $this->getGr4vyConfig()->getEmbedToken($embed_params);
-            $this->gr4vy_logger->logMixed($embed_params);
-            $this->gr4vy_logger->logMixed($token->toString());
+            $this->gr4vyLogger->logMixed($embed_params);
+            $this->gr4vyLogger->logMixed($token->toString());
             return $token->toString();
         }
         catch (\Exception $e) {
-            $this->gr4vy_logger->logException($e);
+            $this->gr4vyLogger->logException($e);
         }
     }
 }

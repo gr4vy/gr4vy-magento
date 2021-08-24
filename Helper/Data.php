@@ -18,6 +18,7 @@ class Data extends AbstractHelper
     const GR4VY_PRIVATE_KEY = 'payment/gr4vy/private_key';
     const GR4VY_DEBUG = 'payment/gr4vy/debug';
     const GR4VY_ID = 'payment/gr4vy/id';
+    const GR4VY_INTENT = 'payment/gr4vy/payment_action';
     const GR4VY_ENV = 'payment/gr4vy/environment';
 
     /**
@@ -84,6 +85,16 @@ class Data extends AbstractHelper
     public function getGr4vyId()
     {
         return (string) $this->scopeConfig->getValue(self::GR4VY_ID, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve Gr4vy Intent
+     *
+     * @return string
+     */
+    public function getGr4vyIntent()
+    {
+        return (string) $this->scopeConfig->getValue(self::GR4VY_INTENT, ScopeInterface::SCOPE_STORE);
     }
 
     /**

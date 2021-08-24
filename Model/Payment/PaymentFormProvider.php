@@ -73,6 +73,7 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'buyer_id' => $buyer_id,
                     'description' => $this->gr4vyHelper->getPaymentInstructions(),
                     'token' => $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id),
+                    'intent' => $this->gr4vyHelper->getGr4vyIntent(),
                     'isActive' => $this->gr4vyHelper->isEnabled()
                 ]
             ]

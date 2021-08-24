@@ -16,12 +16,12 @@ class Base
     /**
      * @var Gr4vyHelper
      */
-    protected $gr4vy_helper;
+    protected $gr4vyHelper;
 
     /**
      * @var Gr4vyLogger
      */
-    protected $gr4vy_logger;
+    protected $gr4vyLogger;
 
     /**
      * @var PrivateKey
@@ -34,13 +34,13 @@ class Base
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        Gr4vyHelper $gr4vy_helper,
-        Gr4vyLogger $gr4vy_logger,
+        Gr4vyHelper $gr4vyHelper,
+        Gr4vyLogger $gr4vyLogger,
         PrivateKey $source_privatekey,
         array $data = []
     ) {
-        $this->gr4vy_helper = $gr4vy_helper;
-        $this->gr4vy_logger = $gr4vy_logger;
+        $this->gr4vyHelper = $gr4vyHelper;
+        $this->gr4vyLogger = $gr4vyLogger;
         $this->source_privatekey = $source_privatekey;
     }
 
@@ -51,7 +51,7 @@ class Base
      */
     protected function getGr4vyConfig()
     {
-        $gr4vy_id = $this->gr4vy_helper->getGr4vyId();
+        $gr4vy_id = $this->gr4vyHelper->getGr4vyId();
         $private_key = $this->getPrivateKey();
 
         return new \Gr4vy\Gr4vyConfig($gr4vy_id, $private_key);
@@ -66,6 +66,6 @@ class Base
     {
         return $this->source_privatekey->getPrivateKeyDirAbsolutePath()
             .DIRECTORY_SEPARATOR
-            .$this->gr4vy_helper->getPrivateKey();
+            .$this->gr4vyHelper->getPrivateKey();
     }
 }

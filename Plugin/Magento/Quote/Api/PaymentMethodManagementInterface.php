@@ -44,7 +44,6 @@ class PaymentMethodManagementInterface
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $method
     ) {
-        //var_dump($cartId);
         //var_dump($method->getData());
         $result = $proceed($cartId, $method);
         //var_dump($result); die;

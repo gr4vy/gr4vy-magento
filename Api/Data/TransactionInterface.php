@@ -9,7 +9,6 @@ namespace Gr4vy\Payment\Api\Data;
 
 interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-
     const TRANSACTION_ID = 'transaction_id';
     const ID = 'id';
     const METHOD_ID = 'method_id';
@@ -91,13 +90,13 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
 
     /**
      * Get status
-     * @return boolean|null
+     * @return string|null
      */
     public function getStatus();
 
     /**
      * Set status
-     * @param boolean $status
+     * @param string $status
      * @return \Gr4vy\Payment\Api\Data\TransactionInterface
      */
     public function setStatus($status);

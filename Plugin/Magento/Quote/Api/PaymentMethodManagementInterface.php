@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Plugin\Magento\Quote\Api;
 
 use Gr4vy\Payment\Model\Client\Embed as Gr4vyEmbed;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
 
 class PaymentMethodManagementInterface
 {
@@ -18,19 +18,19 @@ class PaymentMethodManagementInterface
     protected $embedApi;
 
     /**
-     * @var Gr4vyLogger
+     * @var Gr4vyHelper
      */
-    protected $gr4vy_logger;
+    protected $gr4vyHelper;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      */
     public function __construct(
         Gr4vyEmbed $embedApi,
-        Gr4vyLogger $gr4vy_logger
+        Gr4vyHelper $gr4vyHelper
     ) {
         $this->embedApi = $embedApi;
-        $this->gr4vy_logger = $gr4vy_logger;
+        $this->gr4vyHelper = $gr4vyHelper;
     }
 
     /**
@@ -44,9 +44,8 @@ class PaymentMethodManagementInterface
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $method
     ) {
-        //var_dump($method->getData());
+        $cartId = $this->gr4vyHelper->getQuoteIdFromMask($cartId);
         $result = $proceed($cartId, $method);
-        //var_dump($result); die;
 
         return $result;
     }

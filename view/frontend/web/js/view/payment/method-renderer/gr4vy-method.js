@@ -98,8 +98,8 @@ define(
                     service_id: transaction.paymentService.id,
                     status: transaction.status,
                     amount: transaction.amount,
-                    captured_amount: transaction.captured_amount,
-                    refunded_amount: transaction.refunded_amount,
+                    captured_amount: transaction.capturedAmount,
+                    refunded_amount: transaction.refundedAmount,
                     currency: transaction.currency,
                     gr4vy_transaction_id: transaction.id,
                     environment: transaction.environment

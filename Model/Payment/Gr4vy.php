@@ -34,6 +34,13 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
      *
      * @var bool
      */
+    protected $_canAuthorize = true;
+
+    /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
     protected $_canCapture = true;
 
     /**

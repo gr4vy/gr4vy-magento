@@ -13,6 +13,7 @@ use Gr4vy\Payment\Api\TransactionRepositoryInterface;
 use Gr4vy\Payment\Model\ResourceModel\Transaction as ResourceTransaction;
 use Gr4vy\Payment\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
 use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -52,7 +53,12 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * @var Gr4vyLogger
      */
-    protected $gr4vy_logger;
+    protected $gr4vyLogger;
+
+    /**
+     * @var Gr4vyHelper
+     */
+    protected $gr4vyHelper;
 
     /**
      * @var \Magento\Quote\Api\PaymentMethodManagementInterface
@@ -76,7 +82,8 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param CollectionProcessorInterface $collectionProcessor
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
-     * @param Gr4vyLogger $gr4vy_logger
+     * @param Gr4vyLogger $gr4vyLogger
+     * @param Gr4vyHelper $gr4vyHelper
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      */
     public function __construct(
@@ -91,7 +98,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         CollectionProcessorInterface $collectionProcessor,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
-        Gr4vyLogger $gr4vy_logger,
+        Gr4vyLogger $gr4vyLogger,
+        Gr4vyHelper $gr4vyHelper,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
     ) {
         $this->resource = $resource;
@@ -106,7 +114,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
         $this->paymentMethodManagement = $paymentMethodManagement;
-        $this->gr4vy_logger = $gr4vy_logger;
+        $this->gr4vyLogger = $gr4vyLogger;
+        $this->gr4vyHelper = $gr4vyHelper;
     }
 
     /**
@@ -154,13 +163,14 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->save($transactionData);
 
         // 2. set payment information
+        $cartId = $this->gr4vyHelper->getQuoteIdFromMask($cartId);
         /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
         $quoteRepository = $this->getCartRepository();
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $quoteRepository->getActive($cartId);
         $payment = $quote->getPayment();
         $payment->setData('gr4vy_transaction_id', $transactionData->getGr4vyTransactionId())->save();
-        $this->gr4vy_logger->logMixed($payment->getData());
+        $this->gr4vyLogger->logMixed($payment->getData());
 
         $quote_payment_id = $this->paymentMethodManagement->set($cartId, $paymentMethod);
 

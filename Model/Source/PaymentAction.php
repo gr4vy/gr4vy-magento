@@ -14,8 +14,8 @@ class PaymentAction implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => Gr4vy::PAYMENT_TYPE_AUTH, 'label' => __('Authorisation')],
-            ['value' => Gr4vy::PAYMENT_TYPE_AUCAP, 'label' => __('Authorise & Capture')]
+            ['value' => Gr4vy::PAYMENT_TYPE_AUTH, 'label' => __('Authorize Only')],
+            ['value' => Gr4vy::PAYMENT_TYPE_AUCAP, 'label' => __('Authorize & Capture')]
         ];
     }
 }

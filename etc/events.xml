@@ -3,4 +3,7 @@
     <event name="sales_order_payment_save_before">
         <observer name="gr4vy_order_payment_save_before" instance="Gr4vy\Payment\Observer\OrderPaymentSaveBefore" />
     </event>
+    <event name="checkout_submit_all_after">
+        <observer name="gr4vy_place_order_after" instance="Gr4vy\Payment\Observer\OrderPlaceAfter"/>
+    </event>
 </config>

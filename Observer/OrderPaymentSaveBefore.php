@@ -25,6 +25,7 @@ class OrderPaymentSaveBefore implements \Magento\Framework\Event\ObserverInterfa
 
     /**
      * @param Gr4vyLogger $gr4vyLogger
+     * @param QuoteFactory $quoteFactory
      */
     public function __construct(
         Gr4vyLogger $gr4vyLogger,

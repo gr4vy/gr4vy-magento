@@ -196,11 +196,13 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         // send capture request and retrieve response
         $response = $this->transactionApi->capture($gr4vy_transaction_id, $transaction_capture_request);
 
-        if ($response->getStatus() != 'capture_failed') {
-            return $this;
-        } else {
-            throw new \Exception("Gr4vy capturing error.");
+        if ($response->getStatus() == 'capture_failed') {
+            $this->gr4vyLogger->logMixed($response->listInvalidProperties());
+            $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
+            throw new \Magento\Framework\Exception\LocalizedException(__('Gr4vy capturing error.'));
         }
+
+        return $this;
     }
 
     /**
@@ -223,11 +225,11 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         // send refund request and retrieve response
         $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_refund_request);
 
-        if ($response->getStatus() != 'refund_failed') {
-            return $this;
-        } else {
-            throw new \Exception("Gr4vy refunding error.");
+        if ($response->getStatus() == 'refund_failed') {
+            throw new \Magento\Framework\Exception\LocalizedException(__('Gr4vy refunding error.'));
         }
+
+        return $this;
     }
 
 

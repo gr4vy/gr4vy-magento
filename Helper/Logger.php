@@ -46,6 +46,7 @@ class Logger extends AbstractHelper
     {
         if ($this->gr4vyHelper->isDebugOn()) {
             $this->logger->error($e->getMessage());
+            $this->logger->error($e->getTraceAsString());
             if (method_exists($e, 'getResponseBody')) {
                 $this->logger->info($e->getResponseBody());
             }

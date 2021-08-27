@@ -36,7 +36,7 @@ interface BuyerRepositoryInterface
      * @param string
      * @return Gr4vy\Payment\Model\Buyer | null
      */
-    public function getBuyerByExternalIdentifier($external_identifier);
+    public function getByExternalIdentifier($external_identifier);
 
     /**
      * Retrieve Buyer matching the specified criteria.

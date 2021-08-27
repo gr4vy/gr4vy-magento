@@ -52,8 +52,10 @@ class OrderPlaceAfter implements ObserverInterface
         $payment = $order->getPayment();
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
         $newOrderStatus = $this->gr4vyHelper->getGr4vyNewOrderStatus();
+
         if (empty($newOrderStatus)) {
-            $newOrderStatus = \Magento\Sales\Model\Order::STATE_NEW;
+            // default new order status in code is processing
+            $newOrderStatus = \Magento\Sales\Model\Order::STATE_PROCESSING;
         }
 
         // only applicable for gr4vy payment method
@@ -83,7 +85,7 @@ class OrderPlaceAfter implements ObserverInterface
         if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUTH) {
             $msg = __(
                 "Authorized amount of %1 online. Transaction ID: '%2'.",
-                strip_tags($transaction->getCapturedAmount()),
+                strip_tags($transaction->getAmount()),
                 strval($transaction->getGr4vyTransactionId())
             );
             $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);

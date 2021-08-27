@@ -53,6 +53,7 @@ class OrderPaymentSaveBefore implements \Magento\Framework\Event\ObserverInterfa
         if ($gr4vy_transaction_id = $quotePayment->getData('gr4vy_transaction_id')) { // remove hardcode later
             try {
                 $orderPayment->setData('gr4vy_transaction_id', $gr4vy_transaction_id);
+                $orderPayment->setData('transaction_id', $gr4vy_transaction_id);
             }
             catch (\Exception $e) {
                 $this->gr4vyLogger->logException($e);

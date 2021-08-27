@@ -54,6 +54,7 @@ class OrderPaymentSaveBefore implements \Magento\Framework\Event\ObserverInterfa
             try {
                 $orderPayment->setData('gr4vy_transaction_id', $gr4vy_transaction_id);
                 $orderPayment->setData('transaction_id', $gr4vy_transaction_id);
+                $orderPayment->setData('last_trans_id', $gr4vy_transaction_id);
             }
             catch (\Exception $e) {
                 $this->gr4vyLogger->logException($e);

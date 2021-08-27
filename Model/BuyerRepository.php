@@ -21,6 +21,7 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 
 class BuyerRepository implements BuyerRepositoryInterface
 {
@@ -48,6 +49,11 @@ class BuyerRepository implements BuyerRepositoryInterface
     protected $extensibleDataObjectConverter;
 
     /**
+     * @var searchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+
+    /**
      * @param ResourceBuyer $resource
      * @param BuyerFactory $buyerFactory
      * @param BuyerInterfaceFactory $dataBuyerFactory
@@ -59,6 +65,7 @@ class BuyerRepository implements BuyerRepositoryInterface
      * @param CollectionProcessorInterface $collectionProcessor
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ResourceBuyer $resource,
@@ -71,7 +78,8 @@ class BuyerRepository implements BuyerRepositoryInterface
         StoreManagerInterface $storeManager,
         CollectionProcessorInterface $collectionProcessor,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
-        ExtensibleDataObjectConverter $extensibleDataObjectConverter
+        ExtensibleDataObjectConverter $extensibleDataObjectConverter,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->resource = $resource;
         $this->buyerFactory = $buyerFactory;
@@ -84,6 +92,7 @@ class BuyerRepository implements BuyerRepositoryInterface
         $this->collectionProcessor = $collectionProcessor;
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -127,6 +136,22 @@ class BuyerRepository implements BuyerRepositoryInterface
             throw new NoSuchEntityException(__('Buyer with id "%1" does not exist.', $buyerId));
         }
         return $buyer->getDataModel();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBuyerByExternalIdentifier($external_identifier)
+    {
+        $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->create();
+        $buyerSearchResults = $this->getList($buyerSearchCriteria);
+
+        if ($buyerSearchResults->getTotalCount() > 0) {
+            list($item) = $buyerSearchResults->getItems();
+            return $item;
+        }
+
+        return null;
     }
 
     /**

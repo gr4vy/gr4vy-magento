@@ -24,6 +24,7 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
@@ -71,6 +72,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     private $cartRepository;
 
     /**
+     * @var searchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+
+    /**
      * @param ResourceTransaction $resource
      * @param TransactionFactory $transactionFactory
      * @param TransactionInterfaceFactory $dataTransactionFactory
@@ -84,6 +90,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      */
     public function __construct(
@@ -100,6 +107,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
     ) {
         $this->resource = $resource;
@@ -116,6 +124,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -203,6 +212,25 @@ class TransactionRepository implements TransactionRepositoryInterface
             throw new NoSuchEntityException(__('Transaction with id "%1" does not exist.', $transactionId));
         }
         return $transaction->getDataModel();
+    }
+
+    /**
+     * retrieve buyer buy gr4vy transaction using gr4vy_transaction_id
+     *
+     * @param string
+     * @return Gr4vy\Payment\Api\Data\TransactionInterface
+     */
+    public function getByGr4vyTransactionId($gr4vy_transaction_id)
+    {
+        $transactionSearchCriteria = $this->searchCriteriaBuilder->addFilter('gr4vy_transaction_id', $gr4vy_transaction_id, 'eq')->create();
+        $transactionSearchResults = $this->getList($transactionSearchCriteria);
+
+        if ($transactionSearchResults->getTotalCount() > 0) {
+            list($item) = $transactionSearchResults->getItems();
+            return $item;
+        }
+
+        return null;
     }
 
     /**

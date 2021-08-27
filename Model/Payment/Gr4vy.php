@@ -21,6 +21,11 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * @var string
      */
+    protected $_infoBlockType = \Gr4vy\Payment\Block\Info::class;
+
+    /**
+     * @var string
+     */
     protected $_code = self::PAYMENT_METHOD_CODE;
 
     /**
@@ -196,9 +201,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         // send capture request and retrieve response
         $response = $this->transactionApi->capture($gr4vy_transaction_id, $transaction_capture_request);
 
+        $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
         if ($response->getStatus() == 'capture_failed') {
             $this->gr4vyLogger->logMixed($response->listInvalidProperties());
-            $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
             throw new \Magento\Framework\Exception\LocalizedException(__('Gr4vy capturing error.'));
         }
 
@@ -225,6 +230,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         // send refund request and retrieve response
         $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_refund_request);
 
+        $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
         if ($response->getStatus() == 'refund_failed') {
             throw new \Magento\Framework\Exception\LocalizedException(__('Gr4vy refunding error.'));
         }

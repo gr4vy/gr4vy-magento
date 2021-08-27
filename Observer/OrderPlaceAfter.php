@@ -2,7 +2,6 @@
 
 namespace Gr4vy\Payment\Observer;
 
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Event\ObserverInterface;
 use Gr4vy\Payment\Api\TransactionRepositoryInterface;
 use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
@@ -11,11 +10,6 @@ use Gr4vy\Payment\Helper\Order as OrderHelper;
 
 class OrderPlaceAfter implements ObserverInterface
 {
-    /**
-     * @var searchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
-
     /**
      * @var TransactionRepositoryInterface
      */
@@ -41,13 +35,11 @@ class OrderPlaceAfter implements ObserverInterface
      * @param OrderHelper $orderHelper
      */
     public function __construct(
-        SearchCriteriaBuilder $searchCriteriaBuilder,
         TransactionRepositoryInterface $transactionRepository,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger,
         OrderHelper $orderHelper
     ) {
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->transactionRepository = $transactionRepository;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
@@ -72,7 +64,7 @@ class OrderPlaceAfter implements ObserverInterface
         }
         $this->gr4vyLogger->logMixed([ 'method' => $payment->getMethod(), 'gr4vy_transaction_id' => $gr4vy_transaction_id ]);
 
-        $transaction = $this->getTransaction($gr4vy_transaction_id);
+        $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
         if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUCAP) {
             if (!$order->canInvoice()) {
                 $msg = __("Error in creating an Invoice.");
@@ -96,26 +88,5 @@ class OrderPlaceAfter implements ObserverInterface
             );
             $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);
         }
-    }
-
-    /**
-     * retrieve buyer buy gr4vy transaction using gr4vy_transaction_id
-     *
-     * @param string
-     * @return Gr4vy\Payment\Api\Data\TransactionInterface
-     */
-    public function getTransaction($gr4vy_transaction_id)
-    {
-        if (!empty($gr4vy_transaction_id)) {
-            $transactionSearchCriteria = $this->searchCriteriaBuilder->addFilter('gr4vy_transaction_id', $gr4vy_transaction_id, 'eq')->create();
-            $transactionSearchResults = $this->transactionRepository->getList($transactionSearchCriteria);
-
-            if ($transactionSearchResults->getTotalCount() > 0) {
-                list($item) = $transactionSearchResults->getItems();
-                return $item;
-            }
-        }
-
-        return null;
     }
 }

@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Gr4vy\Payment\Plugin\Magento\Quote\Api;
 
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Gr4vy\Payment\Api\BuyerRepositoryInterface;
 use Gr4vy\Payment\Api\Data\BuyerInterface as DataBuyerInterface;
 use Gr4vy\Payment\Model\Client\Buyer as Gr4vyBuyer;
@@ -16,11 +15,6 @@ use Magento\Quote\Model\QuoteRepository;
 
 class CartRepositoryInterface
 {
-    /**
-     * @var searchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
-
     /**
      * @var QuoteRepository
      */
@@ -50,14 +44,12 @@ class CartRepositoryInterface
      * @param \Magento\Framework\App\Helper\Context $context
      */
     public function __construct(
-        SearchCriteriaBuilder $searchCriteriaBuilder,
         QuoteRepository $quoteRepository,
         BuyerRepositoryInterface $buyerRepository,
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
         Gr4vyLogger $gr4vyLogger
     ) {
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->quoteRepository = $quoteRepository;
         $this->buyerRepository = $buyerRepository;
         $this->buyerData = $buyerData;
@@ -87,11 +79,11 @@ class CartRepositoryInterface
 
         if (empty($quoteModel) || empty($quoteModel->getData('gr4vy_buyer_id'))) {
             $external_identifier = $quote->getCustomerId();
-            $buyer_model = $this->getBuyerByExternalIdentifier($external_identifier);
+            $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier);
 
-            if ($buyer_model) {
+            if ($buyerModel) {
                 // check for customer in gr4vy_buyers table
-                $quote->setData('gr4vy_buyer_id',$buyer_model->getBuyerId());
+                $quote->setData('gr4vy_buyer_id',$buyerModel->getBuyerId());
             }
             else {
                 // if customer not logged in, create anonymous buyer without external_identifier and display_name
@@ -110,27 +102,6 @@ class CartRepositoryInterface
         }
 
         $result = $proceed($quote);
-    }
-
-    /**
-     * retrieve buyer buy external_identifier
-     *
-     * @param string
-     * @return Gr4vy\Payment\Model\Buyer
-     */
-    public function getBuyerByExternalIdentifier($external_identifier)
-    {
-        if (!empty($external_identifier)) {
-            $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->create();
-            $buyerSearchResults = $this->buyerRepository->getList($buyerSearchCriteria);
-
-            if ($buyerSearchResults->getTotalCount() > 0) {
-                list($item) = $buyerSearchResults->getItems();
-                return $item;
-            }
-        }
-
-        return null;
     }
 
     /**

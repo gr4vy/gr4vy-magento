@@ -10,23 +10,25 @@ namespace Gr4vy\Payment\Block;
 class Info extends \Magento\Payment\Block\Info\Cc
 {
     /**
-     * @var \Gr4vy\Payment\Model\TransactionFactory
+     * @var \Gr4vy\Payment\Api\TransactionRepositoryInterface
      */
-    protected $_transactionFactory;
+    protected $_transactionRepository;
 
     /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context  $context
+     * @param \Magento\Payment\Model\Config $paymentConfig
+     * @param \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Model\Config $paymentConfig,
-        \Gr4vy\Payment\Model\TransactionFactory $transactionFactory,
+        \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository,
         array $data = []
     ) {
-        $this->_transactionFactory = $transactionFactory;
+        $this->_transactionRepository = $transactionRepository;
         parent::__construct($context, $paymentConfig, $data);
     }
 
@@ -47,13 +49,30 @@ class Info extends \Magento\Payment\Block\Info\Cc
     {
         $transport = parent::_prepareSpecificInformation($transport);
         $payment = $this->getInfo();
-        $info = $this->_transactionFactory->create();
-        if ($this->getIsSecureMode()) {
-            $info = $info->getPublicPaymentInfo($payment, true);
-        } else {
-            $info = $info->getPaymentInfo($payment, true);
-        }
-        return $transport->addData($info);
+        $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
+        $transaction = $this->_transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
+
+        /*prepare labels*/
+        $last_trans_id = (string)__('Last Transaction ID');
+        $status = (string)__('Status');
+        $amount = (string)__('Amount');
+        $captured_amount = (string)__('Captured Amount');
+        $refunded_amount = (string)__('Refunded Amount');
+        $currency = (string)__('Currency');
+
+        /*prepare data*/
+        $captured = $transaction->getCapturedAmount() ? number_format($transaction->getCapturedAmount()/100, 2) : 0;
+        $refunded = $transaction->getRefundedAmount() ? number_format($transaction->getRefundedAmount()/100, 2) : 0;
+        $data = array(
+            $last_trans_id => $transaction->getGr4vyTransactionId(),
+            $status => ucwords(str_replace('_', ' ',$transaction->getStatus())),
+            $amount => number_format($transaction->getAmount()/100, 2),
+            $captured_amount => $captured ?: '0.00',
+            $refunded_amount => $refunded ?: '0.00',
+            $currency => $transaction->getCurrency()
+        );
+
+        return $transport->addData($data);
     }
 }
 

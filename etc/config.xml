@@ -6,7 +6,7 @@
 				<active>1</active>
 				<environment>development</environment>
 				<model>Gr4vy\Payment\Model\Payment\Gr4vy</model>
-				<order_status>pending</order_status>
+				<order_status>processing</order_status>
                 <payment_action>authorize</payment_action>
 				<title>Gr4vy</title>
 				<allowspecific>0</allowspecific>

@@ -48,6 +48,14 @@ interface TransactionRepositoryInterface
     public function get($transactionId);
 
     /**
+     * retrieve buyer buy gr4vy transaction using gr4vy_transaction_id
+     *
+     * @param string
+     * @return Gr4vy\Payment\Api\Data\TransactionInterface
+     */
+    public function getByGr4vyTransactionId($gr4vy_transaction_id);
+
+    /**
      * Retrieve Transaction matching the specified criteria.
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
      * @return \Gr4vy\Payment\Api\Data\TransactionSearchResultsInterface

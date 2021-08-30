@@ -33,17 +33,26 @@ class Data extends AbstractHelper
     protected $quoteIdMaskFactory;
 
     /**
+     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
+     */
+    protected $_priceHelper;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceHelper
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceHelper,
         ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($context);
         $this->quoteIdMaskFactory = $quoteIdMaskFactory;
         $this->scopeConfig = $scopeConfig;
+        $this->_priceHelper = $priceHelper;
     }
 
     /**
@@ -143,5 +152,15 @@ class Data extends AbstractHelper
 
         return $cartId;
     }
-}
 
+    /**
+     * format currency with symbol and no container
+     *
+     * @param string | number
+     * @return string
+     */
+    public function formatCurrency($amount)
+    {
+        return $this->_priceHelper->convertAndFormat($amount, false);
+    }
+}

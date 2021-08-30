@@ -73,7 +73,7 @@ class OrderPlaceAfter implements ObserverInterface
             } else {
                 $msg = __(
                     "Captured amount of %1 online. Transaction ID: '%2'.",
-                    strip_tags($transaction->getCapturedAmount()),
+                    $this->gr4vyHelper->formatCurrency($transaction->getCapturedAmount()/100),
                     strval($transaction->getGr4vyTransactionId())
                 );
             }
@@ -85,7 +85,7 @@ class OrderPlaceAfter implements ObserverInterface
         if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUTH) {
             $msg = __(
                 "Authorized amount of %1 online. Transaction ID: '%2'.",
-                strip_tags($transaction->getAmount()),
+                $this->gr4vyHelper->formatCurrency($transaction->getAmount()/100),
                 strval($transaction->getGr4vyTransactionId())
             );
             $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);

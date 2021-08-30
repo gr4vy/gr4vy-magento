@@ -15,20 +15,28 @@ class Info extends \Magento\Payment\Block\Info\Cc
     protected $_transactionRepository;
 
     /**
+     * @var \Gr4vy\Payment\Helper\Data
+     */
+    protected $_gr4vyHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context  $context
      * @param \Magento\Payment\Model\Config $paymentConfig
      * @param \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository
+     * @param \Gr4vy\Payment\Helper\Data $gr4vyHelper
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Model\Config $paymentConfig,
         \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository,
+        \Gr4vy\Payment\Helper\Data $gr4vyHelper,
         array $data = []
     ) {
         $this->_transactionRepository = $transactionRepository;
+        $this->_gr4vyHelper = $gr4vyHelper;
         parent::__construct($context, $paymentConfig, $data);
     }
 
@@ -61,12 +69,12 @@ class Info extends \Magento\Payment\Block\Info\Cc
         $currency = (string)__('Currency');
 
         /*prepare data*/
-        $captured = $transaction->getCapturedAmount() ? number_format($transaction->getCapturedAmount()/100, 2) : 0;
-        $refunded = $transaction->getRefundedAmount() ? number_format($transaction->getRefundedAmount()/100, 2) : 0;
+        $captured = $transaction->getCapturedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getCapturedAmount()/100) : 0;
+        $refunded = $transaction->getRefundedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getRefundedAmount()/100) : 0;
         $data = array(
             $last_trans_id => $transaction->getGr4vyTransactionId(),
             $status => ucwords(str_replace('_', ' ',$transaction->getStatus())),
-            $amount => number_format($transaction->getAmount()/100, 2),
+            $amount => $this->_gr4vyHelper->formatCurrency($transaction->getAmount()/100),
             $captured_amount => $captured ?: '0.00',
             $refunded_amount => $refunded ?: '0.00',
             $currency => $transaction->getCurrency()

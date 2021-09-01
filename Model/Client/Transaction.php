@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Model\Client;
 
 use Gr4vy\api\TransactionsApi;
+use Gr4vy\model\TransactionCaptureRequest;
+use Gr4vy\model\TransactionRefundRequest;
 
 class Transaction extends Base
 {
@@ -49,21 +51,24 @@ class Transaction extends Base
      */
     public function authorize()
     {
+        // skipped because of webform checkout
     }
 
     /**
      * capture transaction online
      *
      * @param  string $transaction_id The ID for the transaction to get the information for. (required)
-     * @param  \Gr4vy\model\TransactionCaptureRequest $transaction_capture_request transaction_capture_request (optional) - for partial capture
+     * @param  float (optional) - for partial capture
      *
      * @throws \Gr4vy\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \Gr4vy\model\Transaction|\Gr4vy\model\ErrorGeneric|\Gr4vy\model\Error401Unauthorized|\Gr4vy\model\ErrorGeneric
      */
-    public function capture($transaction_id, $transaction_capture_request = null)
+    public function capture($transaction_id, $amount = null)
     {
         try {
+            $transaction_capture_request = new TransactionCaptureRequest();
+            $transaction_capture_request->setAmount($amount);
             return $this->getApiInstance()->captureTransaction($transaction_id, $transaction_capture_request);
         }
         catch (\Exception $e) {
@@ -73,10 +78,19 @@ class Transaction extends Base
 
     /**
      * refund transaction online
+     *
+     * @param  string $transaction_id The ID for the transaction to get the information for. (required)
+     * @param  float (optional) - for partial capture
+     *
+     * @throws \Gr4vy\ApiException on non-2xx response
+     * @throws \InvalidArgumentException
+     * @return \Gr4vy\model\Transaction|\Gr4vy\model\ErrorGeneric|\Gr4vy\model\Error401Unauthorized|\Gr4vy\model\ErrorGeneric
      */
-    public function refund()
+    public function refund($transaction_id, $amount = null)
     {
         try {
+            $transaction_capture_request = new TransactionRefundRequest();
+            $transaction_capture_request->setAmount($amount);
             return $this->getApiInstance()->refundTransaction($transaction_id, $transaction_capture_request);
         }
         catch (\Exception $e) {

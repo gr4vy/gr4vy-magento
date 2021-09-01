@@ -167,12 +167,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         $order = $payment->getOrder();
 
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
-        $transaction_request = array(
-            'amount' => intval($order->getGrandTotal() * 100)
-        );
 
         // send refund request and retrieve response
-        $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_request);
+        $response = $this->transactionApi->refund($gr4vy_transaction_id);
 
         if ($response->getStatus() != 'refund_failed') {
             return $this;
@@ -194,12 +191,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     {
         $order = $payment->getOrder();
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
-        $transaction_capture_request = array(
-            'amount' => intval($amount * 100)
-        );
 
         // send capture request and retrieve response
-        $response = $this->transactionApi->capture($gr4vy_transaction_id, $transaction_capture_request);
+        $response = $this->transactionApi->capture($gr4vy_transaction_id, $amount * 100);
 
         $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
         if ($response->getStatus() == 'capture_failed') {
@@ -223,12 +217,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         $order = $payment->getOrder();
 
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
-        $transaction_refund_request = array(
-            'amount' => intval($amount * 100)
-        );
 
         // send refund request and retrieve response
-        $response = $this->transactionApi->refund($gr4vy_transaction_id, $transaction_refund_request);
+        $response = $this->transactionApi->refund($gr4vy_transaction_id, $amount * 100);
 
         $this->gr4vyLogger->logMixed(['json' => $response->__toString()]);
         if ($response->getStatus() == 'refund_failed') {

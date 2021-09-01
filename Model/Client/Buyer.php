@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gr4vy\Payment\Model\Client;
 
 use Gr4vy\api\BuyersApi;
+use Gr4vy\model\BuyerRequest;
 
 class Buyer extends Base
 {

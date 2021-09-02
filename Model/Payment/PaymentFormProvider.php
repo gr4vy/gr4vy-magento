@@ -62,6 +62,11 @@ class PaymentFormProvider implements ConfigProviderInterface
     public function getConfig()
     {
         $quote_total = $this->cart->getQuote()->getGrandTotal();
+
+        if ($shipping_address = $this->getShippingAddress()) {
+            $quote_total += $shipping_address->getShippingAmount();
+        }
+
         $currency = $this->cart->getQuote()->getStore()->getCurrentCurrency()->getCode();
         $buyer_id = $this->cart->getQuote()->getData('gr4vy_buyer_id');
         $config = [
@@ -80,5 +85,19 @@ class PaymentFormProvider implements ConfigProviderInterface
         ];
 
         return $config;
+    }
+
+    /**
+     * retrieve shipping_address for current quote, return null if there is no shipping address (virtual or downloadable products)
+     *
+     * @return Magento\Quote\Model\Quote\Address|null
+     */
+    public function getShippingAddress()
+    {
+        if ($this->cart->getQuote()->getShippingAddress()) {
+            return $this->cart->getQuote()->getShippingAddress();
+        }
+
+        return null;
     }
 }

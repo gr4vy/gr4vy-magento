@@ -20,7 +20,9 @@ class Transaction extends Base
     public function getApiInstance()
     {
         try {
-            return new TransactionsApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
+            $config = $this->getGr4vyConfig()->getConfig();
+            // $this->gr4vyLogger->logMixed(['auth' => $config->getAccessToken()->__toString()]);
+            return new TransactionsApi(new \GuzzleHttp\Client(), $config);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

@@ -39,16 +39,15 @@ class Buyer extends Base
     {
         $display_name = strval($display_name);
         $external_identifier = strval($external_identifier);
-        $buyer_request = array();
-        if ($display_name) {
-            $buyer_request['display_name'] = $display_name;
+        $buyer_request = new BuyerRequest();
+        if (strlen($display_name) > 0) {
+            $buyer_request->setDisplayName($display_name);
         }
-        if ($external_identifier) {
-            $buyer_request['external_identifier'] = $external_identifier;
+        if (strlen($external_identifier) > 0) {
+            $buyer_request->setExternalIdentifier($external_identifier);
         }
 
         try {
-            $this->gr4vyLogger->logMixed($buyer_request);
             $buyer = $this->getApiInstance()->addBuyer($buyer_request);
 
             return $buyer->getId();

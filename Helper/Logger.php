@@ -12,6 +12,9 @@ use Psr\Log\LoggerInterface;
 
 class Logger extends AbstractHelper
 {
+    private $expected_error_msgs = array(
+        'No such entity with cartId' => 'Quote not available'
+    );
     /**
      * @var LoggerInterface
      */
@@ -45,12 +48,37 @@ class Logger extends AbstractHelper
     public function logException(\Exception $e)
     {
         if ($this->gr4vyHelper->isDebugOn()) {
-            $this->logger->error($e->getMessage());
-            $this->logger->error($e->getTraceAsString());
+
+            $original_message = $e->getMessage();
+            if ($translated_message = $this->translateErrorMsg($original_message)) {
+                $this->logger->error($translated_message);
+            }
+            else {
+                $this->logger->error($original_message);
+                $this->logger->error($e->getTraceAsString());
+            }
+
             if (method_exists($e, 'getResponseBody')) {
                 $this->logger->info($e->getResponseBody());
             }
         }
+    }
+
+    /**
+     * check to see if error message is expected or not
+     *
+     * @param string
+     * @return boolean
+     */
+    public function translateErrorMsg($error_message)
+    {
+        foreach ($this->expected_error_msgs as $msg => $meaning ){
+            if (strpos($error_message, $msg) !== false) {
+                return $meaning;
+            }
+        }
+
+        return null;
     }
 
     /**

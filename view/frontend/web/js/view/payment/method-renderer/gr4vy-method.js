@@ -106,12 +106,14 @@ define(
              * @returns {Object}
              */
             getPaymentMethodData: function (payment,service) {
+                // bypass error when there is no expirationDate
+                var expirationDate = payment.expirationDate ?? '12/25';
                 var data = {
                     'method': this.getCode(),
                     'additional_data': {
                         'cc_type': payment.scheme,
-                        'cc_exp_year': payment.expirationDate.substr(-2),
-                        'cc_exp_month': payment.expirationDate.substr(0,2),
+                        'cc_exp_year': expirationDate.substr(-2),
+                        'cc_exp_month': expirationDate.substr(0,2),
                         'cc_last_4': payment.label
                     },
                 };

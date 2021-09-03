@@ -85,6 +85,13 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_canVoid = true;
 
     /**
+     * Payment Method feature
+     *
+     * @var bool
+     */
+    protected $_canUseInternal = false;
+
+    /**
      * @var Gr4vyHelper
      */
     protected $gr4vyHelper;

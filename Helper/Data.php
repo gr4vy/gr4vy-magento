@@ -163,4 +163,14 @@ class Data extends AbstractHelper
     {
         return $this->_priceHelper->convertAndFormat($amount, false);
     }
+
+    /**
+     * placeholder to determine partial refund is available
+     *
+     * @return boolean
+     */
+    public function blockPartialRefund()
+    {
+        return true;
+    }
 }

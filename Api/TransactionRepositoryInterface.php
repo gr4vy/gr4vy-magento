@@ -23,7 +23,16 @@ interface TransactionRepositoryInterface
     );
 
     /**
-     * Set Payment Information
+     * Retrieve token for Gr4vy Webform Checkout
+     * @param string
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getEmbedToken($cartId);
+
+    /**
+     * Set Payment Information - Associate transaction payment detail with magento payment object
      * @param string
      * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
      * @param \Gr4vy\Payment\Api\Data\TransactionInterface $transaction

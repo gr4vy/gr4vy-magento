@@ -37,6 +37,12 @@
             <resource ref="anonymous" />
 		</resources>
 	</route>
+    <route url="/V1/gr4vy-payment/get-embed-token" method="POST">
+        <service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="getEmbedToken"/>
+		<resources>
+            <resource ref="anonymous" />
+		</resources>
+    </route>
     <!--end of custom api-->
 	<route url="/V1/gr4vy-payment/transaction" method="POST">
 		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="save"/>

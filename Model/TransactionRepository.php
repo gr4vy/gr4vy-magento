@@ -12,6 +12,7 @@ use Gr4vy\Payment\Api\Data\TransactionSearchResultsInterfaceFactory;
 use Gr4vy\Payment\Api\TransactionRepositoryInterface;
 use Gr4vy\Payment\Model\ResourceModel\Transaction as ResourceTransaction;
 use Gr4vy\Payment\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
+use Gr4vy\Payment\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
 use Magento\Framework\App\ObjectManager;
@@ -62,6 +63,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $gr4vyHelper;
 
     /**
+     * @var Gr4vyEmbed
+     */
+    protected $embedApi;
+
+    /**
      * @var \Magento\Quote\Api\PaymentMethodManagementInterface
      */
     protected $paymentMethodManagement;
@@ -90,6 +96,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
+     * @param Gr4vyEmbed $embedApi
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      */
@@ -107,6 +114,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
+        Gr4vyEmbed $embedApi,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
     ) {
@@ -124,6 +132,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->embedApi = $embedApi;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
@@ -158,7 +167,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     }
 
     /**
-     * associate transaction payment detail with magento payment object
+     * {@inheritdoc}
      */
     public function setPaymentInformation(
         $cartId,
@@ -172,11 +181,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->save($transactionData);
 
         // 2. set payment information
-        $cartId = $this->gr4vyHelper->getQuoteIdFromMask($cartId);
-        /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
-        $quoteRepository = $this->getCartRepository();
-        /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $quoteRepository->getActive($cartId);
+        $quote = $this->getQuoteModel($cartId);
         $payment = $quote->getPayment();
         $payment->setData('gr4vy_transaction_id', $transactionData->getGr4vyTransactionId())->save();
         $this->gr4vyLogger->logMixed($payment->getData());
@@ -184,6 +189,55 @@ class TransactionRepository implements TransactionRepositoryInterface
         $quote_payment_id = $this->paymentMethodManagement->set($cartId, $paymentMethod);
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEmbedToken($cartId)
+    {
+        $quote = $this->getQuoteModel($cartId);
+        $currency = $quote->getStore()->getCurrentCurrency()->getCode();
+        $buyer_id = $quote->getData('gr4vy_buyer_id');
+
+        // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount
+        $quote_total = $quote->getGrandTotal();
+
+        $result = array();
+        $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
+        $result['amount'] = $quote_total;
+
+        return $result;
+    }
+
+    /**
+     * retrieve fully loaded quote model to interact with Quote Properly
+     *
+     * @param string
+     * @return \Magento\Quote\Model\Quote
+     */
+    private function getQuoteModel($cartId)
+    {
+        $cartId = $this->gr4vyHelper->getQuoteIdFromMask($cartId);
+        /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+        $quoteRepository = $this->getCartRepository();
+
+        /** @var \Magento\Quote\Model\Quote $quote */
+        return $quoteRepository->getActive($cartId);
+    }
+
+    /**
+     * retrieve shipping_address for current quote, return null if there is no shipping address (virtual or downloadable products)
+     *
+     * @return Magento\Quote\Model\Quote\Address|null
+     */
+    private function getShippingAddress($quote)
+    {
+        if ($quote->getShippingAddress()) {
+            return $quote->getShippingAddress();
+        }
+
+        return null;
     }
 
     /**

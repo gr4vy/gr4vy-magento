@@ -29,7 +29,6 @@ class Embed extends Base
             );
             $token = $this->getGr4vyConfig()->getEmbedToken($embed_params);
             $this->gr4vyLogger->logMixed($embed_params);
-            $this->gr4vyLogger->logMixed($token->toString());
             return $token->toString();
         }
         catch (\Exception $e) {

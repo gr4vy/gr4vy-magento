@@ -5,72 +5,102 @@ define(
         'Magento_Checkout/js/model/url-builder',
         'mage/storage',
         'mage/url',
+        'mage/translate',
         'Magento_Checkout/js/model/error-processor',
         'Magento_Customer/js/model/customer',
-        'Magento_Checkout/js/model/full-screen-loader'
+        'Magento_Ui/js/model/messageList',
+        'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Ui/js/modal/alert'
     ],
-    function (Component, quote, urlBuilder, storage, url, errorProcessor, customer, fullScreenLoader) {
+    function (Component, quote, urlBuilder, storage, url, $t, errorProcessor, customer, globalMessageList, fullScreenLoader, alertModal) {
         'use strict';
         return Component.extend({
             defaults: {
                 template: 'Gr4vy_Payment/payment/gr4vy'
             },
-            initEmbedPayment: function () {
-                // initialize embed checkout form
-                gr4vy.setup({
-                    gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
-                    buyerId: window.checkoutConfig.payment.gr4vy.buyer_id,
-                    environment: window.checkoutConfig.payment.gr4vy.environment,
-                    element: ".container",
-                    form: "#co-payment-form",
-                    amount: parseInt(parseFloat(window.checkoutConfig.quoteData.grand_total)*100),
-                    currency: window.checkoutConfig.quoteData.quote_currency_code,
-                    country: window.checkoutConfig.originCountryCode,
-                    token: window.checkoutConfig.payment.gr4vy.token,
-                    intent: window.checkoutConfig.payment.gr4vy.intent,
-                    onEvent: (eventName, data) => {
-                        if (eventName === 'agumentError') {
-                            console.log(data)
+            displayMessage: function(msg) {
+                alertModal({
+                    title: 'Error',
+                    content: msg,
+                    actions: {
+                        always: function(){
+                            window.scrollTo(0,0);
+                            globalMessageList.addErrorMessage({
+                                message: $t(msg)
+                            });
                         }
-                        if (eventName === 'transactionCreated') {
-                            console.log(data)
-                        }
-                        if (eventName === 'transactionFailed') {
-                            console.log(data)
-                        }
-                        if (eventName === 'apiError') {
-                            console.log(data)
-                        }
-                    },
-                    onComplete: (transaction) => {
-                        var This = this;
-                        // send api requests to transaction web api
-                        var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
-                        console.log(transaction);
-                        var payload = {
-                            cartId: quote.getQuoteId(),
-                            paymentMethod: this.getPaymentMethodData(transaction.paymentMethod),
-                            methodData: this.getGr4vyPaymentMethodData(transaction.paymentMethod),
-                            serviceData: this.getGr4vyPaymentServiceData(transaction.paymentService),
-                            transactionData: this.getGr4vyTransactionData(transaction)
-                        };
-                        return storage.post(
-                            serviceUrl,
-                            JSON.stringify(payload)
-                        ).done(
-                            function (response) {
-                                // success - trigger default placeorder request from magento library
-                                //console.log(response);
-                                This.placeOrder();
-                            }
-                        ).fail(
-                            function (response) {
-                                errorProcessor.process(response);
-                                fullScreenLoader.stopLoader(true);
-                            }
-                        );
                     }
                 });
+            },
+            initEmbedPayment: function () {
+                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/get-embed-token', {});
+                var payload = { cartId: quote.getQuoteId() };
+                var This = this;
+                storage.post( serviceUrl, JSON.stringify(payload)).done(
+                    function (response) {
+                        var embed_token = response[0];
+                        var amount = response[1];
+                        gr4vy.setup({
+                            gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
+                            buyerId: window.checkoutConfig.payment.gr4vy.buyer_id,
+                            environment: window.checkoutConfig.payment.gr4vy.environment,
+                            element: ".container",
+                            form: "#co-payment-form",
+                            amount: parseInt(parseFloat(amount)*100),
+                            currency: window.checkoutConfig.quoteData.quote_currency_code,
+                            country: window.checkoutConfig.originCountryCode,
+                            token: embed_token,
+                            intent: window.checkoutConfig.payment.gr4vy.intent,
+                            onEvent: (eventName, data) => {
+                                if (eventName === 'agumentError') {
+                                    console.log(data)
+                                }
+                                if (eventName === 'transactionCreated') {
+                                    console.log(data)
+                                }
+                                if (eventName === 'transactionFailed') {
+                                    console.log(data)
+                                }
+                                if (eventName === 'apiError') {
+                                    console.log(data)
+                                }
+                            },
+                            onComplete: (transaction) => {
+                                // send api requests to transaction web api
+                                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
+                                console.log(transaction);
+                                var payload = {
+                                    cartId: quote.getQuoteId(),
+                                    paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
+                                    methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
+                                    serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
+                                    transactionData: This.getGr4vyTransactionData(transaction)
+                                };
+                                return storage.post(
+                                    serviceUrl,
+                                    JSON.stringify(payload)
+                                ).done(
+                                    function (response) {
+                                        // success - trigger default placeorder request from magento library
+                                        This.placeOrder();
+                                    }
+                                ).fail(
+                                    function (response) {
+                                        errorProcessor.process(response);
+                                        This.displayMessage(response);
+                                        fullScreenLoader.stopLoader(true);
+                                    }
+                                );
+                            }
+                        });
+                    }
+                ).fail(
+                    function (response) {
+                        errorProcessor.process(response);
+                        fullScreenLoader.stopLoader(true);
+                    }
+                );
+
             },
             /**
              * @returns {Object}

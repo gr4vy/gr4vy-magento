@@ -3,7 +3,9 @@
 	<system>
 		<section id="payment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="1000" translate="label">
 			<group id="gr4vy" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
-				<label>Gr4vy Payment</label>
+                <comment><![CDATA[<div class="gr4vy-payment-logo"></div><div class="gr4vy-payment-text">Your Payments Team In The Cloud.<br/>Gr4vy is the only payment orchestration platform built natively in the Cloud giving you scale and control of your payment stack from anywhere.</div>]]></comment>
+                <fieldset_css>complex gr4vy-section</fieldset_css>
+                <frontend_model>Gr4vy\Payment\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
 				<field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
 					<label>Enabled</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

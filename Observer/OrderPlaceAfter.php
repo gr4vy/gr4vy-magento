@@ -68,6 +68,9 @@ class OrderPlaceAfter implements ObserverInterface
 
         $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
         if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUCAP) {
+            // always set $newOrderStatus to processing if payment intent is authorize and capture
+            $newOrderStatus = \Magento\Sales\Model\Order::STATE_PROCESSING;
+
             if (!$order->canInvoice()) {
                 $msg = __("Error in creating an Invoice.");
             } else {

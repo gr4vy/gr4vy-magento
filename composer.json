@@ -10,7 +10,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "~7.1.3||^7.2",
+        "php": "^7.1.0",
         "ext-hash": "*",
         "ext-json": "*",
         "magento/framework": "*",
@@ -27,7 +27,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Pay360\\Payments\\": ""
+            "Gr4vy\\Payment\\": ""
         }
     }
 }

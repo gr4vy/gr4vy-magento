@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\MethodInterface;
-use Gr4vy\Payment\Api\Data\MethodInterfaceFactory;
+use Gr4vy\Magento\Api\Data\MethodInterface;
+use Gr4vy\Magento\Api\Data\MethodInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Method extends \Magento\Framework\Model\AbstractModel
@@ -25,8 +25,8 @@ class Method extends \Magento\Framework\Model\AbstractModel
      * @param \Magento\Framework\Registry $registry
      * @param MethodInterfaceFactory $methodDataFactory
      * @param DataObjectHelper $dataObjectHelper
-     * @param \Gr4vy\Payment\Model\ResourceModel\Method $resource
-     * @param \Gr4vy\Payment\Model\ResourceModel\Method\Collection $resourceCollection
+     * @param \Gr4vy\Magento\Model\ResourceModel\Method $resource
+     * @param \Gr4vy\Magento\Model\ResourceModel\Method\Collection $resourceCollection
      * @param array $data
      */
     public function __construct(
@@ -34,8 +34,8 @@ class Method extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         MethodInterfaceFactory $methodDataFactory,
         DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Method $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Method\Collection $resourceCollection,
+        \Gr4vy\Magento\Model\ResourceModel\Method $resource,
+        \Gr4vy\Magento\Model\ResourceModel\Method\Collection $resourceCollection,
         array $data = []
     ) {
         $this->methodDataFactory = $methodDataFactory;

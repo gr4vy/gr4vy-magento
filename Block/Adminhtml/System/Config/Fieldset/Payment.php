@@ -1,6 +1,6 @@
 <?php
 
-namespace Gr4vy\Payment\Block\Adminhtml\System\Config\Fieldset;
+namespace Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset;
 
 use Magento\Backend\Block\Context;
 use Magento\Backend\Model\Auth\Session;

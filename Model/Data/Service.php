@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Data;
+namespace Gr4vy\Magento\Model\Data;
 
-use Gr4vy\Payment\Api\Data\ServiceInterface;
+use Gr4vy\Magento\Api\Data\ServiceInterface;
 
 class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements ServiceInterface
 {
@@ -172,7 +172,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\ServiceExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\ServiceExtensionInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -181,11 +181,11 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\ServiceExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\ServiceExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

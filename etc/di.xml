@@ -1,54 +1,47 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-	<type name="Magento\Framework\Console\CommandList">
-		<arguments>
-			<argument name="commands" xsi:type="array">
-				<item name="gr4vy_list_buyers" xsi:type="object">Gr4vy\Payment\Console\Command\Gr4vyListBuyers</item>
-			</argument>
-		</arguments>
-	</type>
-	<preference for="Gr4vy\Payment\Api\BuyerRepositoryInterface" type="Gr4vy\Payment\Model\BuyerRepository"/>
-	<preference for="Gr4vy\Payment\Api\Data\BuyerInterface" type="Gr4vy\Payment\Model\Data\Buyer"/>
-	<preference for="Gr4vy\Payment\Api\Data\BuyerSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-	<preference for="Gr4vy\Payment\Api\TransactionRepositoryInterface" type="Gr4vy\Payment\Model\TransactionRepository"/>
-	<preference for="Gr4vy\Payment\Api\Data\TransactionInterface" type="Gr4vy\Payment\Model\Data\Transaction"/>
-	<preference for="Gr4vy\Payment\Api\Data\TransactionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-	<preference for="Gr4vy\Payment\Api\MethodRepositoryInterface" type="Gr4vy\Payment\Model\MethodRepository"/>
-	<preference for="Gr4vy\Payment\Api\Data\MethodInterface" type="Gr4vy\Payment\Model\Data\Method"/>
-	<preference for="Gr4vy\Payment\Api\Data\MethodSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
-	<preference for="Gr4vy\Payment\Api\ServiceRepositoryInterface" type="Gr4vy\Payment\Model\ServiceRepository"/>
-	<preference for="Gr4vy\Payment\Api\Data\ServiceInterface" type="Gr4vy\Payment\Model\Data\Service"/>
-	<preference for="Gr4vy\Payment\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Magento\Api\BuyerRepositoryInterface" type="Gr4vy\Magento\Model\BuyerRepository"/>
+	<preference for="Gr4vy\Magento\Api\Data\BuyerInterface" type="Gr4vy\Magento\Model\Data\Buyer"/>
+	<preference for="Gr4vy\Magento\Api\Data\BuyerSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Magento\Api\TransactionRepositoryInterface" type="Gr4vy\Magento\Model\TransactionRepository"/>
+	<preference for="Gr4vy\Magento\Api\Data\TransactionInterface" type="Gr4vy\Magento\Model\Data\Transaction"/>
+	<preference for="Gr4vy\Magento\Api\Data\TransactionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Magento\Api\MethodRepositoryInterface" type="Gr4vy\Magento\Model\MethodRepository"/>
+	<preference for="Gr4vy\Magento\Api\Data\MethodInterface" type="Gr4vy\Magento\Model\Data\Method"/>
+	<preference for="Gr4vy\Magento\Api\Data\MethodSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Gr4vy\Magento\Api\ServiceRepositoryInterface" type="Gr4vy\Magento\Model\ServiceRepository"/>
+	<preference for="Gr4vy\Magento\Api\Data\ServiceInterface" type="Gr4vy\Magento\Model\Data\Service"/>
+	<preference for="Gr4vy\Magento\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
     <!--override quote data model-->
 
     <!--plugins-->
 	<type name="Magento\Quote\Api\CartRepositoryInterface">
-		<plugin name="Gr4vy_Payment_Plugin_Magento_Quote_Api_CartRepositoryInterface" type="Gr4vy\Payment\Plugin\Magento\Quote\Api\CartRepositoryInterface" sortOrder="10" disabled="false"/>
+		<plugin name="Gr4vy_Magento_Plugin_Magento_Quote_Api_CartRepositoryInterface" type="Gr4vy\Magento\Plugin\Magento\Quote\Api\CartRepositoryInterface" sortOrder="10" disabled="false"/>
 	</type>
 	<type name="Magento\Quote\Api\PaymentMethodManagementInterface">
-		<plugin name="Gr4vy_Payment_Plugin_Magento_Quote_Api_PaymentMethodManagementInterface" type="Gr4vy\Payment\Plugin\Magento\Quote\Api\PaymentMethodManagementInterface" sortOrder="10" disabled="false"/>
+		<plugin name="Gr4vy_Magento_Plugin_Magento_Quote_Api_PaymentMethodManagementInterface" type="Gr4vy\Magento\Plugin\Magento\Quote\Api\PaymentMethodManagementInterface" sortOrder="10" disabled="false"/>
 	</type>
 
     <!--logger-->
-    <virtualType name="Gr4vy\Payment\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+    <virtualType name="Gr4vy\Magento\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
             <argument name="fileName" xsi:type="string">/var/log/gr4vy_debug.log</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Gr4vy\Payment\Logger\Logger" type="Magento\Framework\Logger\Monolog">
+    <virtualType name="Gr4vy\Magento\Logger\Logger" type="Magento\Framework\Logger\Monolog">
         <arguments>
             <argument name="name" xsi:type="string">Gr4vy Payment Logger</argument>
             <argument name="handlers" xsi:type="array">
-                <item name="system" xsi:type="object">Gr4vy\Payment\Logger\Handler</item>
+                <item name="system" xsi:type="object">Gr4vy\Magento\Logger\Handler</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <type name="Gr4vy\Payment\Helper\Logger">
+    <type name="Gr4vy\Magento\Helper\Logger">
         <arguments>
-            <argument name="logger" xsi:type="object">Gr4vy\Payment\Logger\Logger</argument>
+            <argument name="logger" xsi:type="object">Gr4vy\Magento\Logger\Logger</argument>
         </arguments>
     </type>
 </config>

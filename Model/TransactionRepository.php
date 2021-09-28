@@ -5,16 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\TransactionInterfaceFactory;
-use Gr4vy\Payment\Api\Data\TransactionSearchResultsInterfaceFactory;
-use Gr4vy\Payment\Api\TransactionRepositoryInterface;
-use Gr4vy\Payment\Model\ResourceModel\Transaction as ResourceTransaction;
-use Gr4vy\Payment\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
-use Gr4vy\Payment\Model\Client\Embed as Gr4vyEmbed;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Api\Data\TransactionInterfaceFactory;
+use Gr4vy\Magento\Api\Data\TransactionSearchResultsInterfaceFactory;
+use Gr4vy\Magento\Api\TransactionRepositoryInterface;
+use Gr4vy\Magento\Model\ResourceModel\Transaction as ResourceTransaction;
+use Gr4vy\Magento\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
+use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -140,7 +140,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\TransactionInterface $transaction
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transaction
     ) {
         /* if (empty($transaction->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -150,7 +150,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $transactionData = $this->extensibleDataObjectConverter->toNestedArray(
             $transaction,
             [],
-            \Gr4vy\Payment\Api\Data\TransactionInterface::class
+            \Gr4vy\Magento\Api\Data\TransactionInterface::class
         );
         
         $transactionModel = $this->transactionFactory->create()->setData($transactionData);
@@ -172,9 +172,9 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function setPaymentInformation(
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
-        \Gr4vy\Payment\Api\Data\MethodInterface $methodData,
-        \Gr4vy\Payment\Api\Data\ServiceInterface $serviceData,
-        \Gr4vy\Payment\Api\Data\TransactionInterface $transactionData
+        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
+        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
     )
     {
         // 1. save transaction data
@@ -272,7 +272,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * retrieve buyer buy gr4vy transaction using gr4vy_transaction_id
      *
      * @param string
-     * @return Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function getByGr4vyTransactionId($gr4vy_transaction_id)
     {
@@ -297,7 +297,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         
         $this->extensionAttributesJoinProcessor->process(
             $collection,
-            \Gr4vy\Payment\Api\Data\TransactionInterface::class
+            \Gr4vy\Magento\Api\Data\TransactionInterface::class
         );
         
         $this->collectionProcessor->process($criteria, $collection);
@@ -319,7 +319,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\TransactionInterface $transaction
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transaction
     ) {
         try {
             $transactionModel = $this->transactionFactory->create();

@@ -5,26 +5,26 @@
 			<group id="gr4vy" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
                 <comment><![CDATA[<div class="gr4vy-payment-logo"></div><div class="gr4vy-payment-text">Your Payments Team In The Cloud.<br/>Gr4vy is the only payment orchestration platform built natively in the Cloud giving you scale and control of your payment stack from anywhere.</div>]]></comment>
                 <fieldset_css>complex gr4vy-section</fieldset_css>
-                <frontend_model>Gr4vy\Payment\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
 				<field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
 					<label>Enabled</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
 				<field id="payment_type" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="15" translate="label" type="select">
 					<label>Display Type</label>
-					<source_model>Gr4vy\Payment\Model\Source\PaymentType</source_model>
+					<source_model>Gr4vy\Magento\Model\Source\PaymentType</source_model>
 				</field>
 				<field id="id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
 					<label>Gr4vy ID</label>
 				</field>
                 <field id="private_key" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="25" showInDefault="1" showInWebsite="1" >
                     <label>Private Key</label>
-                    <backend_model>Gr4vy\Payment\Model\Source\PrivateKey</backend_model>
+                    <backend_model>Gr4vy\Magento\Model\Source\PrivateKey</backend_model>
                     <upload_dir config="system" scope_info="1">gr4vy</upload_dir>
                 </field>
 				<field id="environment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label" type="select">
 					<label>Environment</label>
-                    <source_model>Gr4vy\Payment\Model\Source\Environment</source_model>
+                    <source_model>Gr4vy\Magento\Model\Source\Environment</source_model>
 				</field>
 				<field id="debug" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
 					<label>Enable Debug</label>
@@ -32,7 +32,7 @@
 				</field>
                 <field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
                     <label>Payment Action</label>
-                    <source_model>Gr4vy\Payment\Model\Source\PaymentAction</source_model>
+                    <source_model>Gr4vy\Magento\Model\Source\PaymentAction</source_model>
                 </field>
 				<field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
 					<label>Title</label>

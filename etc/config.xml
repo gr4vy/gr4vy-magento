@@ -5,7 +5,7 @@
 			<gr4vy>
 				<active>1</active>
 				<environment>development</environment>
-				<model>Gr4vy\Payment\Model\Payment\Gr4vy</model>
+				<model>Gr4vy\Magento\Model\Payment\Gr4vy</model>
 				<order_status>processing</order_status>
                 <payment_action>authorize</payment_action>
 				<title>Gr4vy</title>

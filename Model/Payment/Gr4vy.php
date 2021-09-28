@@ -5,11 +5,11 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Payment;
+namespace Gr4vy\Magento\Model\Payment;
 
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
-use Gr4vy\Payment\Model\Client\Transaction as TransactionApi;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Model\Client\Transaction as TransactionApi;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 
 class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
@@ -21,7 +21,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * @var string
      */
-    protected $_infoBlockType = \Gr4vy\Payment\Block\Info::class;
+    protected $_infoBlockType = \Gr4vy\Magento\Block\Info::class;
 
     /**
      * @var string

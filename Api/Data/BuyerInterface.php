@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api\Data;
+namespace Gr4vy\Magento\Api\Data;
 
 interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -23,7 +23,7 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set buyer_id
      * @param string $buyer_id
-     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      */
     public function setBuyerId($buyer_id);
 
@@ -36,7 +36,7 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set external_identifier
      * @param string $external_identifier
-     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      */
     public function setExternalIdentifier($external_identifier);
 
@@ -49,23 +49,23 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set display_name
      * @param string $display_name
-     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      */
     public function setDisplayName($display_name);
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\BuyerExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\BuyerExtensionInterface|null
      */
     public function getExtensionAttributes();
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\BuyerExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\BuyerExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\BuyerExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\BuyerExtensionInterface $extensionAttributes
     );
 }
 

@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\ServiceInterfaceFactory;
-use Gr4vy\Payment\Api\Data\ServiceSearchResultsInterfaceFactory;
-use Gr4vy\Payment\Api\ServiceRepositoryInterface;
-use Gr4vy\Payment\Model\ResourceModel\Service as ResourceService;
-use Gr4vy\Payment\Model\ResourceModel\Service\CollectionFactory as ServiceCollectionFactory;
+use Gr4vy\Magento\Api\Data\ServiceInterfaceFactory;
+use Gr4vy\Magento\Api\Data\ServiceSearchResultsInterfaceFactory;
+use Gr4vy\Magento\Api\ServiceRepositoryInterface;
+use Gr4vy\Magento\Model\ResourceModel\Service as ResourceService;
+use Gr4vy\Magento\Model\ResourceModel\Service\CollectionFactory as ServiceCollectionFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
@@ -90,7 +90,7 @@ class ServiceRepository implements ServiceRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\ServiceInterface $service
+        \Gr4vy\Magento\Api\Data\ServiceInterface $service
     ) {
         /* if (empty($service->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -100,7 +100,7 @@ class ServiceRepository implements ServiceRepositoryInterface
         $serviceData = $this->extensibleDataObjectConverter->toNestedArray(
             $service,
             [],
-            \Gr4vy\Payment\Api\Data\ServiceInterface::class
+            \Gr4vy\Magento\Api\Data\ServiceInterface::class
         );
         
         $serviceModel = $this->serviceFactory->create()->setData($serviceData);
@@ -139,7 +139,7 @@ class ServiceRepository implements ServiceRepositoryInterface
         
         $this->extensionAttributesJoinProcessor->process(
             $collection,
-            \Gr4vy\Payment\Api\Data\ServiceInterface::class
+            \Gr4vy\Magento\Api\Data\ServiceInterface::class
         );
         
         $this->collectionProcessor->process($criteria, $collection);
@@ -161,7 +161,7 @@ class ServiceRepository implements ServiceRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\ServiceInterface $service
+        \Gr4vy\Magento\Api\Data\ServiceInterface $service
     ) {
         try {
             $serviceModel = $this->serviceFactory->create();

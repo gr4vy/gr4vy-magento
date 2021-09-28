@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\BuyerRepositoryInterface;
-use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
-use Gr4vy\Payment\Api\Data\BuyerSearchResultsInterfaceFactory;
-use Gr4vy\Payment\Model\ResourceModel\Buyer as ResourceBuyer;
-use Gr4vy\Payment\Model\ResourceModel\Buyer\CollectionFactory as BuyerCollectionFactory;
+use Gr4vy\Magento\Api\BuyerRepositoryInterface;
+use Gr4vy\Magento\Api\Data\BuyerInterfaceFactory;
+use Gr4vy\Magento\Api\Data\BuyerSearchResultsInterfaceFactory;
+use Gr4vy\Magento\Model\ResourceModel\Buyer as ResourceBuyer;
+use Gr4vy\Magento\Model\ResourceModel\Buyer\CollectionFactory as BuyerCollectionFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
@@ -99,7 +99,7 @@ class BuyerRepository implements BuyerRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
+        \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
     ) {
         /* if (empty($buyer->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -109,7 +109,7 @@ class BuyerRepository implements BuyerRepositoryInterface
         $buyerData = $this->extensibleDataObjectConverter->toNestedArray(
             $buyer,
             [],
-            \Gr4vy\Payment\Api\Data\BuyerInterface::class
+            \Gr4vy\Magento\Api\Data\BuyerInterface::class
         );
         
         $buyerModel = $this->buyerFactory->create()->setData($buyerData);
@@ -164,7 +164,7 @@ class BuyerRepository implements BuyerRepositoryInterface
         
         $this->extensionAttributesJoinProcessor->process(
             $collection,
-            \Gr4vy\Payment\Api\Data\BuyerInterface::class
+            \Gr4vy\Magento\Api\Data\BuyerInterface::class
         );
         
         $this->collectionProcessor->process($criteria, $collection);
@@ -186,7 +186,7 @@ class BuyerRepository implements BuyerRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
+        \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
     ) {
         try {
             $buyerModel = $this->buyerFactory->create();

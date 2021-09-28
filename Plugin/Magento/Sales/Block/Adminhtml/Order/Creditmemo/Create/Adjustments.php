@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Plugin\Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create;
+namespace Gr4vy\Magento\Plugin\Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create;
 
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 class Adjustments
 {
@@ -38,7 +38,7 @@ class Adjustments
             $credit_memo = $subject->getParentBlock()->getSource();
             $payment = $credit_memo->getOrder()->getPayment();
 
-            if ($payment && $payment->getMethod() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_METHOD_CODE) {
+            if ($payment && $payment->getMethod() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_METHOD_CODE) {
                 return str_replace('input', 'input disabled', $result);
             }
         }

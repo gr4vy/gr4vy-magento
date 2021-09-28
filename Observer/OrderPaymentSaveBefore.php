@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Observer;
+namespace Gr4vy\Magento\Observer;
 
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Magento\Quote\Model\QuoteFactory;
 
 class OrderPaymentSaveBefore implements \Magento\Framework\Event\ObserverInterface

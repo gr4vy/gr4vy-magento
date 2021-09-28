@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api\Data;
+namespace Gr4vy\Magento\Api\Data;
 
 interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -30,7 +30,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set method_id
      * @param string $methodId
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setMethodId($methodId);
 
@@ -43,7 +43,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set id
      * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setId($id);
 
@@ -56,7 +56,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set status
      * @param string $status
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setStatus($status);
 
@@ -69,7 +69,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set method
      * @param string $method
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setMethod($method);
 
@@ -82,7 +82,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set label
      * @param string $label
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setLabel($label);
 
@@ -95,7 +95,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set scheme
      * @param string $scheme
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setScheme($scheme);
 
@@ -108,7 +108,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set external_identifier
      * @param string $external_identifier
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setExternalIdentifier($external_identifier);
 
@@ -121,7 +121,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set expiration_date
      * @param string $expiration_date
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setExpirationDate($expiration_date);
 
@@ -134,7 +134,7 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set approval_url
      * @param string $approval_url
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setApprovalUrl($approval_url);
 
@@ -147,23 +147,23 @@ interface MethodInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set environment
      * @param string $environment
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      */
     public function setEnvironment($environment);
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\MethodExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\MethodExtensionInterface|null
      */
     public function getExtensionAttributes();
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\MethodExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\MethodExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes
     );
 }
 

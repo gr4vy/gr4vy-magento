@@ -11,7 +11,7 @@ define(
         rendererList.push(
             {
                 type: 'gr4vy',
-                component: 'Gr4vy_Payment/js/view/payment/method-renderer/gr4vy-method'
+                component: 'Gr4vy_Magento/js/view/payment/method-renderer/gr4vy-method'
             }
         );
         return Component.extend({});

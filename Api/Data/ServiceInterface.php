@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api\Data;
+namespace Gr4vy\Magento\Api\Data;
 
 interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -31,7 +31,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set service_id
      * @param string $serviceId
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setServiceId($serviceId);
 
@@ -44,7 +44,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set id
      * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setId($id);
 
@@ -57,7 +57,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set payment_service_definition_id
      * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setPaymentServiceDefinitionId($payment_service_definition_id);
 
@@ -70,7 +70,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set method
      * @param string $method
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setMethod($method);
 
@@ -83,7 +83,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set display_name
      * @param string $display_name
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setDisplayName($display_name);
 
@@ -96,7 +96,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set status
      * @param string $status
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setStatus($status);
 
@@ -109,7 +109,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set accepted_currencies
      * @param string $accepted_countries
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setAcceptedCurrencies($accepted_countries);
 
@@ -122,7 +122,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set accepted_countries
      * @param string $accepted_countries
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setAcceptedCountries($accepted_countries);
 
@@ -135,7 +135,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set active
      * @param boolean $active
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setActive($active);
 
@@ -148,7 +148,7 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set position
      * @param integer $position
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setPosition($position);
 
@@ -161,23 +161,23 @@ interface ServiceInterface extends \Magento\Framework\Api\ExtensibleDataInterfac
     /**
      * Set environment
      * @param string $environment
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      */
     public function setEnvironment($environment);
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\ServiceExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\ServiceExtensionInterface|null
      */
     public function getExtensionAttributes();
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\ServiceExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\ServiceExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes
     );
 }
 

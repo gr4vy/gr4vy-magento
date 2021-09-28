@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Client;
+namespace Gr4vy\Magento\Model\Client;
 
 use Gr4vy\api\TransactionsApi;
 use Gr4vy\model\TransactionCaptureRequest;

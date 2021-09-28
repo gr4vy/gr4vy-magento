@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\ResourceModel;
+namespace Gr4vy\Magento\Model\ResourceModel;
 
 class Service extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

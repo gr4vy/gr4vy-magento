@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Data;
+namespace Gr4vy\Magento\Model\Data;
 
-use Gr4vy\Payment\Api\Data\TransactionInterface;
+use Gr4vy\Magento\Api\Data\TransactionInterface;
 
 class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implements TransactionInterface
 {
@@ -24,7 +24,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     /**
      * Set transaction_id
      * @param string $transactionId
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setTransactionId($transactionId)
     {
@@ -235,7 +235,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
      * {@inheritdoc}
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\TransactionExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\TransactionExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

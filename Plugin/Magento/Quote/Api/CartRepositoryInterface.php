@@ -5,12 +5,12 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Plugin\Magento\Quote\Api;
+namespace Gr4vy\Magento\Plugin\Magento\Quote\Api;
 
-use Gr4vy\Payment\Api\BuyerRepositoryInterface;
-use Gr4vy\Payment\Api\Data\BuyerInterface as DataBuyerInterface;
-use Gr4vy\Payment\Model\Client\Buyer as Gr4vyBuyer;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Api\BuyerRepositoryInterface;
+use Gr4vy\Magento\Api\Data\BuyerInterface as DataBuyerInterface;
+use Gr4vy\Magento\Model\Client\Buyer as Gr4vyBuyer;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Magento\Quote\Model\QuoteRepository;
 
 class CartRepositoryInterface

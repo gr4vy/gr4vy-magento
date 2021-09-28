@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Block\Head;
+namespace Gr4vy\Magento\Block\Head;
 
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 class Embed extends \Magento\Framework\View\Element\AbstractBlock
 {

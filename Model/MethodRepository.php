@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\MethodInterfaceFactory;
-use Gr4vy\Payment\Api\Data\MethodSearchResultsInterfaceFactory;
-use Gr4vy\Payment\Api\MethodRepositoryInterface;
-use Gr4vy\Payment\Model\ResourceModel\Method as ResourceMethod;
-use Gr4vy\Payment\Model\ResourceModel\Method\CollectionFactory as MethodCollectionFactory;
+use Gr4vy\Magento\Api\Data\MethodInterfaceFactory;
+use Gr4vy\Magento\Api\Data\MethodSearchResultsInterfaceFactory;
+use Gr4vy\Magento\Api\MethodRepositoryInterface;
+use Gr4vy\Magento\Model\ResourceModel\Method as ResourceMethod;
+use Gr4vy\Magento\Model\ResourceModel\Method\CollectionFactory as MethodCollectionFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
@@ -90,7 +90,7 @@ class MethodRepository implements MethodRepositoryInterface
      * {@inheritdoc}
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\MethodInterface $method
+        \Gr4vy\Magento\Api\Data\MethodInterface $method
     ) {
         /* if (empty($method->getStoreId())) {
             $storeId = $this->storeManager->getStore()->getId();
@@ -100,7 +100,7 @@ class MethodRepository implements MethodRepositoryInterface
         $methodData = $this->extensibleDataObjectConverter->toNestedArray(
             $method,
             [],
-            \Gr4vy\Payment\Api\Data\MethodInterface::class
+            \Gr4vy\Magento\Api\Data\MethodInterface::class
         );
         
         $methodModel = $this->methodFactory->create()->setData($methodData);
@@ -139,7 +139,7 @@ class MethodRepository implements MethodRepositoryInterface
         
         $this->extensionAttributesJoinProcessor->process(
             $collection,
-            \Gr4vy\Payment\Api\Data\MethodInterface::class
+            \Gr4vy\Magento\Api\Data\MethodInterface::class
         );
         
         $this->collectionProcessor->process($criteria, $collection);
@@ -161,7 +161,7 @@ class MethodRepository implements MethodRepositoryInterface
      * {@inheritdoc}
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\MethodInterface $method
+        \Gr4vy\Magento\Api\Data\MethodInterface $method
     ) {
         try {
             $methodModel = $this->methodFactory->create();

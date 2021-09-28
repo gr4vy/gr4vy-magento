@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\ResourceModel\Buyer;
+namespace Gr4vy\Magento\Model\ResourceModel\Buyer;
 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -23,8 +23,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            \Gr4vy\Payment\Model\Buyer::class,
-            \Gr4vy\Payment\Model\ResourceModel\Buyer::class
+            \Gr4vy\Magento\Model\Buyer::class,
+            \Gr4vy\Magento\Model\ResourceModel\Buyer::class
         );
     }
 }

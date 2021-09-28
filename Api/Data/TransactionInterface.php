@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api\Data;
+namespace Gr4vy\Magento\Api\Data;
 
 interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -32,7 +32,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set transaction_id
      * @param string $transactionId
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setTransactionId($transactionId);
 
@@ -45,7 +45,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set id
      * @param string $id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setId($id);
 
@@ -58,7 +58,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set method_id
      * @param string $method_id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setMethodId($method_id);
 
@@ -71,7 +71,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set buyer_id
      * @param string $buyer_id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setBuyerId($buyer_id);
 
@@ -84,7 +84,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set service_id
      * @param string $service_id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setServiceId($service_id);
 
@@ -97,7 +97,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set status
      * @param string $status
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setStatus($status);
 
@@ -110,7 +110,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set amount
      * @param integer $amount
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setAmount($amount);
 
@@ -123,7 +123,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set captured_amount
      * @param integer $captured_amount
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setCapturedAmount($captured_amount);
 
@@ -136,7 +136,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set refunded_amount
      * @param string $refunded_amount
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setRefundedAmount($refunded_amount);
 
@@ -149,7 +149,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set currency
      * @param string $currency
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setCurrency($currency);
 
@@ -162,7 +162,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set external_identifier
      * @param string $external_identifier
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setExternalIdentifier($external_identifier);
 
@@ -175,7 +175,7 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set environment
      * @param string $environment
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setEnvironment($environment);
 
@@ -188,22 +188,22 @@ interface TransactionInterface extends \Magento\Framework\Api\ExtensibleDataInte
     /**
      * Set gr4vy_transaction_id
      * @param string $gr4vy_transaction_id
-     * @return \Gr4vy\Payment\Api\Data\TransactionInterface
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      */
     public function setGr4vyTransactionId($gr4vy_transaction_id);
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\TransactionExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\TransactionExtensionInterface|null
      */
     public function getExtensionAttributes();
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\TransactionExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\TransactionExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\TransactionExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\TransactionExtensionInterface $extensionAttributes
     );
 }

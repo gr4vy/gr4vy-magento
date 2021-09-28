@@ -5,11 +5,11 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Client;
+namespace Gr4vy\Magento\Model\Client;
 
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
-use Gr4vy\Payment\Model\Source\PrivateKey;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Model\Source\PrivateKey;
 
 class Base
 {

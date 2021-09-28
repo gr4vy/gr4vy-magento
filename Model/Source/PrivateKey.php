@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Source;
+namespace Gr4vy\Magento\Model\Source;
 
 class PrivateKey extends \Magento\Config\Model\Config\Backend\File
 {

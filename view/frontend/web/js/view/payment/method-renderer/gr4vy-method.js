@@ -16,7 +16,7 @@ define(
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Gr4vy_Payment/payment/gr4vy'
+                template: 'Gr4vy_Magento/payment/gr4vy'
             },
             displayMessage: function(msg) {
                 alertModal({

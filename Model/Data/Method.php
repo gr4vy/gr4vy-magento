@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Data;
+namespace Gr4vy\Magento\Model\Data;
 
-use Gr4vy\Payment\Api\Data\MethodInterface;
+use Gr4vy\Magento\Api\Data\MethodInterface;
 
 class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements MethodInterface
 {
@@ -157,7 +157,7 @@ class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements 
 
     /**
      * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Payment\Api\Data\MethodExtensionInterface|null
+     * @return \Gr4vy\Magento\Api\Data\MethodExtensionInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -166,11 +166,11 @@ class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements 
 
     /**
      * Set an extension attributes object.
-     * @param \Gr4vy\Payment\Api\Data\MethodExtensionInterface $extensionAttributes
+     * @param \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(
-        \Gr4vy\Payment\Api\Data\MethodExtensionInterface $extensionAttributes
+        \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }

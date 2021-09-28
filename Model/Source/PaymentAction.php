@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Source;
+namespace Gr4vy\Magento\Model\Source;
 
-use Gr4vy\Payment\Model\Payment\Gr4vy;
+use Gr4vy\Magento\Model\Payment\Gr4vy;
 
 class PaymentAction implements \Magento\Framework\Option\ArrayInterface
 {

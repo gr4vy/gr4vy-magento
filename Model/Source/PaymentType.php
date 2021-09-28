@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model\Source;
+namespace Gr4vy\Magento\Model\Source;
 
 class PaymentType implements \Magento\Framework\Option\ArrayInterface
 {

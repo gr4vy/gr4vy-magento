@@ -1,11 +1,11 @@
 <?php
-namespace Gr4vy\Payment\Model\Payment;
+namespace Gr4vy\Magento\Model\Payment;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Framework\UrlInterface;
 use Magento\Checkout\Model\Cart;
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 /**
  * Class BillingAgreementConfigProvider

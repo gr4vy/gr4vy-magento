@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api;
+namespace Gr4vy\Magento\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
 
@@ -14,18 +14,18 @@ interface MethodRepositoryInterface
 
     /**
      * Save Method
-     * @param \Gr4vy\Payment\Api\Data\MethodInterface $method
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $method
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\MethodInterface $method
+        \Gr4vy\Magento\Api\Data\MethodInterface $method
     );
 
     /**
      * Retrieve Method
      * @param string $methodId
-     * @return \Gr4vy\Payment\Api\Data\MethodInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function get($methodId);
@@ -33,7 +33,7 @@ interface MethodRepositoryInterface
     /**
      * Retrieve Method matching the specified criteria.
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Gr4vy\Payment\Api\Data\MethodSearchResultsInterface
+     * @return \Gr4vy\Magento\Api\Data\MethodSearchResultsInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getList(
@@ -42,12 +42,12 @@ interface MethodRepositoryInterface
 
     /**
      * Delete Method
-     * @param \Gr4vy\Payment\Api\Data\MethodInterface $method
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $method
      * @return bool true on success
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\MethodInterface $method
+        \Gr4vy\Magento\Api\Data\MethodInterface $method
     );
 
     /**

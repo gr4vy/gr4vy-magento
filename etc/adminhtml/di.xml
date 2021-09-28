@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 	<type name="Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create\Adjustments">
-		<plugin name="Gr4vy_Payment_Plugin_Magento_Sales_Block_Adminhtml_Order_Creditmemo_Create_Adjustments" type="Gr4vy\Payment\Plugin\Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create\Adjustments" sortOrder="10" disabled="false"/>
+		<plugin name="Gr4vy_Magento_Plugin_Magento_Sales_Block_Adminhtml_Order_Creditmemo_Create_Adjustments" type="Gr4vy\Magento\Plugin\Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create\Adjustments" sortOrder="10" disabled="false"/>
 	</type>
 </config>

@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Plugin\Magento\Quote\Api;
+namespace Gr4vy\Magento\Plugin\Magento\Quote\Api;
 
-use Gr4vy\Payment\Model\Client\Embed as Gr4vyEmbed;
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 class PaymentMethodManagementInterface
 {

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api;
+namespace Gr4vy\Magento\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
 
@@ -14,18 +14,18 @@ interface ServiceRepositoryInterface
 
     /**
      * Save Service
-     * @param \Gr4vy\Payment\Api\Data\ServiceInterface $service
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $service
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\ServiceInterface $service
+        \Gr4vy\Magento\Api\Data\ServiceInterface $service
     );
 
     /**
      * Retrieve Service
      * @param string $serviceId
-     * @return \Gr4vy\Payment\Api\Data\ServiceInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function get($serviceId);
@@ -33,7 +33,7 @@ interface ServiceRepositoryInterface
     /**
      * Retrieve Service matching the specified criteria.
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Gr4vy\Payment\Api\Data\ServiceSearchResultsInterface
+     * @return \Gr4vy\Magento\Api\Data\ServiceSearchResultsInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getList(
@@ -42,12 +42,12 @@ interface ServiceRepositoryInterface
 
     /**
      * Delete Service
-     * @param \Gr4vy\Payment\Api\Data\ServiceInterface $service
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $service
      * @return bool true on success
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\ServiceInterface $service
+        \Gr4vy\Magento\Api\Data\ServiceInterface $service
     );
 
     /**

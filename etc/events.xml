@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_order_payment_save_before">
-        <observer name="gr4vy_order_payment_save_before" instance="Gr4vy\Payment\Observer\OrderPaymentSaveBefore" />
+        <observer name="gr4vy_order_payment_save_before" instance="Gr4vy\Magento\Observer\OrderPaymentSaveBefore" />
     </event>
     <event name="checkout_submit_all_after">
-        <observer name="gr4vy_place_order_after" instance="Gr4vy\Payment\Observer\OrderPlaceAfter"/>
+        <observer name="gr4vy_place_order_after" instance="Gr4vy\Magento\Observer\OrderPlaceAfter"/>
     </event>
 </config>

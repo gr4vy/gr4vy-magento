@@ -5,17 +5,17 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Block;
+namespace Gr4vy\Magento\Block;
 
 class Info extends \Magento\Payment\Block\Info\Cc
 {
     /**
-     * @var \Gr4vy\Payment\Api\TransactionRepositoryInterface
+     * @var \Gr4vy\Magento\Api\TransactionRepositoryInterface
      */
     protected $_transactionRepository;
 
     /**
-     * @var \Gr4vy\Payment\Helper\Data
+     * @var \Gr4vy\Magento\Helper\Data
      */
     protected $_gr4vyHelper;
 
@@ -24,15 +24,15 @@ class Info extends \Magento\Payment\Block\Info\Cc
      *
      * @param \Magento\Framework\View\Element\Template\Context  $context
      * @param \Magento\Payment\Model\Config $paymentConfig
-     * @param \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository
-     * @param \Gr4vy\Payment\Helper\Data $gr4vyHelper
+     * @param \Gr4vy\Magento\Api\TransactionRepositoryInterface $transactionRepository
+     * @param \Gr4vy\Magento\Helper\Data $gr4vyHelper
      * @param array $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Payment\Model\Config $paymentConfig,
-        \Gr4vy\Payment\Api\TransactionRepositoryInterface $transactionRepository,
-        \Gr4vy\Payment\Helper\Data $gr4vyHelper,
+        \Gr4vy\Magento\Api\TransactionRepositoryInterface $transactionRepository,
+        \Gr4vy\Magento\Helper\Data $gr4vyHelper,
         array $data = []
     ) {
         $this->_transactionRepository = $transactionRepository;

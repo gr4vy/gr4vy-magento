@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\BuyerInterface;
-use Gr4vy\Payment\Api\Data\BuyerInterfaceFactory;
+use Gr4vy\Magento\Api\Data\BuyerInterface;
+use Gr4vy\Magento\Api\Data\BuyerInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Buyer extends \Magento\Framework\Model\AbstractModel
@@ -25,8 +25,8 @@ class Buyer extends \Magento\Framework\Model\AbstractModel
      * @param \Magento\Framework\Registry $registry
      * @param BuyerInterfaceFactory $buyerDataFactory
      * @param DataObjectHelper $dataObjectHelper
-     * @param \Gr4vy\Payment\Model\ResourceModel\Buyer $resource
-     * @param \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection
+     * @param \Gr4vy\Magento\Model\ResourceModel\Buyer $resource
+     * @param \Gr4vy\Magento\Model\ResourceModel\Buyer\Collection $resourceCollection
      * @param array $data
      */
     public function __construct(
@@ -34,8 +34,8 @@ class Buyer extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         BuyerInterfaceFactory $buyerDataFactory,
         DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Buyer\Collection $resourceCollection,
+        \Gr4vy\Magento\Model\ResourceModel\Buyer $resource,
+        \Gr4vy\Magento\Model\ResourceModel\Buyer\Collection $resourceCollection,
         array $data = []
     ) {
         $this->buyerDataFactory = $buyerDataFactory;

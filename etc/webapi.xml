@@ -1,137 +1,137 @@
 <?xml version="1.0" ?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
 	<route url="/V1/gr4vy-payment/buyer" method="POST">
-		<service class="Gr4vy\Payment\Api\BuyerRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Buyer_save"/>
+			<resource ref="Gr4vy_Magento::Buyer_save"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/buyer/search" method="GET">
-		<service class="Gr4vy\Payment\Api\BuyerRepositoryInterface" method="getList"/>
+		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="getList"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Buyer_view"/>
+			<resource ref="Gr4vy_Magento::Buyer_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="GET">
-		<service class="Gr4vy\Payment\Api\BuyerRepositoryInterface" method="get"/>
+		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="get"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Buyer_view"/>
+			<resource ref="Gr4vy_Magento::Buyer_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="PUT">
-		<service class="Gr4vy\Payment\Api\BuyerRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Buyer_update"/>
+			<resource ref="Gr4vy_Magento::Buyer_update"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="DELETE">
-		<service class="Gr4vy\Payment\Api\BuyerRepositoryInterface" method="deleteById"/>
+		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="deleteById"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Buyer_delete"/>
+			<resource ref="Gr4vy_Magento::Buyer_delete"/>
 		</resources>
 	</route>
     <!--custom set-payment-information-->
 	<route url="/V1/gr4vy-payment/set-payment-information" method="POST">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="setPaymentInformation"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="setPaymentInformation"/>
 		<resources>
             <resource ref="anonymous" />
 		</resources>
 	</route>
     <route url="/V1/gr4vy-payment/get-embed-token" method="POST">
-        <service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="getEmbedToken"/>
+        <service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="getEmbedToken"/>
 		<resources>
             <resource ref="anonymous" />
 		</resources>
     </route>
     <!--end of custom api-->
 	<route url="/V1/gr4vy-payment/transaction" method="POST">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="save"/>
 		<resources>
-            <resource ref="Gr4vy_Payment::Transaction_save" />
+            <resource ref="Gr4vy_Magento::Transaction_save" />
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/search" method="GET">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="getList"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="getList"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Transaction_view"/>
+			<resource ref="Gr4vy_Magento::Transaction_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="GET">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="get"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="get"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Transaction_view"/>
+			<resource ref="Gr4vy_Magento::Transaction_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="PUT">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Transaction_update"/>
+			<resource ref="Gr4vy_Magento::Transaction_update"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="DELETE">
-		<service class="Gr4vy\Payment\Api\TransactionRepositoryInterface" method="deleteById"/>
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="deleteById"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Transaction_delete"/>
+			<resource ref="Gr4vy_Magento::Transaction_delete"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/method" method="POST">
-		<service class="Gr4vy\Payment\Api\MethodRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Method_save"/>
+			<resource ref="Gr4vy_Magento::Method_save"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/method/search" method="GET">
-		<service class="Gr4vy\Payment\Api\MethodRepositoryInterface" method="getList"/>
+		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="getList"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Method_view"/>
+			<resource ref="Gr4vy_Magento::Method_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/method/:methodId" method="GET">
-		<service class="Gr4vy\Payment\Api\MethodRepositoryInterface" method="get"/>
+		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="get"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Method_view"/>
+			<resource ref="Gr4vy_Magento::Method_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/method/:methodId" method="PUT">
-		<service class="Gr4vy\Payment\Api\MethodRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Method_update"/>
+			<resource ref="Gr4vy_Magento::Method_update"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/method/:methodId" method="DELETE">
-		<service class="Gr4vy\Payment\Api\MethodRepositoryInterface" method="deleteById"/>
+		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="deleteById"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Method_delete"/>
+			<resource ref="Gr4vy_Magento::Method_delete"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/service" method="POST">
-		<service class="Gr4vy\Payment\Api\ServiceRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Service_save"/>
+			<resource ref="Gr4vy_Magento::Service_save"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/service/search" method="GET">
-		<service class="Gr4vy\Payment\Api\ServiceRepositoryInterface" method="getList"/>
+		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="getList"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Service_view"/>
+			<resource ref="Gr4vy_Magento::Service_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/service/:serviceId" method="GET">
-		<service class="Gr4vy\Payment\Api\ServiceRepositoryInterface" method="get"/>
+		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="get"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Service_view"/>
+			<resource ref="Gr4vy_Magento::Service_view"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/service/:serviceId" method="PUT">
-		<service class="Gr4vy\Payment\Api\ServiceRepositoryInterface" method="save"/>
+		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="save"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Service_update"/>
+			<resource ref="Gr4vy_Magento::Service_update"/>
 		</resources>
 	</route>
 	<route url="/V1/gr4vy-payment/service/:serviceId" method="DELETE">
-		<service class="Gr4vy\Payment\Api\ServiceRepositoryInterface" method="deleteById"/>
+		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="deleteById"/>
 		<resources>
-			<resource ref="Gr4vy_Payment::Service_delete"/>
+			<resource ref="Gr4vy_Magento::Service_delete"/>
 		</resources>
 	</route>
 </routes>

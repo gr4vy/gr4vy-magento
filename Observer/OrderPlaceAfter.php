@@ -1,12 +1,12 @@
 <?php
 
-namespace Gr4vy\Payment\Observer;
+namespace Gr4vy\Magento\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
-use Gr4vy\Payment\Api\TransactionRepositoryInterface;
-use Gr4vy\Payment\Helper\Data as Gr4vyHelper;
-use Gr4vy\Payment\Helper\Logger as Gr4vyLogger;
-use Gr4vy\Payment\Helper\Order as OrderHelper;
+use Gr4vy\Magento\Api\TransactionRepositoryInterface;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Helper\Order as OrderHelper;
 
 class OrderPlaceAfter implements ObserverInterface
 {
@@ -59,7 +59,7 @@ class OrderPlaceAfter implements ObserverInterface
         }
 
         // only applicable for gr4vy payment method
-        if ($payment->getMethod() != \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_METHOD_CODE
+        if ($payment->getMethod() != \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_METHOD_CODE
             || strlen($gr4vy_transaction_id) < 1)
         {
             return;
@@ -67,7 +67,7 @@ class OrderPlaceAfter implements ObserverInterface
         $this->gr4vyLogger->logMixed([ 'method' => $payment->getMethod(), 'gr4vy_transaction_id' => $gr4vy_transaction_id ]);
 
         $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
-        if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUCAP) {
+        if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_TYPE_AUCAP) {
             // always set $newOrderStatus to processing if payment intent is authorize and capture
             $newOrderStatus = \Magento\Sales\Model\Order::STATE_PROCESSING;
 
@@ -85,7 +85,7 @@ class OrderPlaceAfter implements ObserverInterface
             $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);
         }
 
-        if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Payment\Model\Payment\Gr4vy::PAYMENT_TYPE_AUTH) {
+        if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_TYPE_AUTH) {
             $msg = __(
                 "Authorized amount of %1 online. Transaction ID: '%2'.",
                 $this->gr4vyHelper->formatCurrency($transaction->getAmount()/100),

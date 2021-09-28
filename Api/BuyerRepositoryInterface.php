@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Api;
+namespace Gr4vy\Magento\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
 
@@ -14,18 +14,18 @@ interface BuyerRepositoryInterface
 
     /**
      * Save Buyer
-     * @param \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
-     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     * @param \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function save(
-        \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
+        \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
     );
 
     /**
      * Retrieve Buyer
      * @param string $buyerId
-     * @return \Gr4vy\Payment\Api\Data\BuyerInterface
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function get($buyerId);
@@ -34,14 +34,14 @@ interface BuyerRepositoryInterface
      * retrieve buyer by external_identifier
      *
      * @param string
-     * @return Gr4vy\Payment\Model\Buyer | null
+     * @return Gr4vy\Magento\Model\Buyer | null
      */
     public function getByExternalIdentifier($external_identifier);
 
     /**
      * Retrieve Buyer matching the specified criteria.
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
-     * @return \Gr4vy\Payment\Api\Data\BuyerSearchResultsInterface
+     * @return \Gr4vy\Magento\Api\Data\BuyerSearchResultsInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getList(
@@ -50,12 +50,12 @@ interface BuyerRepositoryInterface
 
     /**
      * Delete Buyer
-     * @param \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
+     * @param \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
      * @return bool true on success
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function delete(
-        \Gr4vy\Payment\Api\Data\BuyerInterface $buyer
+        \Gr4vy\Magento\Api\Data\BuyerInterface $buyer
     );
 
     /**

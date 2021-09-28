@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Helper;
+namespace Gr4vy\Magento\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 

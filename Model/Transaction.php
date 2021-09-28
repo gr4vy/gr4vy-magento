@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\TransactionInterface;
-use Gr4vy\Payment\Api\Data\TransactionInterfaceFactory;
+use Gr4vy\Magento\Api\Data\TransactionInterface;
+use Gr4vy\Magento\Api\Data\TransactionInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Transaction extends \Magento\Framework\Model\AbstractModel
@@ -25,8 +25,8 @@ class Transaction extends \Magento\Framework\Model\AbstractModel
      * @param \Magento\Framework\Registry $registry
      * @param TransactionInterfaceFactory $transactionDataFactory
      * @param DataObjectHelper $dataObjectHelper
-     * @param \Gr4vy\Payment\Model\ResourceModel\Transaction $resource
-     * @param \Gr4vy\Payment\Model\ResourceModel\Transaction\Collection $resourceCollection
+     * @param \Gr4vy\Magento\Model\ResourceModel\Transaction $resource
+     * @param \Gr4vy\Magento\Model\ResourceModel\Transaction\Collection $resourceCollection
      * @param array $data
      */
     public function __construct(
@@ -34,8 +34,8 @@ class Transaction extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         TransactionInterfaceFactory $transactionDataFactory,
         DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Transaction $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Transaction\Collection $resourceCollection,
+        \Gr4vy\Magento\Model\ResourceModel\Transaction $resource,
+        \Gr4vy\Magento\Model\ResourceModel\Transaction\Collection $resourceCollection,
         array $data = []
     ) {
         $this->transactionDataFactory = $transactionDataFactory;

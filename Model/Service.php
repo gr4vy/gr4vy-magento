@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Gr4vy\Payment\Model;
+namespace Gr4vy\Magento\Model;
 
-use Gr4vy\Payment\Api\Data\ServiceInterface;
-use Gr4vy\Payment\Api\Data\ServiceInterfaceFactory;
+use Gr4vy\Magento\Api\Data\ServiceInterface;
+use Gr4vy\Magento\Api\Data\ServiceInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
 
 class Service extends \Magento\Framework\Model\AbstractModel
@@ -25,8 +25,8 @@ class Service extends \Magento\Framework\Model\AbstractModel
      * @param \Magento\Framework\Registry $registry
      * @param ServiceInterfaceFactory $serviceDataFactory
      * @param DataObjectHelper $dataObjectHelper
-     * @param \Gr4vy\Payment\Model\ResourceModel\Service $resource
-     * @param \Gr4vy\Payment\Model\ResourceModel\Service\Collection $resourceCollection
+     * @param \Gr4vy\Magento\Model\ResourceModel\Service $resource
+     * @param \Gr4vy\Magento\Model\ResourceModel\Service\Collection $resourceCollection
      * @param array $data
      */
     public function __construct(
@@ -34,8 +34,8 @@ class Service extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         ServiceInterfaceFactory $serviceDataFactory,
         DataObjectHelper $dataObjectHelper,
-        \Gr4vy\Payment\Model\ResourceModel\Service $resource,
-        \Gr4vy\Payment\Model\ResourceModel\Service\Collection $resourceCollection,
+        \Gr4vy\Magento\Model\ResourceModel\Service $resource,
+        \Gr4vy\Magento\Model\ResourceModel\Service\Collection $resourceCollection,
         array $data = []
     ) {
         $this->serviceDataFactory = $serviceDataFactory;

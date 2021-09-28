@@ -1,5 +1,5 @@
 {
-    "name": "gr4vy/payment",
+    "name": "gr4vy/magento",
     "description": "Magento 2 Payment module from Gr4vy",
     "license": "GPL-3.0",
     "authors": [
@@ -27,7 +27,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Gr4vy\\Payment\\": ""
+            "Gr4vy\\Magento\\": ""
         }
     }
 }

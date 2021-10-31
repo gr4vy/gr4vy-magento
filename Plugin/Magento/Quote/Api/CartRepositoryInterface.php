@@ -105,6 +105,8 @@ class CartRepositoryInterface
         }
 
         $result = $proceed($quote);
+
+        return $result;
     }
 
     /**

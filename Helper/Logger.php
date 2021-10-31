@@ -13,7 +13,8 @@ use Psr\Log\LoggerInterface;
 class Logger extends AbstractHelper
 {
     private $expected_error_msgs = array(
-        'No such entity with cartId' => 'Quote not available'
+        'No such entity with cartId' => 'Quote not available',
+        '409 Conflict' => 'Request conflicts with existing record'
     );
     /**
      * @var LoggerInterface

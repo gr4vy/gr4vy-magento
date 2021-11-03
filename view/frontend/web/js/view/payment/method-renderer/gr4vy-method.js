@@ -40,9 +40,10 @@ define(
                     function (response) {
                         var embed_token = response[0];
                         var amount = response[1];
+                        var buyer_id = response[2];
                         gr4vy.setup({
                             gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
-                            buyerId: window.checkoutConfig.payment.gr4vy.buyer_id,
+                            buyerId: buyer_id,
                             environment: window.checkoutConfig.payment.gr4vy.environment,
                             element: ".container",
                             form: "#co-payment-form",

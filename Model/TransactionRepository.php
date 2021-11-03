@@ -206,6 +206,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result = array();
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
         $result['amount'] = $quote_total;
+        $result['buyer_id'] = $buyer_id;
 
         return $result;
     }

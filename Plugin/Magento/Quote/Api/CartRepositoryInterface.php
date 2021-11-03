@@ -97,11 +97,13 @@ class CartRepositoryInterface
             }
         }
         else {
-            // case 3: customer not logged in - anonymous gr4vy buyer id
-            $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
-            $buyer_id = $this->getGr4vyBuyerId($external_identifier, $display_name);
+            if (!$quote->getData('gr4vy_buyer_id')) {
+                // case 3: customer not logged in - anonymous gr4vy buyer id
+                $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
+                $buyer_id = $this->getGr4vyBuyerId($external_identifier, $display_name);
 
-            $quote->setData('gr4vy_buyer_id', $buyer_id);
+                $quote->setData('gr4vy_buyer_id', $buyer_id);
+            }
         }
 
         $result = $proceed($quote);

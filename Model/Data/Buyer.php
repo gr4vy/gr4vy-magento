@@ -11,6 +11,24 @@ use Gr4vy\Magento\Api\Data\BuyerInterface;
 
 class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements BuyerInterface
 {
+    /**
+     * Get Id
+     * @return string|null
+     */
+    public function getId()
+    {
+        return $this->_get(self::ID);
+    }
+
+    /**
+     * Set Id
+     * @param string $id
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     */
+    public function setId($id)
+    {
+        return $this->setData(self::ID, $id);
+    }
 
     /**
      * Get buyer_id

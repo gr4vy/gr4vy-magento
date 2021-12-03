@@ -133,11 +133,11 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
         DirectoryHelper $directory = null,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger,
-        TransactionApi $transactionApi
+        TransactionApi $transactionApi,
+        array $data = []
     ) {
         parent::__construct(
             $context,

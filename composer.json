@@ -20,7 +20,7 @@
         "magento/module-config": "*",
         "magento/module-payment": "*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": "^0.2.0"
+        "gr4vy/gr4vy-php": "dev-main"
     },
     "autoload": {
         "files": [

@@ -1,7 +1,12 @@
 {
     "name": "gr4vy/magento",
     "description": "Magento 2 Payment module from Gr4vy",
-    "license": "GPL-3.0",
+    "type": "magento2-module",
+    "version": "1.0.1",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
     "authors": [
         {
             "email": "rowandburgess+th@gmail.com",
@@ -10,7 +15,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.1.0",
+        "php": "^7.2.0",
         "ext-hash": "*",
         "ext-json": "*",
         "magento/framework": "*",
@@ -20,7 +25,7 @@
         "magento/module-config": "*",
         "magento/module-payment": "*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": "^0.2.0"
+        "gr4vy/gr4vy-php": "^0.4.0"
     },
     "autoload": {
         "files": [

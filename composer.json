@@ -18,14 +18,14 @@
         "php": "^7.2.0",
         "ext-hash": "*",
         "ext-json": "*",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-checkout": "*",
-        "magento/module-config": "*",
-        "magento/module-payment": "*",
+        "magento/framework": ">=101 <104",
+        "magento/module-backend": ">=100 <103",
+        "magento/module-catalog": ">=101 <105",
+        "magento/module-checkout": "100.*",
+        "magento/module-config": ">=100 <103",
+        "magento/module-payment": "100.*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": "^0.4.0"
+        "gr4vy/gr4vy-php": ">=0.4.0"
     },
     "autoload": {
         "files": [

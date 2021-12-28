@@ -52,15 +52,20 @@ class Logger extends AbstractHelper
 
             $original_message = $e->getMessage();
             if ($translated_message = $this->translateErrorMsg($original_message)) {
-                $this->logger->error($translated_message);
+                $this->logger->error(__('Recognized Error :'), $translated_message);
             }
             else {
-                $this->logger->error($original_message);
-                $this->logger->error($e->getTraceAsString());
+                $this->logger->error(
+                    $original_message,
+                    ['detail' => $e->getTraceAsString()]
+                );
             }
 
             if (method_exists($e, 'getResponseBody')) {
-                $this->logger->info($e->getResponseBody());
+                $this->logger->info(
+                    __('Response Body'),
+                    ['json' => $e->getResponseBody()]
+                );
             }
         }
     }
@@ -91,7 +96,10 @@ class Logger extends AbstractHelper
     public function logMixed($mixed_data)
     {
         if ($this->gr4vyHelper->isDebugOn()) {
-            $this->logger->info(serialize($mixed_data));
+            $this->logger->info(
+                __('Info Array'),
+                $mixed_data
+            );
         }
     }
 }

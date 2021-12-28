@@ -68,6 +68,9 @@ class CartRepositoryInterface
     /**
      * whenever cart is saved, interact with gr4vy payment
      *
+     * @param \Magento\Quote\Api\CartRepositoryInterface $subject
+     * @param \Closure $proceed
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
      * @return void
      */
     public function aroundSave(
@@ -75,36 +78,7 @@ class CartRepositoryInterface
         \Closure $proceed,
         \Magento\Quote\Api\Data\CartInterface $quote
     ) {
-        $quote_id = $quote->getId();
-        $customer = $this->customerSession->getCustomer();
-        $external_identifier = $customer->getId();
-
-        if ($external_identifier) {
-            if ($buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier)) {
-                // case 1: customer logged in & associated with gr4vy for current merchant account
-                $quote->setData('gr4vy_buyer_id', $buyerModel->getBuyerId());
-            }
-            else {
-                // case 2: customer logged in & not associated with gr4vy
-                $display_name = $customer->getFirstname() . " " . $customer->getLastname();
-                $buyer_id = $this->getGr4vyBuyerId($external_identifier, $display_name);
-
-                // assign buyer_id to quote object
-                $quote->setData('gr4vy_buyer_id', $buyer_id);
-
-                // save buyer to gr4vy_buyers table if external_identifier & display_name defined
-                $this->saveBuyerData($external_identifier, $display_name, $buyer_id);
-            }
-        }
-        else {
-            if (!$quote->getData('gr4vy_buyer_id')) {
-                // case 3: customer not logged in - anonymous gr4vy buyer id
-                $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
-                $buyer_id = $this->getGr4vyBuyerId($external_identifier, $display_name);
-
-                $quote->setData('gr4vy_buyer_id', $buyer_id);
-            }
-        }
+        $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
 
         $result = $proceed($quote);
 
@@ -112,13 +86,78 @@ class CartRepositoryInterface
     }
 
     /**
-     * retrieve gr4vy buyer id
+     * initialize gr4vy customer data in session. if customer not in gr4vy, create new record 
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     * @return void
+     */
+    protected function getGr4vyBuyerId($quote)
+    {
+        $customer = $this->customerSession->getCustomer();
+        $external_identifier = $customer->getId();
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier);
+
+        // covered scenarios
+        // 1. guest - no gr4vy_buyer_id and external_identifier stored in session
+        // 2. guest - gr4vy_buyer_id stored in session
+        // 3. logged in - no gr4vy_buyer_id and external_identifier stored in session
+        // 3. logged in - gr4vy_buyer_id previously stored in session (create account on checkout page)
+        if ((!$external_identifier && !$this->customerSession->getGr4vyBuyerId())
+            || ($this->customerSession->getExternalIdentifier() != $external_identifier)) {
+            list($createBuyer, $gr4vy_buyer_id) = $this->verifyBuyerModel($buyerModel, $this->customerSession->getGr4vyBuyerId());
+
+            if ($createBuyer) {
+                if ($customer->getFirstname()) {
+                    $display_name = $customer->getFirstname() . " " . $customer->getLastname();
+                }
+                else {
+                    $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
+                }
+
+                $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
+                $this->saveBuyerData($external_identifier, $display_name, $gr4vy_buyer_id);
+            }
+
+            $this->customerSession->setExternalIdentifier($external_identifier);
+            $this->customerSession->setGr4vyBuyerId($gr4vy_buyer_id);
+        }
+
+        return $this->customerSession->getGr4vyBuyerId();
+    }
+
+    /**
+     * make sure buyer model is valid. determine createBuyer action
+     *
+     * @param DataBuyerInterface
+     * @return array [createBuyer, gr4vy_buyer_id]
+     */
+    protected function verifyBuyerModel($buyerModel, $buyer_id = null)
+    {
+        $result = [false, $buyer_id];
+        if (empty($buyerModel)) {
+            $result[0] = true;
+        }
+        else {
+            $result[1] = $buyerModel->getBuyerId();
+            $verifier = $this->buyerApi->getBuyer($buyerModel->getExternalIdentifier());
+            if ($buyerModel->getBuyerId() != $verifier->getId()) {
+                // remove faulty record
+                $this->buyerRepository->delete($buyerModel);
+                $result[0] = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * create then retrieve gr4vy buyer id
      *
      * @param string
      * @param string
      * @return string
      */
-    protected function getGr4vyBuyerId($external_identifier, $display_name)
+    protected function createGr4vyBuyer($external_identifier, $display_name)
     {
         $buyer_id = $this->buyerApi->createBuyer($external_identifier, $display_name);
 
@@ -131,7 +170,7 @@ class CartRepositoryInterface
     }
 
     /**
-     * save buyer
+     * save buyer - only applicable if customer is logged in , so $external_identifier and $display_name are not empty
      *
      * @param string
      * @param string

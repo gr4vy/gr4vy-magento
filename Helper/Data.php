@@ -188,6 +188,6 @@ class Data extends AbstractHelper
         $privateKey = $this->getPrivateKey();
         $classExist = class_exists('\Gr4vy\Gr4vyConfig');
 
-        return $isEnabled && strlen($privateKey) > 0 && $classExist;
+        return $isEnabled && $privateKey && $classExist;
     }
 }

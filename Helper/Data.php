@@ -171,6 +171,23 @@ class Data extends AbstractHelper
      */
     public function blockPartialRefund()
     {
-        return true;
+        return $this->isEnabled();
+    }
+
+    /**
+     * verify gr4vy payment ready status . it requires
+     * 1. dependencies installed : gr4vy/gr4vy-php, php7.2+
+     * 2. module enabled
+     * 3. key uploaded
+     *
+     * @return boolean
+     */
+    public function checkGr4vyReady()
+    {
+        $isEnabled = $this->isEnabled();
+        $privateKey = $this->getPrivateKey();
+        $classExist = class_exists('\Gr4vy\Gr4vyConfig');
+
+        return $isEnabled && strlen($privateKey) > 0 && $classExist;
     }
 }

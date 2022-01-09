@@ -10,6 +10,7 @@ namespace Gr4vy\Magento\Plugin\Magento\Quote\Api;
 use Gr4vy\Magento\Api\BuyerRepositoryInterface;
 use Gr4vy\Magento\Api\Data\BuyerInterface as DataBuyerInterface;
 use Gr4vy\Magento\Model\Client\Buyer as Gr4vyBuyer;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -42,6 +43,11 @@ class CartRepositoryInterface
     protected $buyerApi;
 
     /**
+     * @var Gr4vyHelper
+     */
+    protected $gr4vyHelper;
+
+    /**
      * @var Gr4vyLogger
      */
     protected $gr4vyLogger;
@@ -55,6 +61,7 @@ class CartRepositoryInterface
         BuyerRepositoryInterface $buyerRepository,
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
+        Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger
     ) {
         $this->customerSession = $customerSession;
@@ -62,6 +69,7 @@ class CartRepositoryInterface
         $this->buyerRepository = $buyerRepository;
         $this->buyerData = $buyerData;
         $this->buyerApi = $buyerApi;
+        $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
     }
 
@@ -78,7 +86,9 @@ class CartRepositoryInterface
         \Closure $proceed,
         \Magento\Quote\Api\Data\CartInterface $quote
     ) {
-        $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
+        if ($this->gr4vyHelper->checkGr4vyReady()) {
+            $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
+        }
 
         $result = $proceed($quote);
 

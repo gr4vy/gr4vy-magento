@@ -30,4 +30,3 @@ are released by creating a new Git tag.
 This library is released under the [MIT License](LICENSE).
 
 [packagist]: https://packagist.org/packages/gr4vy/magento
-

@@ -57,28 +57,31 @@ class Info extends \Magento\Payment\Block\Info\Cc
     {
         $transport = parent::_prepareSpecificInformation($transport);
         $payment = $this->getInfo();
+        $data = [];
         $gr4vy_transaction_id = $payment->getData('gr4vy_transaction_id');
         $transaction = $this->_transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
 
-        /*prepare labels*/
-        $last_trans_id = (string)__('Last Transaction ID');
-        $status = (string)__('Status');
-        $amount = (string)__('Amount');
-        $captured_amount = (string)__('Captured Amount');
-        $refunded_amount = (string)__('Refunded Amount');
-        $currency = (string)__('Currency');
+        if ($transaction && $transaction->getId()) {
+            /*prepare labels*/
+            $last_trans_id = (string)__('Last Transaction ID');
+            $status = (string)__('Status');
+            $amount = (string)__('Amount');
+            $captured_amount = (string)__('Captured Amount');
+            $refunded_amount = (string)__('Refunded Amount');
+            $currency = (string)__('Currency');
 
-        /*prepare data*/
-        $captured = $transaction->getCapturedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getCapturedAmount()/100) : 0;
-        $refunded = $transaction->getRefundedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getRefundedAmount()/100) : 0;
-        $data = array(
-            $last_trans_id => $transaction->getGr4vyTransactionId(),
-            $status => ucwords(str_replace('_', ' ',$transaction->getStatus())),
-            $amount => $this->_gr4vyHelper->formatCurrency($transaction->getAmount()/100),
-            $captured_amount => $captured ?: '0.00',
-            $refunded_amount => $refunded ?: '0.00',
-            $currency => $transaction->getCurrency()
-        );
+            /*prepare data*/
+            $captured = $transaction->getCapturedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getCapturedAmount()/100) : 0;
+            $refunded = $transaction->getRefundedAmount() ? $this->_gr4vyHelper->formatCurrency($transaction->getRefundedAmount()/100) : 0;
+            $data = array(
+                $last_trans_id => $transaction->getGr4vyTransactionId(),
+                $status => ucwords(str_replace('_', ' ',$transaction->getStatus())),
+                $amount => $this->_gr4vyHelper->formatCurrency($transaction->getAmount()/100),
+                $captured_amount => $captured ?: '0.00',
+                $refunded_amount => $refunded ?: '0.00',
+                $currency => $transaction->getCurrency()
+            );
+        }
 
         return $transport->addData($data);
     }

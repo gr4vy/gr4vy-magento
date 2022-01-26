@@ -89,6 +89,12 @@ class CartRepositoryInterface
         if ($this->gr4vyHelper->checkGr4vyReady()) {
             $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
         }
+        // NOTE: additional fix for multishipping checkout issue - somehow it affected gr4vy https://github.com/magento/magento2/pull/26637
+        // issue in vendor/magento/module-quote/Model/QuoteAddressValidator.php [function] validateForCart
+        // when customer logged in, $cart->getCustomerIsGuest() still return true
+        if ($quote->getCustomer() && $quote->getCustomer()->getId()) {
+            $quote->setCustomerIsGuest(false);
+        }
 
         $result = $proceed($quote);
 

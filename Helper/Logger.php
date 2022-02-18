@@ -52,19 +52,22 @@ class Logger extends AbstractHelper
 
             $original_message = $e->getMessage();
             if ($translated_message = $this->translateErrorMsg($original_message)) {
-                $this->logger->error(__('Recognized Error :'), $translated_message);
+                $this->logger->error(
+                    __('Recognized Error :'),
+                    [ 'detail' => $translated_message ]
+                );
             }
             else {
                 $this->logger->error(
                     $original_message,
-                    ['detail' => $e->getTraceAsString()]
+                    [ 'detail' => $e->getTraceAsString() ]
                 );
             }
 
             if (method_exists($e, 'getResponseBody')) {
                 $this->logger->info(
                     __('Response Body'),
-                    ['json' => $e->getResponseBody()]
+                    [ 'json' => $e->getResponseBody() ]
                 );
             }
         }

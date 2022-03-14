@@ -156,8 +156,7 @@ class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements 
     }
 
     /**
-     * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Magento\Api\Data\MethodExtensionInterface|null
+     * {@inheritdoc}
      */
     public function getExtensionAttributes()
     {
@@ -165,9 +164,7 @@ class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements 
     }
 
     /**
-     * Set an extension attributes object.
-     * @param \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes
-     * @return $this
+     * {@inheritdoc}
      */
     public function setExtensionAttributes(
         \Gr4vy\Magento\Api\Data\MethodExtensionInterface $extensionAttributes

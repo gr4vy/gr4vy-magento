@@ -6,7 +6,8 @@
             "display_name": true,
             "created_at": true,
             "updated_at": true,
-            "buyer_id": true
+            "buyer_id": true,
+            "billing_address": true
         },
         "constraint": {
             "PRIMARY": true,
@@ -54,7 +55,8 @@
             "external_identifier": true,
             "expiration_date": true,
             "approval_url": true,
-            "environment": true
+            "environment": true,
+            "method_id": true
         },
         "constraint": {
             "PRIMARY": true
@@ -73,7 +75,8 @@
             "updated_at": true,
             "active": true,
             "position": true,
-            "environment": true
+            "environment": true,
+            "service_id": true
         },
         "constraint": {
             "PRIMARY": true

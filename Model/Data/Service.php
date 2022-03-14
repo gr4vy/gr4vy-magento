@@ -171,8 +171,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
     }
 
     /**
-     * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Magento\Api\Data\ServiceExtensionInterface|null
+     * {@inheritdoc}
      */
     public function getExtensionAttributes()
     {
@@ -180,9 +179,7 @@ class Service extends \Magento\Framework\Api\AbstractExtensibleObject implements
     }
 
     /**
-     * Set an extension attributes object.
-     * @param \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes
-     * @return $this
+     * {@inheritdoc}
      */
     public function setExtensionAttributes(
         \Gr4vy\Magento\Api\Data\ServiceExtensionInterface $extensionAttributes

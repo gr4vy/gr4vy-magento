@@ -128,12 +128,12 @@ class BuyerRepository implements BuyerRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function get($buyerId)
+    public function get($id)
     {
         $buyer = $this->buyerFactory->create();
-        $this->resource->load($buyer, $buyerId);
+        $this->resource->load($buyer, $id);
         if (!$buyer->getId()) {
-            throw new NoSuchEntityException(__('Buyer with id "%1" does not exist.', $buyerId));
+            throw new NoSuchEntityException(__('Buyer with id "%1" does not exist.', $id));
         }
         return $buyer->getDataModel();
     }
@@ -204,9 +204,9 @@ class BuyerRepository implements BuyerRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteById($buyerId)
+    public function deleteById($id)
     {
-        return $this->delete($this->get($buyerId));
+        return $this->delete($this->get($id));
     }
 }
 

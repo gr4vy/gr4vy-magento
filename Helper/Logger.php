@@ -52,7 +52,7 @@ class Logger extends AbstractHelper
 
             $original_message = $e->getMessage();
             if ($translated_message = $this->translateErrorMsg($original_message)) {
-                $this->logger->error(__('Recognized Error :'), $translated_message);
+                $this->logger->error(__('Recognized Error :'), ['msg' => $translated_message]);
             }
             else {
                 $this->logger->error(

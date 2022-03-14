@@ -5,6 +5,7 @@
         <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records - for Magento 2, it customer entity_id."/>
         <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
         <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="A unique name for this buyer which is used in the Gr4vy admin panel to give a buyer a human readable name."/>
+        <column xsi:type="text" name="billing_address" comment="billing address detail in JSON format"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was created in system."/>
         <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was last updated in system."/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

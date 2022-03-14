@@ -30,6 +30,11 @@
 					<label>Enable Debug</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
+                <field id="payment_store" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="34" translate="label" type="select">
+                    <label>Payment Store</label>
+                    <comment>Explicitly store the payment method or ask the buyer</comment>
+                    <source_model>Gr4vy\Magento\Model\Source\PaymentStore</source_model>
+                </field>
                 <field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
                     <label>Payment Action</label>
                     <source_model>Gr4vy\Magento\Model\Source\PaymentAction</source_model>

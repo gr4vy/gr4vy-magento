@@ -8,6 +8,7 @@
 				<model>Gr4vy\Magento\Model\Payment\Gr4vy</model>
 				<order_status>processing</order_status>
                 <payment_action>authorize</payment_action>
+                <payment_store>ask</payment_store>
 				<title>Gr4vy</title>
 				<allowspecific>0</allowspecific>
 			</gr4vy>

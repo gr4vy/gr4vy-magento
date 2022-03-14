@@ -138,6 +138,25 @@ class CartRepositoryInterface
             $this->customerSession->setGr4vyBuyerId($gr4vy_buyer_id);
         }
 
+        // update default billing address for buyer
+        if ($default_billing = $customer->getDefaultBillingAddress()) {
+            $billing_details = [
+                "first_name" => $default_billing->getFirstname(),
+                "last_name" => $default_billing->getLastname(),
+                "email_address" => $customer->getEmailAddress(),
+                "phone_number" => $default_billing->getTelephone(),
+                "address" => [
+                    "city" => $default_billing->getCity(),
+                    "country" => $default_billing->getCountryId(),
+                    "postal_code" => $default_billing->getPostcode(),
+                    "state" => $default_billing->getRegion(),
+                    "street" => $default_billing->getStreet(),
+                    "organization" => $default_billing->getCompany()
+                ]
+            ];
+            $this->updateGr4vyBuyer($this->customerSession->getGr4vyBuyerId(), $billing_details);
+        }
+
         return $this->customerSession->getGr4vyBuyerId();
     }
 
@@ -165,6 +184,17 @@ class CartRepositoryInterface
         }
 
         return $result;
+    }
+
+    /**
+     * update gr4vy buyer with billing address detail
+     *
+     */
+    protected function updateGr4vyBuyer($buyer_id, $billing_details)
+    {
+        $buyer_id = $this->buyerApi->updateBuyer($buyer_id, $billing_details);
+
+        return $buyer_id;
     }
 
     /**

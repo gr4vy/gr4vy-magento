@@ -282,7 +282,7 @@ class TransactionRepository implements TransactionRepositoryInterface
 
         if ($transactionSearchResults->getTotalCount() > 0) {
             list($item) = $transactionSearchResults->getItems();
-            return $item->getDataModel();
+            return $item;
         }
 
         return null;

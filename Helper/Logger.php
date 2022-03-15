@@ -93,11 +93,12 @@ class Logger extends AbstractHelper
      * @param array
      * @return void
      */
-    public function logMixed($mixed_data)
+    public function logMixed($mixed_data, $msg = null)
     {
+        $msg = $msg ?? __('Info Array');
         if ($this->gr4vyHelper->isDebugOn()) {
             $this->logger->info(
-                __('Info Array'),
+                $msg,
                 $mixed_data
             );
         }

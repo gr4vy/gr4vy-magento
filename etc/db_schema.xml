@@ -40,6 +40,9 @@
         <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
             <column name="gr4vy_transaction_id"/>
         </index>
+        <index referenceId="GR4VY_TRANSACTION_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
     </table>
     <table name="gr4vy_methods">
         <column xsi:type="int" name="id" nullable="false" identity="true" padding="10" unsigned="true" comment="The unique ID of the payment method."/>
@@ -78,11 +81,20 @@
     </table>
     <table name="quote" resource="checkout" engine="innodb" comment="Sales Quote">
         <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
+        <index referenceId="GR4VY_BUYER_ID" indexType="btree">
+            <column name="gr4vy_buyer_id"/>
+        </index>
     </table>
     <table name="quote_payment" resource="checkout" engine="innodb" comment="Sales Flat Quote Payment">
         <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this quote payment."/>
+        <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
+            <column name="gr4vy_transaction_id"/>
+        </index>
     </table>
     <table name="sales_order_payment" resource="sales" engine="innodb" comment="Sales Flat Order">
         <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this order payment."/>
+        <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
+            <column name="gr4vy_transaction_id"/>
+        </index>
     </table>
 </schema>

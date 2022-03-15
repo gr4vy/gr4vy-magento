@@ -13,6 +13,9 @@ use Magento\Framework\Api\DataObjectHelper;
 
 class Transaction extends \Magento\Framework\Model\AbstractModel
 {
+    const STATUS_AUTH_SUCCEEDED = 'authorization_succeeded';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_REFUNDED = 'refunded';
 
     protected $transactionDataFactory;
 

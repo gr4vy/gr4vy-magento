@@ -40,7 +40,8 @@
             "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_BUYER_ID": true
         },
         "index": {
-            "GR4VY_TRANSACTIONS_GR4VY_TRANSACTION_ID": true
+            "GR4VY_TRANSACTIONS_GR4VY_TRANSACTION_ID": true,
+            "GR4VY_TRANSACTIONS_STATUS": true
         }
     },
     "gr4vy_methods": {
@@ -85,16 +86,25 @@
     "quote": {
         "column": {
             "gr4vy_buyer_id": true
+        },
+        "index": {
+            "QUOTE_GR4VY_BUYER_ID": true
         }
     },
     "quote_payment": {
         "column": {
             "gr4vy_transaction_id": true
+        },
+        "index": {
+            "QUOTE_PAYMENT_GR4VY_TRANSACTION_ID": true
         }
     },
     "sales_order_payment": {
         "column": {
             "gr4vy_transaction_id": true
+        },
+        "index": {
+            "SALES_ORDER_PAYMENT_GR4VY_TRANSACTION_ID": true
         }
     }
 }

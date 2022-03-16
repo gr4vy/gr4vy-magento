@@ -12,19 +12,19 @@
 			<resource ref="Gr4vy_Magento::Buyer_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="GET">
+	<route url="/V1/gr4vy-payment/buyer/:id" method="GET">
 		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="get"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Buyer_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="PUT">
+	<route url="/V1/gr4vy-payment/buyer/:id" method="PUT">
 		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="save"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Buyer_update"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/buyer/:buyerId" method="DELETE">
+	<route url="/V1/gr4vy-payment/buyer/:id" method="DELETE">
 		<service class="Gr4vy\Magento\Api\BuyerRepositoryInterface" method="deleteById"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Buyer_delete"/>
@@ -56,19 +56,19 @@
 			<resource ref="Gr4vy_Magento::Transaction_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="GET">
+	<route url="/V1/gr4vy-payment/transaction/:id" method="GET">
 		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="get"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Transaction_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="PUT">
+	<route url="/V1/gr4vy-payment/transaction/:id" method="PUT">
 		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="save"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Transaction_update"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/transaction/:transactionId" method="DELETE">
+	<route url="/V1/gr4vy-payment/transaction/:id" method="DELETE">
 		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="deleteById"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Transaction_delete"/>
@@ -86,19 +86,19 @@
 			<resource ref="Gr4vy_Magento::Method_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/method/:methodId" method="GET">
+	<route url="/V1/gr4vy-payment/method/:id" method="GET">
 		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="get"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Method_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/method/:methodId" method="PUT">
+	<route url="/V1/gr4vy-payment/method/:id" method="PUT">
 		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="save"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Method_update"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/method/:methodId" method="DELETE">
+	<route url="/V1/gr4vy-payment/method/:id" method="DELETE">
 		<service class="Gr4vy\Magento\Api\MethodRepositoryInterface" method="deleteById"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Method_delete"/>
@@ -116,19 +116,19 @@
 			<resource ref="Gr4vy_Magento::Service_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/service/:serviceId" method="GET">
+	<route url="/V1/gr4vy-payment/service/:id" method="GET">
 		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="get"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Service_view"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/service/:serviceId" method="PUT">
+	<route url="/V1/gr4vy-payment/service/:id" method="PUT">
 		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="save"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Service_update"/>
 		</resources>
 	</route>
-	<route url="/V1/gr4vy-payment/service/:serviceId" method="DELETE">
+	<route url="/V1/gr4vy-payment/service/:id" method="DELETE">
 		<service class="Gr4vy\Magento\Api\ServiceRepositoryInterface" method="deleteById"/>
 		<resources>
 			<resource ref="Gr4vy_Magento::Service_delete"/>

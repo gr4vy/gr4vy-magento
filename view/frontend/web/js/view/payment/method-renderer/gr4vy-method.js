@@ -8,11 +8,12 @@ define(
         'mage/translate',
         'Magento_Checkout/js/model/error-processor',
         'Magento_Customer/js/model/customer',
+        'Magento_Customer/js/customer-data',
         'Magento_Ui/js/model/messageList',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Ui/js/modal/alert'
     ],
-    function (Component, quote, urlBuilder, storage, url, $t, errorProcessor, customer, globalMessageList, fullScreenLoader, alertModal) {
+    function (Component, quote, urlBuilder, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, fullScreenLoader, alertModal) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -44,6 +45,7 @@ define(
                         gr4vy.setup({
                             gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
                             buyerId: buyer_id,
+                            externalIdentifier: window.checkoutConfig.quoteData.entity_id,
                             environment: window.checkoutConfig.payment.gr4vy.environment,
                             element: ".container",
                             form: "#co-payment-form",
@@ -52,6 +54,7 @@ define(
                             country: window.checkoutConfig.originCountryCode,
                             token: embed_token,
                             intent: window.checkoutConfig.payment.gr4vy.intent,
+                            cartItems: This.getCartItemsData(),
                             onEvent: (eventName, data) => {
                                 if (eventName === 'agumentError') {
                                     console.log(data)
@@ -102,6 +105,30 @@ define(
                     }
                 );
 
+            },
+            /**
+             * NOTE: allowed product types are : 'physical', 'discount', 'shipping_fee', 'sales_tax', 'digital', 'gift_card', 'store_credit', 'surcharge'
+             *
+             * @returns [Array]
+             */
+            getCartItemsData: function () {
+                var cartObject = customerData.get('cart')();
+                if (cartObject && cartObject.items) {
+                    var cartItemsData = cartObject.items.map(function(item) {
+                        return {
+                            name: item.product_name,
+                            quantity: item.qty,
+                            unitAmount: item.product_price_value * 100,
+                            sku: item.product_sku,
+                            productUrl: item.product_url,
+                            productType: 'physical'
+                        }
+                    });
+
+                    return cartItemsData;
+                }
+
+                return [];
             },
             /**
              * @returns {Object}

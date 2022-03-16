@@ -12,8 +12,7 @@ use Gr4vy\Magento\Api\Data\BuyerInterface;
 class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements BuyerInterface
 {
     /**
-     * Get Id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -21,9 +20,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Set Id
-     * @param string $id
-     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     * {@inheritdoc}
      */
     public function setId($id)
     {
@@ -31,8 +28,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Get buyer_id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getBuyerId()
     {
@@ -40,9 +36,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Set buyer_id
-     * @param string $buyerId
-     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     * {@inheritdoc}
      */
     public function setBuyerId($buyerId)
     {
@@ -50,8 +44,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Get external_identifier
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getExternalIdentifier()
     {
@@ -59,9 +52,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Set external_identifier
-     * @param string $external_identifier
-     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     * {@inheritdoc}
      */
     public function setExternalIdentifier($external_identifier)
     {
@@ -69,8 +60,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Get display_name
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getDisplayName()
     {
@@ -78,9 +68,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Set display_name
-     * @param string $display_name
-     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     * {@inheritdoc}
      */
     public function setDisplayName($display_name)
     {
@@ -88,8 +76,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Retrieve existing extension attributes object or create a new one.
-     * @return \Gr4vy\Magento\Api\Data\BuyerExtensionInterface|null
+     * {@inheritdoc}
      */
     public function getExtensionAttributes()
     {
@@ -97,9 +84,7 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     }
 
     /**
-     * Set an extension attributes object.
-     * @param \Gr4vy\Magento\Api\Data\BuyerExtensionInterface $extensionAttributes
-     * @return $this
+     * {@inheritdoc}
      */
     public function setExtensionAttributes(
         \Gr4vy\Magento\Api\Data\BuyerExtensionInterface $extensionAttributes

@@ -62,6 +62,10 @@ class Buyer extends Base
             if ($billing_address['address']['state']) {
                 $address->setState($billing_address['address']['state']);
             }
+            else {
+                // set state to country to fix gr4vy server error - suggested by Gr4vy
+                $address->setState($billing_address['address']['country']);
+            }
             $address->setLine1($billing_address['address']['street'][0]);
             $address->setLine2($billing_address['address']['street'][1]);
             $address->setOrganization($billing_address['address']['organization']);

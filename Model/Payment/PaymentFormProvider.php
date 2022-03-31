@@ -54,6 +54,11 @@ class PaymentFormProvider implements ConfigProviderInterface
     public function getConfig()
     {
         $buyer_id = $this->cart->getQuote()->getData('gr4vy_buyer_id');
+        $external_identifier = $this->cart->getQuote()->getData('entity_id');
+        $store = $this->gr4vyHelper->getGr4vyPaymentStore() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_STORE_ASK
+            ? $this->gr4vyHelper->getGr4vyPaymentStore()
+            : boolval($this->gr4vyHelper->getGr4vyPaymentStore());
+
         $config = [
             'payment' => [
                 'gr4vy' => [
@@ -61,7 +66,8 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'gr4vy_id' => $this->gr4vyHelper->getGr4vyId(),
                     'environment' => $this->gr4vyHelper->getGr4vyEnvironment(),
                     'buyer_id' => $buyer_id,
-                    'store' => $this->gr4vyHelper->getGr4vyPaymentStore(),
+                    'store' => $store,
+                    'external_identifier' => $external_identifier,
                     'description' => $this->gr4vyHelper->getPaymentInstructions(),
                     'intent' => $this->gr4vyHelper->getGr4vyIntent(),
                     'isActive' => $this->gr4vyHelper->isEnabled()

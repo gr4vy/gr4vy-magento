@@ -45,8 +45,9 @@ define(
                         gr4vy.setup({
                             gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
                             buyerId: buyer_id,
-                            externalIdentifier: window.checkoutConfig.quoteData.entity_id,
+                            externalIdentifier: window.checkoutConfig.payment.gr4vy.external_identifier,
                             environment: window.checkoutConfig.payment.gr4vy.environment,
+                            store: window.checkoutConfig.payment.gr4vy.store,
                             element: ".container",
                             form: "#co-payment-form",
                             amount: parseInt(parseFloat(amount)*100),

@@ -173,12 +173,13 @@ class Customer extends AbstractHelper
     {
         $customer = $this->getCurrentCustomer();
         $gr4vy_buyer_id = $this->getGr4vyBuyerId();
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId());
 
         if ($default_billing = $customer->getDefaultBillingAddress()) {
             $billing_details = [
                 "first_name" => $default_billing->getFirstname(),
                 "last_name" => $default_billing->getLastname(),
-                "email_address" => $customer->getEmailAddress(),
+                "email_address" => $customer->getEmail(),
                 "phone_number" => $default_billing->getTelephone(),
                 "address" => [
                     "city" => $default_billing->getCity(),
@@ -190,7 +191,12 @@ class Customer extends AbstractHelper
                 ]
             ];
 
-            $this->updateGr4vyBuyer($gr4vy_buyer_id, $billing_details);
+            if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {
+                $this->updateGr4vyBuyer($gr4vy_buyer_id, $billing_details);
+
+                // save billing_details to gr4vy_buyers table
+                $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));
+            }
         }
     }
 

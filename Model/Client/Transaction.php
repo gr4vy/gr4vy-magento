@@ -112,7 +112,11 @@ class Transaction extends Base
             $model = $this->getApiInstance()->getTransaction($transaction_id);
             return $model->getStatus();
         }
+        catch (\Gr4vy\ApiException $e) {
+            echo($e->getMessage());
+        }
         catch (\Exception $e) {
+            // default behavior
             $this->gr4vyLogger->logException($e);
         }
     }

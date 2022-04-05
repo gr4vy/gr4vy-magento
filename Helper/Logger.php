@@ -14,7 +14,8 @@ class Logger extends AbstractHelper
 {
     private $expected_error_msgs = array(
         'No such entity with cartId' => 'Quote not available',
-        '409 Conflict' => 'Request conflicts with existing record'
+        '409 Conflict' => 'Request conflicts with existing record',
+        'not_found' => 'The resource could not be found'
     );
     /**
      * @var LoggerInterface

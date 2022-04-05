@@ -67,6 +67,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
         $requestBody = $this->getRequest()->getContent();
         $request = json_decode($requestBody);
 
+        // validate request body
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->gr4vyLogger->logMixed(
                 ['request' => $requestBody],
@@ -77,7 +78,20 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
             return $result;
         }
 
-        if ($request->type !== 'event') {
+        if (!property_exists($request, 'type')
+            || $request->type !== 'event') {
+            $this->gr4vyLogger->logMixed(
+                ['request' => $requestBody],
+                __('A Webhook request was received with an invalid entity type of "%1"', $request->type)
+            );
+
+            $result->setHttpResponseCode(422);
+            return $result;
+        }
+
+        if (!property_exists($request, 'resource')
+            || !property_exists($request->resource, 'type')
+            || $request->resource->type !== 'transaction') {
             $this->gr4vyLogger->logMixed(
                 ['request' => $requestBody],
                 __('A Webhook request was received with an invalid entity type of "%1"', $request->type)
@@ -89,7 +103,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
 
 
         try {
-            $gr4vy_transaction_id = $request->target->id;
+            $gr4vy_transaction_id = $request->resource->id;
             $statuses = $this->gr4vyOrder->getGr4vyTransactionStatuses();
             if ($gr4vy_status = $this->transactionApi->getStatus($gr4vy_transaction_id)) {
                 $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);

@@ -78,6 +78,22 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     /**
      * {@inheritdoc}
      */
+    public function getBillingAddress()
+    {
+        return $this->_get(self::BILLING_ADDRESS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBillingAddress($billing_address)
+    {
+        return $this->setData(self::BILLING_ADDRESS, $billing_address);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getExtensionAttributes()
     {
         return $this->_getExtensionAttributes();

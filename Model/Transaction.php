@@ -13,8 +13,22 @@ use Magento\Framework\Api\DataObjectHelper;
 
 class Transaction extends \Magento\Framework\Model\AbstractModel
 {
-    const STATUS_AUTH_SUCCEEDED = 'authorization_succeeded';
     const STATUS_PROCESSING = 'processing';
+    const STATUS_PROCESSING_FAILED = 'processing_failed';
+    const STATUS_AUTHORIZATION_PENDING = "authorization_pending";
+    const STATUS_AUTH_SUCCEEDED = 'authorization_succeeded';
+    const STATUS_AUTHORIZATION_DECLINED = 'authorization_declined';
+    const STATUS_AUTHORIZATION_FAILED = 'authorization_failed';
+    const STATUS_AUTHORIZATION_VOIDED = 'authorization_voided';
+    const STATUS_AUTHORIZATION_EXPIRED = 'authorization_expired';
+    const STATUS_CAPTURE_PENDING = 'capture_pending';
+    const STATUS_CAPTURE_DECLINED = 'capture_declined';
+    const STATUS_CAPTURE_FAILED = 'capture_failed';
+    const STATUS_CAPTURE_SUCCEEDED = 'capture_succeeded';
+    const STATUS_REFUND_SUCCEEDED = 'refund_succeeded';
+    const STATUS_REFUND_PENDING = 'refund_pending';
+    const STATUS_REFUND_DECLINED = 'refund_declined';
+    const STATUS_REFUND_FAILED = 'refund_failed';
     const STATUS_REFUNDED = 'refunded';
 
     protected $transactionDataFactory;

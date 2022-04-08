@@ -42,6 +42,7 @@ define(
                         var embed_token = response[0];
                         var amount = response[1];
                         var buyer_id = response[2];
+
                         gr4vy.setup({
                             gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
                             buyerId: buyer_id,
@@ -56,6 +57,9 @@ define(
                             token: embed_token,
                             intent: window.checkoutConfig.payment.gr4vy.intent,
                             cartItems: This.getCartItemsData(),
+                            metadata: {
+                                "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
+                            },
                             onEvent: (eventName, data) => {
                                 if (eventName === 'agumentError') {
                                     console.log(data)

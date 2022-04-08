@@ -70,7 +70,8 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'external_identifier' => $external_identifier,
                     'description' => $this->gr4vyHelper->getPaymentInstructions(),
                     'intent' => $this->gr4vyHelper->getGr4vyIntent(),
-                    'isActive' => $this->gr4vyHelper->isEnabled()
+                    'isActive' => $this->gr4vyHelper->isEnabled(),
+                    'custom_data' => $this->gr4vyHelper->getGr4vyCustomData()
                 ]
             ]
         ];

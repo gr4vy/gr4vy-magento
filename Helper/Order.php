@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Helper;
 
-use Gr4vy\Magento\Model\Transaction;
+use Gr4vy\model\Transaction;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory;
 

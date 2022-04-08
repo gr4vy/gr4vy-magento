@@ -108,6 +108,14 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
             if ($gr4vy_status = $this->transactionApi->getStatus($gr4vy_transaction_id)) {
                 $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
 
+                if (!isset($dataModel)) {
+                    $this->gr4vyLogger->logMixed(
+                        [],
+                        __('Cannot find transaction "%1"', $gr4vy_transaction_id)
+                    );
+                    return $result;
+                }
+
                 if (in_array($gr4vy_status, $statuses['cancel'])) {
                     $this->gr4vyOrder->cancelOrderByGr4vyTransactionId($dataModel->getGr4vyTransactionId());
                 }

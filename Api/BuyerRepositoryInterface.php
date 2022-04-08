@@ -24,11 +24,11 @@ interface BuyerRepositoryInterface
 
     /**
      * Retrieve Buyer
-     * @param string $buyerId
+     * @param string $id
      * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function get($buyerId);
+    public function get($id);
 
     /**
      * retrieve buyer by external_identifier
@@ -60,11 +60,11 @@ interface BuyerRepositoryInterface
 
     /**
      * Delete Buyer by ID
-     * @param string $buyerId
+     * @param string $id
      * @return bool true on success
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function deleteById($buyerId);
+    public function deleteById($id);
 }
 

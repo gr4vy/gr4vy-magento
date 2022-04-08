@@ -6,7 +6,8 @@
             "display_name": true,
             "created_at": true,
             "updated_at": true,
-            "buyer_id": true
+            "buyer_id": true,
+            "billing_address": true
         },
         "constraint": {
             "PRIMARY": true,
@@ -39,7 +40,8 @@
             "GR4VY_TRANSACTIONS_BUYER_ID_GR4VY_BUYERS_BUYER_ID": true
         },
         "index": {
-            "GR4VY_TRANSACTIONS_GR4VY_TRANSACTION_ID": true
+            "GR4VY_TRANSACTIONS_GR4VY_TRANSACTION_ID": true,
+            "GR4VY_TRANSACTIONS_STATUS": true
         }
     },
     "gr4vy_methods": {
@@ -54,7 +56,8 @@
             "external_identifier": true,
             "expiration_date": true,
             "approval_url": true,
-            "environment": true
+            "environment": true,
+            "method_id": true
         },
         "constraint": {
             "PRIMARY": true
@@ -73,7 +76,8 @@
             "updated_at": true,
             "active": true,
             "position": true,
-            "environment": true
+            "environment": true,
+            "service_id": true
         },
         "constraint": {
             "PRIMARY": true
@@ -82,16 +86,25 @@
     "quote": {
         "column": {
             "gr4vy_buyer_id": true
+        },
+        "index": {
+            "QUOTE_GR4VY_BUYER_ID": true
         }
     },
     "quote_payment": {
         "column": {
             "gr4vy_transaction_id": true
+        },
+        "index": {
+            "QUOTE_PAYMENT_GR4VY_TRANSACTION_ID": true
         }
     },
     "sales_order_payment": {
         "column": {
             "gr4vy_transaction_id": true
+        },
+        "index": {
+            "SALES_ORDER_PAYMENT_GR4VY_TRANSACTION_ID": true
         }
     }
 }

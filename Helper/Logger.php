@@ -14,7 +14,8 @@ class Logger extends AbstractHelper
 {
     private $expected_error_msgs = array(
         'No such entity with cartId' => 'Quote not available',
-        '409 Conflict' => 'Request conflicts with existing record'
+        '409 Conflict' => 'Request conflicts with existing record',
+        'not_found' => 'The resource could not be found'
     );
     /**
      * @var LoggerInterface
@@ -52,10 +53,7 @@ class Logger extends AbstractHelper
 
             $original_message = $e->getMessage();
             if ($translated_message = $this->translateErrorMsg($original_message)) {
-                $this->logger->error(
-                    __('Recognized Error :'),
-                    [ 'detail' => $translated_message ]
-                );
+                $this->logger->error(__('Recognized Error :'), ['msg' => $translated_message]);
             }
             else {
                 $this->logger->error(
@@ -96,11 +94,12 @@ class Logger extends AbstractHelper
      * @param array
      * @return void
      */
-    public function logMixed($mixed_data)
+    public function logMixed($mixed_data, $msg = null)
     {
+        $msg = $msg ?? __('Info Array');
         if ($this->gr4vyHelper->isDebugOn()) {
             $this->logger->info(
-                __('Info Array'),
+                $msg,
                 $mixed_data
             );
         }

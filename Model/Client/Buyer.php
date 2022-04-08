@@ -9,6 +9,10 @@ namespace Gr4vy\Magento\Model\Client;
 
 use Gr4vy\api\BuyersApi;
 use Gr4vy\model\BuyerRequest;
+use Gr4vy\model\BuyerUpdate;
+use Gr4vy\model\BillingDetailsUpdateRequest;
+use Gr4vy\model\AddressUpdate;
+use Gr4vy\model\Tax;
 
 class Buyer extends Base
 {
@@ -22,6 +26,60 @@ class Buyer extends Base
     {
         try {
             return new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
+        }
+        catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
+    /**
+     * update existing Gr4vy buyer
+     *
+     * @param string
+     * @param string
+     * @param array
+     * @return array
+     */
+    public function updateBuyer($buyer_id, $billing_address)
+    {
+        $buyer_update = new BuyerUpdate();
+        $billing_details = new BillingDetailsUpdateRequest();
+        try {
+            $billing_details->setFirstName($billing_address['first_name']);
+            $billing_details->setLastName($billing_address['last_name']);
+            $billing_details->setEmailAddress($billing_address['email_address']);
+            //$billing_details->setPhoneNumber($billing_address['phone_number']);
+        }
+        catch (\InvalidArgumentException $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+
+        $address = new AddressUpdate();
+        try {
+            $address->setCity($billing_address['address']['city']);
+            $address->setCountry($billing_address['address']['country']);
+            $address->setPostalCode($billing_address['address']['postal_code']);
+            if ($billing_address['address']['state']) {
+                $address->setState($billing_address['address']['state']);
+            }
+            else {
+                // set state to country to fix gr4vy server error - suggested by Gr4vy
+                $address->setState($billing_address['address']['country']);
+            }
+            $address->setLine1($billing_address['address']['street'][0]);
+            $address->setLine2($billing_address['address']['street'][1]);
+            $address->setOrganization($billing_address['address']['organization']);
+        }
+        catch (\InvalidArgumentException $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+
+        try {
+            $billing_details->setAddress($address);
+            $buyer_update->setBillingDetails($billing_details);
+            $buyer = $this->getApiInstance()->updateBuyer($buyer_id, $buyer_update);
+
+            return $buyer;
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

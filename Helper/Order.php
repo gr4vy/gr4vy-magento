@@ -75,9 +75,10 @@ class Order extends AbstractHelper
             Transaction::STATUS_PROCESSING,
             Transaction::STATUS_CAPTURE_PENDING,
             Transaction::STATUS_AUTHORIZATION_SUCCEEDED,
-            Transaction::STATUS_AUTHORIZATION_PENDING
+            Transaction::STATUS_AUTHORIZATION_PENDING,
+            Transaction::STATUS_BUYER_APPROVAL_SUCCEEDED,
+            Transaction::STATUS_BUYER_APPROVAL_PENDING
         ];
-
         $cancel_statuses = [
             Transaction::STATUS_PROCESSING_FAILED,
             Transaction::STATUS_CAPTURE_DECLINED,
@@ -85,7 +86,13 @@ class Order extends AbstractHelper
             Transaction::STATUS_AUTHORIZATION_DECLINED,
             Transaction::STATUS_AUTHORIZATION_FAILED,
             Transaction::STATUS_AUTHORIZATION_VOIDED,
-            Transaction::STATUS_AUTHORIZATION_EXPIRED
+            Transaction::STATUS_AUTHORIZATION_EXPIRED,
+            Transaction::STATUS_AUTHORIZATION_VOID_PENDING,
+            Transaction::STATUS_AUTHORIZATION_VOID_DECLINED,
+            Transaction::STATUS_AUTHORIZATION_VOID_FAILED,
+            Transaction::STATUS_BUYER_APPROVAL_DECLINED,
+            Transaction::STATUS_BUYER_APPROVAL_FAILED,
+            Transaction::STATUS_BUYER_APPROVAL_TIMEDOUT
         ];
         $success_statuses = [
             Transaction::STATUS_CAPTURE_SUCCEEDED

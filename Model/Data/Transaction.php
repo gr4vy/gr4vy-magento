@@ -11,10 +11,8 @@ use Gr4vy\Magento\Api\Data\TransactionInterface;
 
 class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implements TransactionInterface
 {
-
     /**
-     * Get transaction_id
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getTransactionId()
     {
@@ -22,9 +20,7 @@ class Transaction extends \Magento\Framework\Api\AbstractExtensibleObject implem
     }
 
     /**
-     * Set transaction_id
-     * @param string $transactionId
-     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
+     * {@inheritdoc}
      */
     public function setTransactionId($transactionId)
     {

@@ -113,7 +113,7 @@ class Transaction extends Base
             return $model->getStatus();
         }
         catch (\Gr4vy\ApiException $e) {
-            echo($e->getMessage());
+            print_r($e->getMessage());
         }
         catch (\Exception $e) {
             // default behavior

@@ -85,8 +85,13 @@ class Buyer extends Base
     public function getBuyer($id)
     {
         $id = strval($id);
-        list($buyer) = $this->listBuyers($id)->getItems();
+        $buyers = $this->listBuyers($id)->getItems();
 
-        return $buyer;
+        if (is_array($buyers) && count($buyers) > 0) {
+            list($buyer) = $buyers;
+            return $buyer;
+        }
+
+        return false;
     }
 }

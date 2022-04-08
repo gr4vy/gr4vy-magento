@@ -89,6 +89,12 @@ class CartRepositoryInterface
         if ($this->gr4vyHelper->checkGr4vyReady()) {
             $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
         }
+        // NOTE: additional fix for multishipping checkout issue - somehow it affected gr4vy https://github.com/magento/magento2/pull/26637
+        // issue in vendor/magento/module-quote/Model/QuoteAddressValidator.php [function] validateForCart
+        // when customer logged in, $cart->getCustomerIsGuest() still return true
+        if ($quote->getCustomer() && $quote->getCustomer()->getId()) {
+            $quote->setCustomerIsGuest(false);
+        }
 
         $result = $proceed($quote);
 
@@ -149,11 +155,12 @@ class CartRepositoryInterface
         }
         else {
             $result[1] = $buyerModel->getBuyerId();
-            $verifier = $this->buyerApi->getBuyer($buyerModel->getExternalIdentifier());
-            if ($buyerModel->getBuyerId() != $verifier->getId()) {
-                // remove faulty record
-                $this->buyerRepository->delete($buyerModel);
-                $result[0] = true;
+            if ($verifier = $this->buyerApi->getBuyer($buyerModel->getExternalIdentifier())) {
+                if ($buyerModel->getBuyerId() != $verifier->getId()) {
+                    // remove faulty record
+                    $this->buyerRepository->delete($buyerModel);
+                    $result[0] = true;
+                }
             }
         }
 
@@ -172,8 +179,9 @@ class CartRepositoryInterface
         $buyer_id = $this->buyerApi->createBuyer($external_identifier, $display_name);
 
         if ($buyer_id == Gr4vyBuyer::ERROR_DUPLICATE) {
-            $buyer = $this->buyerApi->getBuyer($external_identifier);
-            $buyer_id = $buyer->getId();
+            if ($buyer = $this->buyerApi->getBuyer($external_identifier)) {
+                $buyer_id = $buyer->getId();
+            }
         }
 
         return $buyer_id;

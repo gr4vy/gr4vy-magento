@@ -67,7 +67,12 @@ class Buyer extends Base
                 $address->setState($billing_address['address']['country']);
             }
             $address->setLine1($billing_address['address']['street'][0]);
-            $address->setLine2($billing_address['address']['street'][1]);
+            if (isset($billing_address['address']['street'][1])) {
+                $address->setLine2($billing_address['address']['street'][1]);
+            }
+            else {
+                $address->setLine2('');
+            }
             $address->setOrganization($billing_address['address']['organization']);
         }
         catch (\InvalidArgumentException $e) {

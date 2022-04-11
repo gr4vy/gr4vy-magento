@@ -11,7 +11,7 @@ use Gr4vy\api\BuyersApi;
 use Gr4vy\model\BuyerRequest;
 use Gr4vy\model\BuyerUpdate;
 use Gr4vy\model\BillingDetailsUpdateRequest;
-use Gr4vy\model\AddressUpdate;
+use Gr4vy\model\Address as AddressUpdate;
 use Gr4vy\model\Tax;
 
 class Buyer extends Base

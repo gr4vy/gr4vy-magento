@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Model\Source;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
+
 class PrivateKey extends \Magento\Config\Model\Config\Backend\File
 {
     const UPLOAD_DIR = 'gr4vy';
@@ -37,5 +39,18 @@ class PrivateKey extends \Magento\Config\Model\Config\Backend\File
     public function getPrivateKeyDirAbsolutePath()
     {
         return $this->getUploadDirPath($this->getUploadDir());
+    }
+
+    /**
+     * Retrieve upload directory path
+     *
+     * @param string $uploadDir
+     * @return string
+     * @since 100.1.0
+     */
+    protected function getUploadDirPath($uploadDir)
+    {
+        $this->_mediaDirectory = $this->_filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        return $this->_mediaDirectory->getAbsolutePath($uploadDir);
     }
 }

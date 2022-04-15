@@ -53,8 +53,9 @@ class Base
     {
         $gr4vy_id = $this->gr4vyHelper->getGr4vyId();
         $private_key = $this->getPrivateKey();
+        $environment = $this->gr4vyHelper->getGr4vyEnvironment();
 
-        return new \Gr4vy\Gr4vyConfig($gr4vy_id, $private_key);
+        return new \Gr4vy\Gr4vyConfig($gr4vy_id, $private_key, false, $environment);
     }
     
     /**

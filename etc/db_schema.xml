@@ -5,6 +5,7 @@
         <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records - for Magento 2, it customer entity_id."/>
         <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
         <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="A unique name for this buyer which is used in the Gr4vy admin panel to give a buyer a human readable name."/>
+        <column xsi:type="text" name="billing_address" comment="billing address detail in JSON format"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was created in system."/>
         <column xsi:type="timestamp" name="updated_at" nullable="false" on_update="true" default="CURRENT_TIMESTAMP" comment="The date and time when this buyer was last updated in system."/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
@@ -38,6 +39,9 @@
         <!--<constraint xsi:type="foreign" referenceId="GR4VY_BUYERS_ID_GR4VY_TRANSACTIONS_BUYER_ID" table="gr4vy_transactions" column="buyer_id" referenceTable="gr4vy_buyers" referenceColumn="buyer_id" onDelete="CASCADE"/>-->
         <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
             <column name="gr4vy_transaction_id"/>
+        </index>
+        <index referenceId="GR4VY_TRANSACTION_STATUS" indexType="btree">
+            <column name="status"/>
         </index>
     </table>
     <table name="gr4vy_methods">
@@ -77,11 +81,20 @@
     </table>
     <table name="quote" resource="checkout" engine="innodb" comment="Sales Quote">
         <column xsi:type="varchar" name="gr4vy_buyer_id" length="50" nullable="false" comment="The unique Gr4vy Buyer ID for this quote."/>
+        <index referenceId="GR4VY_BUYER_ID" indexType="btree">
+            <column name="gr4vy_buyer_id"/>
+        </index>
     </table>
     <table name="quote_payment" resource="checkout" engine="innodb" comment="Sales Flat Quote Payment">
         <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this quote payment."/>
+        <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
+            <column name="gr4vy_transaction_id"/>
+        </index>
     </table>
     <table name="sales_order_payment" resource="sales" engine="innodb" comment="Sales Flat Order">
         <column xsi:type="varchar" name="gr4vy_transaction_id" length="50" nullable="false" comment="The unique Gr4vy Transaction ID for this order payment."/>
+        <index referenceId="GR4VY_TRANSACTION_ID" indexType="btree">
+            <column name="gr4vy_transaction_id"/>
+        </index>
     </table>
 </schema>

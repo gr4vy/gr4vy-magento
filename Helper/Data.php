@@ -21,6 +21,8 @@ class Data extends AbstractHelper
     const GR4VY_INTENT = 'payment/gr4vy/payment_action';
     const GR4VY_ORDER_STATUS = 'payment/gr4vy/order_status';
     const GR4VY_ENV = 'payment/gr4vy/environment';
+    const GR4VY_STORE = 'payment/gr4vy/payment_store';
+    const GR4VY_CUSTOM_DATA = 'payment/gr4vy/custom_data';
 
     /**
      * @var ScopeConfigInterface
@@ -123,6 +125,26 @@ class Data extends AbstractHelper
     public function getGr4vyEnvironment()
     {
         return (string) $this->scopeConfig->getValue(self::GR4VY_ENV, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve Gr4vy Store action
+     *
+     * @return string
+     */
+    public function getGr4vyPaymentStore()
+    {
+        return (string) $this->scopeConfig->getValue(self::GR4VY_STORE, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve Gr4vy custom data action
+     *
+     * @return string
+     */
+    public function getGr4vyCustomData()
+    {
+        return (string) $this->scopeConfig->getValue(self::GR4VY_CUSTOM_DATA, ScopeInterface::SCOPE_STORE);
     }
 
     /**

@@ -9,10 +9,11 @@ namespace Gr4vy\Magento\Api\Data;
 
 interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-    const ID = 'buyer_id';
+    const ID = 'id';
     const EXTERNAL_IDENTIFIER = 'external_identifier';
     const BUYER_ID = 'buyer_id';
     const DISPLAY_NAME = 'display_name';
+    const BILLING_ADDRESS = 'billing_address';
 
     /**
      * Get id
@@ -65,6 +66,19 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      */
     public function setDisplayName($display_name);
+
+    /**
+     * Get billing_address
+     * @return string|null
+     */
+    public function getBillingAddress();
+
+    /**
+     * Set billing_address
+     * @param string $billing_address
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     */
+    public function setBillingAddress($billing_address);
 
     /**
      * Retrieve existing extension attributes object or create a new one.

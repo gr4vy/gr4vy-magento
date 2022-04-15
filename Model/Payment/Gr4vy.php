@@ -17,6 +17,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     const PAYMENT_TYPE_AUTH = 'authorize';
     const PAYMENT_TYPE_AUCAP = 'capture';
     const PAYMENT_METHOD_CODE = 'gr4vy';
+    const PAYMENT_STORE_ASK = 'ask';
+    const PAYMENT_STORE_YES = true;
+    const PAYMENT_STORE_NO = false;
 
     /**
      * @var string

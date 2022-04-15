@@ -13,6 +13,31 @@ use Magento\Framework\Api\DataObjectHelper;
 
 class Transaction extends \Magento\Framework\Model\AbstractModel
 {
+    const TYPE_TRANSACTION = 'transaction';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_PROCESSING_FAILED = 'processing_failed';
+    const STATUS_CAPTURE_SUCCEEDED = 'capture_succeeded';
+    const STATUS_CAPTURE_PENDING = 'capture_pending';
+    const STATUS_CAPTURE_DECLINED = 'capture_declined';
+    const STATUS_CAPTURE_FAILED = 'capture_failed';
+    const STATUS_AUTHORIZATION_SUCCEEDED = 'authorization_succeeded';
+    const STATUS_AUTHORIZATION_PENDING = 'authorization_pending';
+    const STATUS_AUTHORIZATION_DECLINED = 'authorization_declined';
+    const STATUS_AUTHORIZATION_FAILED = 'authorization_failed';
+    const STATUS_AUTHORIZATION_EXPIRED = 'authorization_expired';
+    const STATUS_AUTHORIZATION_VOIDED = 'authorization_voided';
+    const STATUS_AUTHORIZATION_VOID_PENDING = 'authorization_void_pending';
+    const STATUS_AUTHORIZATION_VOID_DECLINED = 'authorization_void_declined';
+    const STATUS_AUTHORIZATION_VOID_FAILED = 'authorization_void_failed';
+    const STATUS_REFUND_SUCCEEDED = 'refund_succeeded';
+    const STATUS_REFUND_PENDING = 'refund_pending';
+    const STATUS_REFUND_DECLINED = 'refund_declined';
+    const STATUS_REFUND_FAILED = 'refund_failed';
+    const STATUS_BUYER_APPROVAL_SUCCEEDED = 'buyer_approval_succeeded';
+    const STATUS_BUYER_APPROVAL_PENDING = 'buyer_approval_pending';
+    const STATUS_BUYER_APPROVAL_DECLINED = 'buyer_approval_declined';
+    const STATUS_BUYER_APPROVAL_FAILED = 'buyer_approval_failed';
+    const STATUS_BUYER_APPROVAL_TIMEDOUT = 'buyer_approval_timedout';
 
     protected $transactionDataFactory;
 

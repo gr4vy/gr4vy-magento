@@ -130,10 +130,39 @@ define(
                         }
                     });
 
+                    // calculate shipping method
+                    var shipping_fee = this.calculateShippingFee();
+                    if (typeof shipping_fee.unitAmount !== "undefied") {
+                        cartItemsData.push(shipping_fee);
+                    }
+
+                    console.log(cartItemsData);
+
                     return cartItemsData;
                 }
 
                 return [];
+            },
+            calculateShippingFee: function () {
+                var selected_shipping_method = window.checkoutConfig.selectedShippingMethod;
+                if (false) {
+                    // TODO when multi shipping address is supported, need to calculate it
+                }
+                else {
+                    var fee = {};
+                    if (selected_shipping_method.amount) {
+                        fee = {
+                            name: selected_shipping_method.method_title,
+                            quantity: 1,
+                            unitAmount: selected_shipping_method.amount * 100,
+                            sku: selected_shipping_method.method_code,
+                            productUrl: '',
+                            productType: 'shipping_fee'
+                        }
+                    }
+                }
+
+                return fee;
             },
             /**
              * @returns {Object}

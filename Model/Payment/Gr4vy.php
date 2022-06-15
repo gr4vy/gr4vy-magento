@@ -110,6 +110,9 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
     protected $transactionApi;
 
     /**
+     * @param Gr4vyHelper $gr4vyHelper
+     * @param Gr4vyLogger $gr4vyLogger
+     * @param TransactionApi $transactionApi
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -121,12 +124,12 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
      * @param DirectoryHelper $directory
-     * @param Gr4vyHelper $gr4vyHelper
-     * @param Gr4vyLogger $gr4vyLogger
-     * @param TransactionApi $transactionApi
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
+        Gr4vyHelper $gr4vyHelper,
+        Gr4vyLogger $gr4vyLogger,
+        TransactionApi $transactionApi,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
@@ -136,11 +139,8 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        DirectoryHelper $directory = null,
-        Gr4vyHelper $gr4vyHelper,
-        Gr4vyLogger $gr4vyLogger,
-        TransactionApi $transactionApi,
-        array $data = []
+        array $data = [],
+        DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,
@@ -154,6 +154,7 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
             $resourceCollection,
             $data
         );
+
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->transactionApi = $transactionApi;

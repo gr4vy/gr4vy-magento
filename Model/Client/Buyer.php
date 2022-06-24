@@ -25,11 +25,13 @@ class Buyer extends Base
     public function getApiInstance()
     {
         try {
-            return new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
+            $api_instance =  new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
         }
+
+        return $api_instance;
     }
 
     /**

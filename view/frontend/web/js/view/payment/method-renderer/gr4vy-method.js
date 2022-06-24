@@ -156,7 +156,7 @@ define(
                             quantity: 1,
                             unitAmount: selected_shipping_method.amount * 100,
                             sku: selected_shipping_method.method_code,
-                            productUrl: '',
+                            productUrl: BASE_URL,
                             productType: 'shipping_fee'
                         }
                     }

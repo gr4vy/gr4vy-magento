@@ -145,6 +145,10 @@ define(
             },
             calculateShippingFee: function () {
                 var selected_shipping_method = window.checkoutConfig.selectedShippingMethod;
+                if (selected_shipping_method === null) {
+                    // 2.4.4 compatibility fix
+                    selected_shipping_method = quote.shippingMethod();
+                }
                 if (false) {
                     // TODO when multi shipping address is supported, need to calculate it
                 }

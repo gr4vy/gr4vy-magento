@@ -29,7 +29,15 @@ class Embed extends Base
             );
             $token = $this->getGr4vyConfig()->getEmbedToken($embed_params);
             $this->gr4vyLogger->logMixed($embed_params);
-            return $token->toString();
+
+            if (is_object($token)) {
+                $token_str = $token->toString();
+            }
+            else {
+                $token_str = (string) $token;
+            }
+
+            return $token_str;
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

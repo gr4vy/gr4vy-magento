@@ -15,7 +15,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.2.0",
         "ext-hash": "*",
         "ext-json": "*",
         "magento/framework": ">=101 <104",
@@ -25,7 +24,7 @@
         "magento/module-config": ">=100 <103",
         "magento/module-payment": "100.*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": ">=0.12.0"
+        "gr4vy/gr4vy-php": ">=0.13.0"
     },
     "autoload": {
         "files": [

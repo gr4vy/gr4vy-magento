@@ -1,0 +1,14 @@
+<?php
+    $currentVersion = $this->getCurrentVersion();
+?>
+<div class="gr4vy-config-header">
+    <?php if (!$currentVersion): ?>
+        <p>
+            <?php echo __('Cannot read module version. Please update your extension.') ?>
+        </p>
+    <?php else: ?>
+        <p>
+            <?php echo __('Currently installed version:') ?> <?php echo $this->getCurrentVersion(); ?>.
+        </p>
+    <?php endif; ?>
+</div>

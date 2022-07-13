@@ -122,7 +122,7 @@ define(
                     var cartItemsData = cartObject.items.map(function(item) {
                         return {
                             name: item.product_name,
-                            quantity: item.qty,
+                            quantity: item.qty ?? 1,
                             unitAmount: item.product_price_value * 100,
                             sku: item.product_sku,
                             productUrl: item.product_url,
@@ -132,7 +132,7 @@ define(
 
                     // calculate shipping method
                     var shipping_fee = this.calculateShippingFee();
-                    if (typeof shipping_fee.unitAmount !== "undefied") {
+                    if (typeof shipping_fee.unitAmount !== "undefined") {
                         cartItemsData.push(shipping_fee);
                     }
 

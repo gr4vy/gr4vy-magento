@@ -120,10 +120,11 @@ define(
                 var cartObject = customerData.get('cart')();
                 if (cartObject && cartObject.items) {
                     var cartItemsData = cartObject.items.map(function(item) {
+                        var item_quantity = parseInt(item.qty) || 1;
                         return {
                             name: item.product_name,
-                            quantity: item.qty ?? 1,
-                            unitAmount: item.product_price_value * 100,
+                            quantity: item_quantity ?? 1,
+                            unitAmount: Math.round(item.product_price_value * 100),
                             sku: item.product_sku,
                             productUrl: item.product_url,
                             productType: 'physical'
@@ -158,7 +159,7 @@ define(
                         fee = {
                             name: selected_shipping_method.method_title,
                             quantity: 1,
-                            unitAmount: selected_shipping_method.amount * 100,
+                            unitAmount: Math.round(selected_shipping_method.amount * 100),
                             sku: selected_shipping_method.method_code,
                             productUrl: BASE_URL,
                             productType: 'shipping_fee'

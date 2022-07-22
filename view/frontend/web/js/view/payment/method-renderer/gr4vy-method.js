@@ -43,65 +43,82 @@ define(
                         var amount = response[1];
                         var buyer_id = response[2];
 
-                        gr4vy.setup({
-                            gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
-                            buyerId: buyer_id,
-                            externalIdentifier: window.checkoutConfig.payment.gr4vy.external_identifier,
-                            environment: window.checkoutConfig.payment.gr4vy.environment,
-                            store: window.checkoutConfig.payment.gr4vy.store,
-                            element: ".container",
-                            form: "#co-payment-form",
-                            amount: parseInt(parseFloat(amount)*100),
-                            currency: window.checkoutConfig.quoteData.quote_currency_code,
-                            country: window.checkoutConfig.originCountryCode,
-                            token: embed_token,
-                            intent: window.checkoutConfig.payment.gr4vy.intent,
-                            cartItems: This.getCartItemsData(),
-                            metadata: {
-                                "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
-                            },
-                            onEvent: (eventName, data) => {
-                                if (eventName === 'agumentError') {
-                                    console.log(data)
-                                }
-                                if (eventName === 'transactionCreated') {
-                                    console.log(data)
-                                }
-                                if (eventName === 'transactionFailed') {
-                                    console.log(data)
-                                }
-                                if (eventName === 'apiError') {
-                                    console.log(data)
-                                }
-                            },
-                            onComplete: (transaction) => {
-                                // send api requests to transaction web api
-                                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
-                                console.log(transaction);
-                                var payload = {
-                                    cartId: quote.getQuoteId(),
-                                    paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
-                                    methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
-                                    serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
-                                    transactionData: This.getGr4vyTransactionData(transaction)
-                                };
-                                return storage.post(
-                                    serviceUrl,
-                                    JSON.stringify(payload)
-                                ).done(
-                                    function (response) {
-                                        // success - trigger default placeorder request from magento library
-                                        This.placeOrder();
+                        // Verify data before setting gr4vy
+                        if (embed_token && amount && buyer_id) {
+                            gr4vy.setup({
+                                gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
+                                buyerId: buyer_id,
+                                externalIdentifier: window.checkoutConfig.payment.gr4vy.external_identifier,
+                                environment: window.checkoutConfig.payment.gr4vy.environment,
+                                store: window.checkoutConfig.payment.gr4vy.store,
+                                element: ".container",
+                                form: "#co-payment-form",
+                                amount: parseInt(parseFloat(amount)*100),
+                                currency: window.checkoutConfig.quoteData.quote_currency_code,
+                                country: window.checkoutConfig.originCountryCode,
+                                token: embed_token,
+                                intent: window.checkoutConfig.payment.gr4vy.intent,
+                                cartItems: This.getCartItemsData(),
+                                metadata: {
+                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
+                                },
+                                onEvent: (eventName, data) => {
+                                    if (eventName === 'agumentError') {
+                                        console.log(data)
                                     }
-                                ).fail(
-                                    function (response) {
-                                        errorProcessor.process(response);
-                                        This.displayMessage(response);
-                                        fullScreenLoader.stopLoader(true);
+                                    if (eventName === 'transactionCreated') {
+                                        console.log(data)
                                     }
-                                );
-                            }
-                        });
+                                    if (eventName === 'transactionFailed') {
+                                        console.log(data)
+                                    }
+                                    if (eventName === 'apiError') {
+                                        console.log(data)
+                                    }
+                                },
+                                onComplete: (transaction) => {
+                                    // send api requests to transaction web api
+                                    var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
+                                    //console.log(transaction);
+                                    var payload = {
+                                        cartId: quote.getQuoteId(),
+                                        paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
+                                        methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
+                                        serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
+                                        transactionData: This.getGr4vyTransactionData(transaction)
+                                    };
+                                    return storage.post(
+                                        serviceUrl,
+                                        JSON.stringify(payload)
+                                    ).done(
+                                        function (response) {
+                                            // success - trigger default placeorder request from magento library
+                                            This.placeOrder();
+                                        }
+                                    ).fail(
+                                        function (response) {
+                                            errorProcessor.process(response);
+                                            This.displayMessage(response);
+                                            fullScreenLoader.stopLoader(true);
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                        else {
+                            // log error
+                            console.log({embed_token: embed_token, amount: amount, buyer_id: buyer_id});
+
+                            var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
+                            address_collection[0].style.display = 'none';
+
+                            var button_collection = document.querySelectorAll('.gr4vy-payment-method .gr4vy-actions-toolbar');
+                            button_collection[0].style.display = 'none';
+
+                            var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
+                            placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
+                            placeholder_collection[0].style.display = 'block';
+                        }
                     }
                 ).fail(
                     function (response) {

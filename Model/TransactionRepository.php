@@ -15,6 +15,7 @@ use Gr4vy\Magento\Model\ResourceModel\Transaction\CollectionFactory as Transacti
 use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Customer as CustomerHelper;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -63,6 +64,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $gr4vyHelper;
 
     /**
+     * @var CustomerHelper
+     */
+    protected $customerHelper;
+
+    /**
      * @var Gr4vyEmbed
      */
     protected $embedApi;
@@ -96,6 +102,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
+     * @param CustomerHelper $customerHelper
      * @param Gr4vyEmbed $embedApi
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
@@ -114,6 +121,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
+        CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
@@ -132,6 +140,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->customerHelper = $customerHelper;
         $this->embedApi = $embedApi;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
@@ -198,6 +207,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     {
         $quote = $this->getQuoteModel($cartId);
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
+        if (!$quote->getData('gr4vy_buyer_id')) {
+            $this->customerHelper->connectQuoteWithGr4vy($quote);
+            $quote->save();
+        }
+
         $buyer_id = $quote->getData('gr4vy_buyer_id');
 
         // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount

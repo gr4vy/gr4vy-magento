@@ -42,6 +42,7 @@ define(
                         var embed_token = response[0];
                         var amount = response[1];
                         var buyer_id = response[2];
+                        var cartItems = response[3];
 
                         // Verify data before setting gr4vy
                         if (embed_token && amount && buyer_id) {
@@ -58,7 +59,7 @@ define(
                                 country: window.checkoutConfig.originCountryCode,
                                 token: embed_token,
                                 intent: window.checkoutConfig.payment.gr4vy.intent,
-                                cartItems: This.getCartItemsData(),
+                                cartItems: cartItems,
                                 metadata: {
                                     "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
                                 },
@@ -127,64 +128,6 @@ define(
                     }
                 );
 
-            },
-            /**
-             * NOTE: allowed product types are : 'physical', 'discount', 'shipping_fee', 'sales_tax', 'digital', 'gift_card', 'store_credit', 'surcharge'
-             *
-             * @returns [Array]
-             */
-            getCartItemsData: function () {
-                var cartObject = customerData.get('cart')();
-                if (cartObject && cartObject.items) {
-                    var cartItemsData = cartObject.items.map(function(item) {
-                        var item_quantity = parseInt(item.qty) || 1;
-                        return {
-                            name: item.product_name,
-                            quantity: item_quantity ?? 1,
-                            unitAmount: Math.round(item.product_price_value * 100),
-                            sku: item.product_sku,
-                            productUrl: item.product_url,
-                            productType: 'physical'
-                        }
-                    });
-
-                    // calculate shipping method
-                    var shipping_fee = this.calculateShippingFee();
-                    if (typeof shipping_fee.unitAmount !== "undefined") {
-                        cartItemsData.push(shipping_fee);
-                    }
-
-                    console.log(cartItemsData);
-
-                    return cartItemsData;
-                }
-
-                return [];
-            },
-            calculateShippingFee: function () {
-                var selected_shipping_method = window.checkoutConfig.selectedShippingMethod;
-                if (selected_shipping_method === null) {
-                    // 2.4.4 compatibility fix
-                    selected_shipping_method = quote.shippingMethod();
-                }
-                if (false) {
-                    // TODO when multi shipping address is supported, need to calculate it
-                }
-                else {
-                    var fee = {};
-                    if (selected_shipping_method.amount) {
-                        fee = {
-                            name: selected_shipping_method.method_title,
-                            quantity: 1,
-                            unitAmount: Math.round(selected_shipping_method.amount * 100),
-                            sku: selected_shipping_method.method_code,
-                            productUrl: BASE_URL,
-                            productType: 'shipping_fee'
-                        }
-                    }
-                }
-
-                return fee;
             },
             /**
              * @returns {Object}

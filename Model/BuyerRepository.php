@@ -141,9 +141,9 @@ class BuyerRepository implements BuyerRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getByExternalIdentifier($external_identifier)
+    public function getByExternalIdentifier($external_identifier, $gr4vy_id)
     {
-        $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->create();
+        $buyerSearchCriteria = $this->searchCriteriaBuilder->addFilter('external_identifier', $external_identifier, 'eq')->addFilter('gr4vy_id', $gr4vy_id, 'eq')->create();
         $buyerSearchResults = $this->getList($buyerSearchCriteria);
 
         if ($buyerSearchResults->getTotalCount() > 0) {

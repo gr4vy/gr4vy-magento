@@ -14,6 +14,8 @@ use Gr4vy\Magento\Model\Client\Buyer as Gr4vyBuyer;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class Customer extends AbstractHelper
 {
@@ -53,8 +55,14 @@ class Customer extends AbstractHelper
     private $customer = null;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param CustomerHelper $customerHelper
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -63,7 +71,8 @@ class Customer extends AbstractHelper
         BuyerRepositoryInterface $buyerRepository,
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
-        Logger $gr4vyLogger
+        Logger $gr4vyLogger,
+        ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($context);
         $this->customerSession = $customerSession;
@@ -72,6 +81,7 @@ class Customer extends AbstractHelper
         $this->buyerData = $buyerData;
         $this->buyerApi = $buyerApi;
         $this->gr4vyLogger = $gr4vyLogger;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -125,8 +135,13 @@ class Customer extends AbstractHelper
         }
     }
 
+    public function getGr4vyId()
+    {
+        return (string) $this->scopeConfig->getValue(\Gr4vy\Magento\Helper\Data::GR4VY_ID, ScopeInterface::SCOPE_STORE);
+    }
+
     /**
-     * initialize gr4vy customer data in session. if customer not in gr4vy, create new record 
+     * initialize gr4vy customer data. if customer not in gr4vy, create new record 
      *
      * covered scenarios
      * 1. guest - no gr4vy_buyer_id and external_identifier stored in session
@@ -145,22 +160,20 @@ class Customer extends AbstractHelper
             $display_name = $customer->getFirstname() . " " . $customer->getLastname();
         }
 
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier);
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->getGr4vyId());
 
-        if ((!$external_identifier && !$this->customerSession->getGr4vyBuyerId())
-            || ($this->customerSession->getExternalIdentifier() != $external_identifier)) {
-            list($createBuyer, $gr4vy_buyer_id) = $this->verifyBuyerModel($buyerModel, $this->customerSession->getGr4vyBuyerId());
+        if (is_null($buyerModel)) {
+            $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
 
-            if ($createBuyer && $display_name !== null) {
-                $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
+            if ($external_identifier) {
                 $this->saveBuyerData($external_identifier, $display_name, $gr4vy_buyer_id);
             }
-
-            $this->customerSession->setExternalIdentifier($external_identifier);
-            $this->customerSession->setGr4vyBuyerId($gr4vy_buyer_id);
+        }
+        else {
+            $gr4vy_buyer_id = $buyerModel->getBuyerId();
         }
 
-        return $this->customerSession->getGr4vyBuyerId();
+        return $gr4vy_buyer_id;
     }
 
     /**
@@ -173,9 +186,9 @@ class Customer extends AbstractHelper
     {
         $customer = $this->getCurrentCustomer();
         $gr4vy_buyer_id = $this->getGr4vyBuyerId();
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId());
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->getGr4vyId());
 
-        if ($default_billing = $customer->getDefaultBillingAddress()) {
+        if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
             $billing_details = [
                 "first_name" => $default_billing->getFirstname(),
                 "last_name" => $default_billing->getLastname(),
@@ -198,32 +211,6 @@ class Customer extends AbstractHelper
                 $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));
             }
         }
-    }
-
-    /**
-     * make sure buyer model is valid. determine createBuyer action
-     *
-     * @param DataBuyerInterface
-     * @return array [createBuyer, gr4vy_buyer_id]
-     */
-    protected function verifyBuyerModel($buyerModel, $buyer_id = null)
-    {
-        $result = [false, $buyer_id];
-        if (empty($buyerModel)) {
-            $result[0] = true;
-        }
-        else {
-            $result[1] = $buyerModel->getBuyerId();
-            if ($verifier = $this->buyerApi->getBuyer($buyerModel->getExternalIdentifier())) {
-                if ($buyerModel->getBuyerId() != $verifier->getId()) {
-                    // remove faulty record
-                    $this->buyerRepository->delete($buyerModel);
-                    $result[0] = true;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -278,6 +265,7 @@ class Customer extends AbstractHelper
         }
 
         $this->buyerData
+             ->setGr4vyId($this->getGr4vyId())
              ->setExternalIdentifier($external_identifier)
              ->setDisplayName($display_name)
              ->setBuyerId($buyer_id);

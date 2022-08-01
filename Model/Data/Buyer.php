@@ -30,6 +30,22 @@ class Buyer extends \Magento\Framework\Api\AbstractExtensibleObject implements B
     /**
      * {@inheritdoc}
      */
+    public function getGr4vyId()
+    {
+        return $this->_get(self::GR4VY_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setGr4vyId($gr4vy_id)
+    {
+        return $this->setData(self::GR4VY_ID, $gr4vy_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getBuyerId()
     {
         return $this->_get(self::BUYER_ID);

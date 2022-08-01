@@ -221,8 +221,45 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
         $result['amount'] = $quote_total;
         $result['buyer_id'] = $buyer_id;
+        $result['items'] = $this->getCartItemsData($quote);
 
         return $result;
+    }
+
+    /**
+     * NOTE: allowed product types are
+     * 'physical', 'discount', 'shipping_fee', 'sales_tax', 'digital', 'gift_card', 'store_credit', 'surcharge'
+     *
+     * @return Array
+     */
+    public function getCartItemsData($quote)
+    {
+        $items = [];
+        foreach ($quote->getAllVisibleItems() as $item){
+            $product = $item->getProduct();
+            $productUrl = $product->getUrlModel()->getUrl($product);
+            $items[] = [
+                'name' => $item->getName(),
+                'quantity' => $item->getQty(),
+                'unitAmount' => round(floatval($item->getPrice()) * 100),
+                'sku' => $item->getSku(),
+                'productUrl' => $productUrl,
+                'productType' => 'physical'
+            ];
+        }
+
+        // calculate shipping fee as cart item
+        $shipping_address = $quote->getShippingAddress();
+        $items[] = [
+            'name' => $shipping_address->getShippingMethod(),
+            'quantity' => 1,
+            'unitAmount' => round(floatval($shipping_address->getShippingAmount()) * 100),
+            'sku' => $shipping_address->getShippingMethod(),
+            'productUrl' => $quote->getStore()->getUrl(),
+            'productType' => 'shipping_fee'
+        ];
+
+        return $items;
     }
 
     /**

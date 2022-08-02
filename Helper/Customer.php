@@ -145,9 +145,10 @@ class Customer extends AbstractHelper
      *
      * covered scenarios
      * 1. guest - no gr4vy_buyer_id and external_identifier stored in session
-     * 2. guest - gr4vy_buyer_id stored in session
+     * 2. guest - gr4vy_buyer_id stored in quote
      * 3. logged in - no gr4vy_buyer_id and external_identifier stored in session
-     * 3. logged in - gr4vy_buyer_id previously stored in session (create account on checkout page)
+     * 4. logged in - gr4vy_buyer_id previously stored in session (create account on checkout page)
+     * 5. logged in - buyer_id not available due to unexpected issue like missing private_key
      *
      * @param string $display_name
      * @param string $external_identifier
@@ -162,12 +163,19 @@ class Customer extends AbstractHelper
 
         $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->getGr4vyId());
 
-        if (is_null($buyerModel)) {
+        if (!is_object($buyerModel)) {
             $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
 
             if ($external_identifier) {
                 $this->saveBuyerData($external_identifier, $display_name, $gr4vy_buyer_id);
             }
+        }
+        elseif (!$buyerModel->getBuyerId()) {
+            // if buyer_id is not empty - due to unknown
+            $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
+
+            $buyerModel->setBuyerId($gr4vy_buyer_id);
+            $this->buyerRepository->save($buyerModel);
         }
         else {
             $gr4vy_buyer_id = $buyerModel->getBuyerId();

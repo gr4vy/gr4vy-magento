@@ -13,6 +13,7 @@
                     ]]>
                 </comment>
                 <field id="version" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Information</label>
                     <frontend_model>Gr4vy\Magento\Block\System\Config\Version</frontend_model>
                 </field>
                 <fieldset_css>complex gr4vy-section</fieldset_css>

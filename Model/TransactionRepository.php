@@ -241,7 +241,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
-                'unitAmount' => round(floatval($item->getPrice()) * 100),
+                'unitAmount' => round(floatval($item->getPriceInclTax()) * 100),
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
                 'productType' => 'physical'
@@ -253,7 +253,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $items[] = [
             'name' => $shipping_address->getShippingMethod(),
             'quantity' => 1,
-            'unitAmount' => round(floatval($shipping_address->getShippingAmount()) * 100),
+            'unitAmount' => round(floatval($shipping_address->getShippingInclTax()) * 100),
             'sku' => $shipping_address->getShippingMethod(),
             'productUrl' => $quote->getStore()->getUrl(),
             'productType' => 'shipping_fee'

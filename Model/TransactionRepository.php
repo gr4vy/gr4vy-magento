@@ -219,11 +219,21 @@ class TransactionRepository implements TransactionRepositoryInterface
 
         $result = array();
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
-        $result['amount'] = $quote_total;
+        $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote);
 
         return $result;
+    }
+
+    /**
+     * multiply by 100 and round input number
+     *
+     * @return integer
+     */
+    public function round_number($input)
+    {
+        return round(floatval($input) * 100);
     }
 
     /**
@@ -241,7 +251,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
-                'unitAmount' => round(floatval($item->getPriceInclTax()) * 100),
+                'unitAmount' => $this->round_number($item->getPriceInclTax()),
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
                 'productType' => 'physical'
@@ -253,7 +263,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $items[] = [
             'name' => $shipping_address->getShippingMethod(),
             'quantity' => 1,
-            'unitAmount' => round(floatval($shipping_address->getShippingInclTax()) * 100),
+            'unitAmount' => $this->round_number($shipping_address->getShippingInclTax()),
             'sku' => $shipping_address->getShippingMethod(),
             'productUrl' => $quote->getStore()->getUrl(),
             'productType' => 'shipping_fee'

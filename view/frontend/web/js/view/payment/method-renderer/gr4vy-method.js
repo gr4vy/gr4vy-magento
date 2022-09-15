@@ -54,7 +54,7 @@ define(
                                 store: window.checkoutConfig.payment.gr4vy.store,
                                 element: ".container",
                                 form: "#co-payment-form",
-                                amount: parseInt(parseFloat(amount)*100),
+                                amount: amount,
                                 currency: window.checkoutConfig.quoteData.quote_currency_code,
                                 country: window.checkoutConfig.originCountryCode,
                                 token: embed_token,

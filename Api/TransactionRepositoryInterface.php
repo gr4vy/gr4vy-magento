@@ -25,7 +25,6 @@ interface TransactionRepositoryInterface
     /**
      * Retrieve token for Gr4vy Webform Checkout
      * @param string
-     *
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -35,8 +34,9 @@ interface TransactionRepositoryInterface
      * Set Payment Information - Associate transaction payment detail with magento payment object
      * @param string
      * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
-     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transaction
-     *
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
+     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
      * @return \Gr4vy\Magento\Api\Data\TransactionInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */

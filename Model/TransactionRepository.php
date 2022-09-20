@@ -217,13 +217,33 @@ class TransactionRepository implements TransactionRepositoryInterface
         // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount
         $quote_total = $quote->getGrandTotal();
 
-        $result = array();
+        $result = array('total_mismatch' => false);
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote);
 
+        if (!$this->validateTotals($result)) {
+            $result['total_mismatch'] = true;
+        }
+
         return $result;
+    }
+
+    /**
+     * validate cart totals to make sure items and grand total match
+     *
+     * @param array
+     * @return boolean
+     */
+    public function validateTotals($result)
+    {
+        $items_total = 0;
+        foreach ($result['items'] as $item){
+            $items_total += $item['unitAmount'];
+        }
+
+        return $result['amount'] != $items_total;
     }
 
     /**

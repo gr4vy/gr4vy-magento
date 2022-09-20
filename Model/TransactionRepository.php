@@ -243,7 +243,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             $items_total += $item['unitAmount'];
         }
 
-        return $result['amount'] != $items_total;
+        return $result['amount'] == $items_total;
     }
 
     /**

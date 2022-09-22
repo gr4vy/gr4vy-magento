@@ -39,14 +39,13 @@ define(
                 var This = this;
                 storage.post( serviceUrl, JSON.stringify(payload)).done(
                     function (response) {
-                        var total_mismatch = response[0];
-                        var embed_token = response[1];
-                        var amount = response[2];
-                        var buyer_id = response[3];
-                        var cartItems = response[4];
+                        var embed_token = response[0];
+                        var amount = response[1];
+                        var buyer_id = response[2];
+                        var cartItems = response[3];
 
                         // Verify data before setting gr4vy
-                        if (!total_mismatch && embed_token && amount && buyer_id) {
+                        if (embed_token && amount && buyer_id) {
                             gr4vy.setup({
                                 gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
                                 buyerId: buyer_id,
@@ -118,12 +117,7 @@ define(
                             button_collection[0].style.display = 'none';
 
                             var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
-                            if (total_mismatch) {
-                                placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Totals mismatch. Please contact us for Support</span>');
-                            }
-                            else {
-                                placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
-                            }
+                            placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
                             placeholder_collection[0].style.display = 'block';
                         }
                     }

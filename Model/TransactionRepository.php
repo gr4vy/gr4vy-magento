@@ -217,38 +217,19 @@ class TransactionRepository implements TransactionRepositoryInterface
         // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount
         $quote_total = $quote->getGrandTotal();
 
-        $result = array('total_mismatch' => false);
+        $result = [];
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
-        $result['items'] = $this->getCartItemsData($quote);
-
-        if (!$this->validateTotals($result)) {
-            $result['total_mismatch'] = true;
-        }
+        $result['items'] = $this->getCartItemsData($quote, $result['amount']);
 
         return $result;
     }
 
     /**
-     * validate cart totals to make sure items and grand total match
-     *
-     * @param array
-     * @return boolean
-     */
-    public function validateTotals($result)
-    {
-        $items_total = 0;
-        foreach ($result['items'] as $item){
-            $items_total += $item['unitAmount'];
-        }
-
-        return $result['amount'] == $items_total;
-    }
-
-    /**
      * multiply by 100 and round input number
      *
+     * @param float
      * @return integer
      */
     public function round_number($input)
@@ -260,18 +241,23 @@ class TransactionRepository implements TransactionRepositoryInterface
      * NOTE: allowed product types are
      * 'physical', 'discount', 'shipping_fee', 'sales_tax', 'digital', 'gift_card', 'store_credit', 'surcharge'
      *
+     * @param Magento\Quote\Model\Quote
+     * @param integer
      * @return Array
      */
-    public function getCartItemsData($quote)
+    public function getCartItemsData($quote, $totalAmount)
     {
         $items = [];
+        $itemsTotal = 0;
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
             $productUrl = $product->getUrlModel()->getUrl($product);
+            $itemAmount = $this->round_number($item->getPriceInclTax());
+            $itemsTotal += $itemAmount;
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
-                'unitAmount' => $this->round_number($item->getPriceInclTax()),
+                'unitAmount' => $itemAmount,
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
                 'productType' => 'physical'
@@ -280,14 +266,20 @@ class TransactionRepository implements TransactionRepositoryInterface
 
         // calculate shipping fee as cart item
         $shipping_address = $quote->getShippingAddress();
+        $shippingAmount = $this->round_number($shipping_address->getShippingInclTax());
+        $itemsTotal += $shippingAmount;
         $items[] = [
             'name' => $shipping_address->getShippingMethod(),
             'quantity' => 1,
-            'unitAmount' => $this->round_number($shipping_address->getShippingInclTax()),
+            'unitAmount' => $shippingAmount,
             'sku' => $shipping_address->getShippingMethod(),
             'productUrl' => $quote->getStore()->getUrl(),
             'productType' => 'shipping_fee'
         ];
+
+        if ($totalAmount != $itemsTotal) {
+            return [];
+        }
 
         return $items;
     }

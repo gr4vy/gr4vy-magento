@@ -4,7 +4,7 @@
  * See LICENSE for license details.
  */
 -->
-<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+<div class="payment-method gr4vy-payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
     <div class="payment-method-title field choice">
         <input type="radio"
                name="payment[method]"
@@ -28,7 +28,7 @@
             <!--/ko-->
         </div>
         <div class="container"></div>
-        <div class="actions-toolbar">
+        <div class="actions-toolbar gr4vy-actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout" >
                     <span data-bind="i18n: 'Place Order'"></span>
@@ -46,7 +46,7 @@
                 </button>-->
             </div>
         </div>
-        <div class="initializer" style="display: none" data-bind="text: initEmbedPayment()"></div>
+        <div class="gr4vy-placeholder initializer" style="display: none" data-bind="text: initEmbedPayment()"></div>
     </div>
 </div>
         

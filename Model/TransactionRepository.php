@@ -15,6 +15,7 @@ use Gr4vy\Magento\Model\ResourceModel\Transaction\CollectionFactory as Transacti
 use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Customer as CustomerHelper;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -63,6 +64,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $gr4vyHelper;
 
     /**
+     * @var CustomerHelper
+     */
+    protected $customerHelper;
+
+    /**
      * @var Gr4vyEmbed
      */
     protected $embedApi;
@@ -96,6 +102,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
+     * @param CustomerHelper $customerHelper
      * @param Gr4vyEmbed $embedApi
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
@@ -114,6 +121,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
+        CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
@@ -132,6 +140,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->customerHelper = $customerHelper;
         $this->embedApi = $embedApi;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
@@ -198,17 +207,81 @@ class TransactionRepository implements TransactionRepositoryInterface
     {
         $quote = $this->getQuoteModel($cartId);
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
+        if (!$quote->getData('gr4vy_buyer_id')) {
+            $this->customerHelper->connectQuoteWithGr4vy($quote);
+            $quote->save();
+        }
+
         $buyer_id = $quote->getData('gr4vy_buyer_id');
 
         // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount
         $quote_total = $quote->getGrandTotal();
 
-        $result = array();
+        $result = [];
         $result['token'] = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
-        $result['amount'] = $quote_total;
+        $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
+        $result['items'] = $this->getCartItemsData($quote, $result['amount']);
 
         return $result;
+    }
+
+    /**
+     * multiply by 100 and round input number
+     *
+     * @param float
+     * @return integer
+     */
+    public function round_number($input)
+    {
+        return round(floatval($input) * 100);
+    }
+
+    /**
+     * NOTE: allowed product types are
+     * 'physical', 'discount', 'shipping_fee', 'sales_tax', 'digital', 'gift_card', 'store_credit', 'surcharge'
+     *
+     * @param Magento\Quote\Model\Quote
+     * @param integer
+     * @return Array
+     */
+    public function getCartItemsData($quote, $totalAmount)
+    {
+        $items = [];
+        $itemsTotal = 0;
+        foreach ($quote->getAllVisibleItems() as $item){
+            $product = $item->getProduct();
+            $productUrl = $product->getUrlModel()->getUrl($product);
+            $itemAmount = $this->round_number($item->getPriceInclTax());
+            $itemsTotal += $itemAmount;
+            $items[] = [
+                'name' => $item->getName(),
+                'quantity' => $item->getQty(),
+                'unitAmount' => $itemAmount,
+                'sku' => $item->getSku(),
+                'productUrl' => $productUrl,
+                'productType' => 'physical'
+            ];
+        }
+
+        // calculate shipping fee as cart item
+        $shipping_address = $quote->getShippingAddress();
+        $shippingAmount = $this->round_number($shipping_address->getShippingInclTax());
+        $itemsTotal += $shippingAmount;
+        $items[] = [
+            'name' => $shipping_address->getShippingMethod(),
+            'quantity' => 1,
+            'unitAmount' => $shippingAmount,
+            'sku' => $shipping_address->getShippingMethod(),
+            'productUrl' => $quote->getStore()->getUrl(),
+            'productType' => 'shipping_fee'
+        ];
+
+        if ($totalAmount != $itemsTotal) {
+            return [];
+        }
+
+        return $items;
     }
 
     /**

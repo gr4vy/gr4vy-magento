@@ -10,6 +10,7 @@ namespace Gr4vy\Magento\Api\Data;
 interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
     const ID = 'id';
+    const GR4VY_ID = 'gr4vy_id';
     const EXTERNAL_IDENTIFIER = 'external_identifier';
     const BUYER_ID = 'buyer_id';
     const DISPLAY_NAME = 'display_name';
@@ -27,6 +28,19 @@ interface BuyerInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      * @return \Gr4vy\Magento\Api\Data\BuyerInterface
      */
     public function setId($id);
+
+    /**
+     * Get gr4vy_id
+     * @return string|null
+     */
+    public function getGr4vyId();
+
+    /**
+     * Set gr4vy_id
+     * @param string $gr4vy_id
+     * @return \Gr4vy\Magento\Api\Data\BuyerInterface
+     */
+    public function setGr4vyId($gr4vy_id);
 
     /**
      * Get buyer_id

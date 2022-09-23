@@ -8,22 +8,30 @@ declare(strict_types=1);
 namespace Gr4vy\Magento\Plugin\Magento\Customer\Api;
 
 use Gr4vy\Magento\Helper\Customer as CustomerHelper;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 class AddressRepositoryInterface
 {
-
     /**
      * @var CustomerHelper
      */
     protected $customerHelper;
 
     /**
-     * @param \Magento\Framework\App\Helper\Context $context
+     * @var Gr4vyHelper
+     */
+    protected $gr4vyHelper;
+
+    /**
+     * @param CustomerHelper $customerHelper
+     * @param Gr4vyHelper $gr4vyHelper
      */
     public function __construct(
-        CustomerHelper $customerHelper
+        CustomerHelper $customerHelper,
+        Gr4vyHelper $gr4vyHelper
     ) {
         $this->customerHelper = $customerHelper;
+        $this->gr4vyHelper = $gr4vyHelper;
     }
 
     /**
@@ -37,7 +45,9 @@ class AddressRepositoryInterface
         \Magento\Customer\Api\Data\AddressInterface $address
     ) {
         $result = $proceed($address);
-        $this->customerHelper->checkGr4vyAddress($address);
+        if ($this->gr4vyHelper->checkGr4vyReady()) {
+            $this->customerHelper->checkGr4vyAddress($address);
+        }
 
         return $result;
     }

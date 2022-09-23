@@ -11,7 +11,7 @@ use Gr4vy\api\BuyersApi;
 use Gr4vy\model\BuyerRequest;
 use Gr4vy\model\BuyerUpdate;
 use Gr4vy\model\BillingDetailsUpdateRequest;
-use Gr4vy\model\AddressUpdate;
+use Gr4vy\model\Address as AddressUpdate;
 use Gr4vy\model\Tax;
 
 class Buyer extends Base
@@ -25,11 +25,13 @@ class Buyer extends Base
     public function getApiInstance()
     {
         try {
-            return new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
+            $api_instance =  new BuyersApi(new \GuzzleHttp\Client(), $this->getGr4vyConfig()->getConfig());
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
         }
+
+        return $api_instance;
     }
 
     /**
@@ -67,7 +69,12 @@ class Buyer extends Base
                 $address->setState($billing_address['address']['country']);
             }
             $address->setLine1($billing_address['address']['street'][0]);
-            $address->setLine2($billing_address['address']['street'][1]);
+            if (isset($billing_address['address']['street'][1])) {
+                $address->setLine2($billing_address['address']['street'][1]);
+            }
+            else {
+                $address->setLine2('');
+            }
             $address->setOrganization($billing_address['address']['organization']);
         }
         catch (\InvalidArgumentException $e) {

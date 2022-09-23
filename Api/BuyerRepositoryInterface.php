@@ -31,12 +31,13 @@ interface BuyerRepositoryInterface
     public function get($id);
 
     /**
-     * retrieve buyer by external_identifier
+     * retrieve buyer by external_identifier and gr4vy_id
      *
+     * @param string
      * @param string
      * @return Gr4vy\Magento\Model\Buyer | null
      */
-    public function getByExternalIdentifier($external_identifier);
+    public function getByExternalIdentifier($external_identifier, $gr4vy_id);
 
     /**
      * Retrieve Buyer matching the specified criteria.

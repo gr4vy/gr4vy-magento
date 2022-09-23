@@ -2,6 +2,7 @@
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="gr4vy_buyers">
         <column xsi:type="int" name="id" nullable="false" identity="true" padding="10" unsigned="true" comment="The unique identifier for this gr4vy buyer."/>
+        <column xsi:type="varchar" name="gr4vy_id" length="255" nullable="false" comment="The unique Gr4vy ID account"/>
         <column xsi:type="varchar" name="external_identifier" nullable="false" length="50" comment="An external identifier that can be used to match the buyer against your own records - for Magento 2, it customer entity_id."/>
         <column xsi:type="varchar" name="buyer_id" length="50" nullable="false" comment="The unique Gr4vy ID for this buyer."/>
         <column xsi:type="varchar" name="display_name" nullable="false" length="255" comment="A unique name for this buyer which is used in the Gr4vy admin panel to give a buyer a human readable name."/>
@@ -11,8 +12,9 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
-        <constraint xsi:type="unique" referenceId="GR4VY_BUYERS_EXTERNAL_IDENTIFIER_UNIQUE">
+        <constraint xsi:type="unique" referenceId="GR4VY_BUYERS_EXTERNAL_IDENTIFIER_GR4VY_ID_UNIQUE">
             <column name="external_identifier"/>
+            <column name="gr4vy_id"/>
         </constraint>
         <index referenceId="GR4VY_BUYERS_BUYER_ID" indexType="btree">
             <column name="buyer_id"/>

@@ -177,11 +177,19 @@ class Order extends AbstractHelper
         try {
             $invoice = $this->_invoiceService->prepareInvoice($order);
             //set Gr4vy Transaction Id for this invoice
-            $invoice->setTransactionId($gr4vy_transaction_id);
+            $invoice->setData('transaction_id', $gr4vy_transaction_id);
             //set Invoice State to Paid
             $invoice->setState(\Magento\Sales\Model\Order\Invoice::STATE_PAID);
+            $invoice->setRequestedCaptureCase(\Magento\Sales\Model\Order\Invoice::CAPTURE_ONLINE);
             $invoice->register();
+
+            // set order payment amount paid
+            $payment = $order->getPayment();
+            $payment->setAmountPaid($invoice->getGrandTotal())->setCanRefund(1);
+            $order->setTotalPaid($invoice->getGrandTotal())->setBaseTotalPaid($invoice->getGrandTotal());
+
             $this->_transaction->addObject($invoice)->addObject($order)->save();
+            $this->gr4vyLogger->logMixed( ['generated' => 'Invoice #'. $invoice->getId() . ' for Transaction ' . $gr4vy_transaction_id . ' Captured']);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

@@ -119,6 +119,14 @@
                             <field id="statement_descriptor">1</field>
                         </depends>
                     </field>
+                    <field id="ask_cvv" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="90" translate="label" type="select">
+                        <label>Always Ask for the CVv</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="ask_security_code" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="select">
+                        <label>Require Security Code</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
                 </group>
                 <group id="theme" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
                     <label>Theme</label>
@@ -134,7 +142,7 @@
                         </depends>
                     </field>
                     <field id="colors" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="select">
-                        <label>Enable Fonts Config</label>
+                        <label>Enable Colors Config</label>
                         <comment>Colors are named semantically, for example primary or danger. This allows us to update introduce new features or UI elements without explicitly requiring you to update your theme.</comment>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     </field>

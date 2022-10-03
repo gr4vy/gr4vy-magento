@@ -98,6 +98,16 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
+    public function isEnabled()
+    {
+        return $this->getApiConfig(OptionsInterface::API_ENABLED);
+    }
+
+    /**
+     * check payment debug enabled
+     *
+     * @return bool
+     */
     public function isDebugOn()
     {
         return $this->getApiConfig(OptionsInterface::API_DEBUG);
@@ -171,6 +181,26 @@ class Data extends AbstractHelper
     public function getGr4vyCustomData()
     {
         return $this->getOptionsConfig(OptionsInterface::OPTIONS_CUSTOM_DATA);
+    }
+
+    /**
+     * retrieve ask cvv
+     *
+     * @return string
+     */
+    public function getAskCvv()
+    {
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS_ASK_CVV);
+    }
+
+    /**
+     * retrieve ask security code
+     *
+     * @return string
+     */
+    public function getAskSecurityCode()
+    {
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS_ASK_SECURITY_CODE);
     }
 
     /**

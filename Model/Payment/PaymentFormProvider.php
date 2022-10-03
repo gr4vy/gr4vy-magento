@@ -71,7 +71,12 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'description' => $this->gr4vyHelper->getPaymentInstructions(),
                     'intent' => $this->gr4vyHelper->getGr4vyIntent(),
                     'isActive' => $this->gr4vyHelper->isEnabled(),
-                    'custom_data' => $this->gr4vyHelper->getGr4vyCustomData()
+                    'custom_data' => $this->gr4vyHelper->getGr4vyCustomData(),
+                    'payment_source' => $this->gr4vyHelper->getPaymentSource(),
+                    'ask_cvv' => $this->gr4vyHelper->getAskCvv(),
+                    'ask_security_code' => $this->gr4vyHelper->getAskSecurityCode(),
+                    'theme' => $this->gr4vyHelper->buildThemeConfig(),
+                    'statement_descriptor' => $this->gr4vyHelper->buildStatementDescriptor(),
                 ]
             ]
         ];

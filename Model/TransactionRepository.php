@@ -231,11 +231,6 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote, $result['amount']);
-        $result['locale'] = $this->getLocaleCode();
-        $result['paymentSource'] = $this->gr4vyHelper->getPaymentSource();
-
-        $result['theme'] = $this->gr4vyHelper->buildThemeConfig();
-        $result['statement_descriptor'] = $this->gr4vyHelper->buildStatementDescriptor();
 
         return $result;
     }
@@ -251,6 +246,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         if ($result === null) {
             return '';
         }
+        $parts = explode('_', $result);
+        $result = $parts[0].'-'.strtoupper($parts[1]);
 
         return $result;
     }

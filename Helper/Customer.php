@@ -12,6 +12,7 @@ use Gr4vy\Magento\Api\BuyerRepositoryInterface;
 use Gr4vy\Magento\Api\Data\BuyerInterface as DataBuyerInterface;
 use Gr4vy\Magento\Model\Client\Buyer as Gr4vyBuyer;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -55,14 +56,8 @@ class Customer extends AbstractHelper
     private $customer = null;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param CustomerHelper $customerHelper
-     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -72,7 +67,7 @@ class Customer extends AbstractHelper
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
         Logger $gr4vyLogger,
-        ScopeConfigInterface $scopeConfig
+        Gr4vyHelper $gr4vyHelper
     ) {
         parent::__construct($context);
         $this->customerSession = $customerSession;
@@ -81,7 +76,7 @@ class Customer extends AbstractHelper
         $this->buyerData = $buyerData;
         $this->buyerApi = $buyerApi;
         $this->gr4vyLogger = $gr4vyLogger;
-        $this->scopeConfig = $scopeConfig;
+        $this->gr4vyHelper = $gr4vyHelper;
     }
 
     /**
@@ -135,11 +130,6 @@ class Customer extends AbstractHelper
         }
     }
 
-    public function getGr4vyId()
-    {
-        return (string) $this->scopeConfig->getValue(\Gr4vy\Magento\Helper\Data::GR4VY_ID, ScopeInterface::SCOPE_STORE);
-    }
-
     /**
      * initialize gr4vy customer data. if customer not in gr4vy, create new record 
      *
@@ -161,7 +151,7 @@ class Customer extends AbstractHelper
             $display_name = $customer->getFirstname() . " " . $customer->getLastname();
         }
 
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->getGr4vyId());
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->gr4vyHelper->getGr4vyId());
 
         if (!is_object($buyerModel)) {
             $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
@@ -194,7 +184,7 @@ class Customer extends AbstractHelper
     {
         $customer = $this->getCurrentCustomer();
         $gr4vy_buyer_id = $this->getGr4vyBuyerId();
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->getGr4vyId());
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
 
         if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
             $billing_details = [
@@ -273,7 +263,7 @@ class Customer extends AbstractHelper
         }
 
         $this->buyerData
-             ->setGr4vyId($this->getGr4vyId())
+             ->setGr4vyId($this->gr4vyHelper->getGr4vyId())
              ->setExternalIdentifier($external_identifier)
              ->setDisplayName($display_name)
              ->setBuyerId($buyer_id);

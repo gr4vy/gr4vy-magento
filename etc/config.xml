@@ -4,6 +4,8 @@
 		<payment>
             <gr4vy>
                 <model>Gr4vy\Magento\Model\Payment\Gr4vy</model>
+                <active>1</active>
+                <title>Gr4vy</title>
             </gr4vy>
 			<gr4vy_section>
                 <api>

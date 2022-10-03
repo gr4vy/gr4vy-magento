@@ -35,6 +35,8 @@ interface OptionsInterface
     const OPTIONS_SD_CITY = 'sd_city';
     const OPTIONS_SD_PHONE = 'sd_phonenumber';
     const OPTIONS_SD_URL = 'sd_url';
+    const OPTIONS_ASK_CVV = 'ask_cvv';
+    const OPTIONS_ASK_SECURITY_CODE = 'ask_security_code';
 
     const SECTION_THEME = 'theme';
     const THEME_FONTS = 'fonts';

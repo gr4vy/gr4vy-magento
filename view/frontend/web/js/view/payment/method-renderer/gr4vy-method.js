@@ -43,6 +43,7 @@ define(
                         var amount = response[1];
                         var buyer_id = response[2];
                         var cartItems = response[3];
+                        var locale = response[4];
 
                         // Verify data before setting gr4vy
                         if (embed_token && amount && buyer_id) {
@@ -57,6 +58,7 @@ define(
                                 amount: amount,
                                 currency: window.checkoutConfig.quoteData.quote_currency_code,
                                 country: window.checkoutConfig.originCountryCode,
+                                locale: locale,
                                 token: embed_token,
                                 intent: window.checkoutConfig.payment.gr4vy.intent,
                                 cartItems: cartItems,

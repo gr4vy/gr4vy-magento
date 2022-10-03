@@ -2,17 +2,52 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
 	<default>
 		<payment>
-			<gr4vy>
-				<active>1</active>
-				<environment>development</environment>
-				<model>Gr4vy\Magento\Model\Payment\Gr4vy</model>
-				<order_status>processing</order_status>
-                <payment_action>authorize</payment_action>
-                <payment_store>ask</payment_store>
-                <custom_data></custom_data>
-				<title>Gr4vy</title>
-				<allowspecific>0</allowspecific>
-			</gr4vy>
+            <gr4vy>
+                <model>Gr4vy\Magento\Model\Payment\Gr4vy</model>
+            </gr4vy>
+			<gr4vy_section>
+                <api>
+                    <active>1</active>
+                    <environment>development</environment>
+                    <order_status>processing</order_status>
+                    <payment_action>authorize</payment_action>
+                    <payment_store>ask</payment_store>
+                    <custom_data></custom_data>
+                    <title>Gr4vy</title>
+                    <allowspecific>0</allowspecific>
+                </api>
+                <theme>
+                    <!--font-->
+                    <font_body>google:Lato, Tahoma, Arial</font_body>
+                    <!--colors-->
+                    <color_text>#0f0f0f</color_text>
+                    <color_subtle_text>#434343</color_subtle_text>
+                    <color_label_text>#0f0f0f</color_label_text>
+                    <color_primary>#006cd0</color_primary>
+                    <color_page_background>#ffffff</color_page_background>
+                    <color_container_background_unchecked>#fcfcfc</color_container_background_unchecked>
+                    <color_container_background>#ffffff</color_container_background>
+                    <color_container_border>#f2f2f2</color_container_border>
+                    <color_input_border>#b6b6b6</color_input_border>
+                    <color_input_background>#ffffff</color_input_background>
+                    <color_input_text>#0f0f0f</color_input_text>
+                    <color_danger>#d82121</color_danger>
+                    <color_danger_background>#fbf7f7</color_danger_background>
+                    <color_danger_text>#b81010</color_danger_text>
+                    <color_info>#3ea2ff</color_info>
+                    <color_info_background>#e7f2fb</color_info_background>
+                    <color_info_text>#0367c4</color_info_text>
+                    <color_focus>#4844ff</color_focus>
+                    <!--border-->
+                    <border_container>thin</border_container>
+                    <border_input>thin</border_input>
+                    <!--radii-->
+                    <radii_container>subtle</radii_container>
+                    <radii_input>subtle</radii_input>
+                    <!--focus ring-->
+                    <focus_ring_shadows>0 0 0 2px #ffffff, 0 0 0 4px #4844ff</focus_ring_shadows>
+                </theme>
+			</gr4vy_section>
 		</payment>
 	</default>
 </config>

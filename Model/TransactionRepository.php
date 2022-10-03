@@ -16,6 +16,7 @@ use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Customer as CustomerHelper;
+use Magento\Framework\Locale\Resolver;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -74,6 +75,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $embedApi;
 
     /**
+     * @var Resolver
+     */
+    private $resolver;
+
+    /**
      * @var \Magento\Quote\Api\PaymentMethodManagementInterface
      */
     protected $paymentMethodManagement;
@@ -104,6 +110,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param Gr4vyHelper $gr4vyHelper
      * @param CustomerHelper $customerHelper
      * @param Gr4vyEmbed $embedApi
+     * @param Resolver $resolver
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      */
@@ -123,6 +130,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         Gr4vyHelper $gr4vyHelper,
         CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
+        Resolver $resolver,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
     ) {
@@ -142,6 +150,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->gr4vyHelper = $gr4vyHelper;
         $this->customerHelper = $customerHelper;
         $this->embedApi = $embedApi;
+        $this->resolver = $resolver;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
@@ -222,6 +231,26 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote, $result['amount']);
+        $result['locale'] = $this->getLocaleCode();
+        $result['paymentSource'] = $this->gr4vyHelper->getPaymentSource();
+
+        $result['theme'] = $this->gr4vyHelper->buildThemeConfig();
+        $result['statement_descriptor'] = $this->gr4vyHelper->buildStatementDescriptor();
+
+        return $result;
+    }
+
+    /**
+     * Get the current locale code
+     *
+     * @return string
+     */
+    public function getLocaleCode(): string
+    {
+        $result = $this->resolver->getLocale();
+        if ($result === null) {
+            return '';
+        }
 
         return $result;
     }

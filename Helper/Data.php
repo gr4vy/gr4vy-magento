@@ -100,7 +100,7 @@ class Data extends AbstractHelper
      */
     public function isEnabled()
     {
-        return $this->getApiConfig(OptionsInterface::API_ENABLED);
+        return $this->getApiConfig(OptionsInterface::API['enabled']);
     }
 
     /**
@@ -110,7 +110,7 @@ class Data extends AbstractHelper
      */
     public function isDebugOn()
     {
-        return $this->getApiConfig(OptionsInterface::API_DEBUG);
+        return $this->getApiConfig(OptionsInterface::API['debug']);
     }
 
     /**
@@ -120,7 +120,7 @@ class Data extends AbstractHelper
      */
     public function getPaymentInstructions()
     {
-        return $this->getApiConfig(OptionsInterface::API_INSTRUCTION);
+        return $this->getApiConfig(OptionsInterface::API['instructions']);
     }
 
     /**
@@ -130,7 +130,7 @@ class Data extends AbstractHelper
      */
     public function getPrivateKey()
     {
-        return $this->getApiConfig(OptionsInterface::API_PRIVATE_KEY);
+        return $this->getApiConfig(OptionsInterface::API['private_key']);
     }
 
     /**
@@ -140,7 +140,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyId()
     {
-        return $this->getApiConfig(OptionsInterface::API_ID);
+        return $this->getApiConfig(OptionsInterface::API['id']);
     }
 
     /**
@@ -150,7 +150,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyIntent()
     {
-        return $this->getApiConfig(OptionsInterface::API_INTENT);
+        return $this->getApiConfig(OptionsInterface::API['intent']);
     }
 
     /**
@@ -160,7 +160,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyEnvironment()
     {
-        return $this->getApiConfig(OptionsInterface::API_ENV);
+        return $this->getApiConfig(OptionsInterface::API['environment']);
     }
 
     /**
@@ -170,7 +170,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyPaymentStore()
     {
-        return $this->getApiConfig(OptionsInterface::API_STORE);
+        return $this->getApiConfig(OptionsInterface::API['store']);
     }
 
     /**
@@ -180,7 +180,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyCustomData()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS_CUSTOM_DATA);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['custom_data']);
     }
 
     /**
@@ -190,7 +190,7 @@ class Data extends AbstractHelper
      */
     public function getAskCvv()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS_ASK_CVV);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['ask_cvv']);
     }
 
     /**
@@ -200,7 +200,7 @@ class Data extends AbstractHelper
      */
     public function getAskSecurityCode()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS_ASK_SECURITY_CODE);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['ask_security_code']);
     }
 
     /**
@@ -210,7 +210,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyNewOrderStatus()
     {
-        return $this->getApiConfig(OptionsInterface::API_ORDER_STATUS);
+        return $this->getApiConfig(OptionsInterface::API['order_status']);
     }
 
     /**
@@ -220,7 +220,7 @@ class Data extends AbstractHelper
      */
     public function getPaymentSource()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS_PAYMENT_SOURCE);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['payment_source']);
     }
 
     /**
@@ -231,52 +231,42 @@ class Data extends AbstractHelper
     public function buildThemeConfig()
     {
         $theme_config = [];
-        if ($this->getThemeConfig(OptionsInterface::THEME_FONTS)) {
-            $theme_config[OptionsInterface::THEME_FONTS] = [
-                'body' => $this->getThemeConfig(OptionsInterface::THEME_FONT_BODY),
-            ];
-        }
-        if ($this->getThemeConfig(OptionsInterface::THEME_COLORS)) {
-            $theme_config[OptionsInterface::THEME_COLORS] = [
-                'text' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_TEXT),
-                'subtleText' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_SUBTLE_TEXT),
-                'labelText' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_LABLE_TEXT),
-                'primary' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_PRIMARY),
-                'pageBackground' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_PAGE_BACKGROUND),
-                'containerBackgroundUnchecked' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_CONTAINER_BACKGROUND_UNCHECKED),
-                'containerBackground' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_CONTAINER_BACKGROUND),
-                'containerBorder' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_CONTAINER_BORDER),
-                'inputBorder' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INPUT_BORDER),
-                'inputBackground' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INPUT_BACKGROUND),
-                'inputText' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INPUT_TEXT),
-                'inputRadioBorder' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INPUT_RADIO_BORDER),
-                'inputRadioBorderChecked' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INPUT_RADIO_BORDER_CHECKED),
-                'danger' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_DANGER),
-                'dangerBackground' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_DANGER_BACKGROUND),
-                'dangerText' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_DANGER_TEXT),
-                'info' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INFO),
-                'infoBackground' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INFO_BACKGROUND),
-                'infoText' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_INFO_TEXT),
-                'focus' => $this->getThemeConfig(OptionsInterface::THEME_COLOR_FOCUS),
-            ];
-        }
-        if ($this->getThemeConfig(OptionsInterface::THEME_BORDERS)) {
-            $theme_config['borderWidths'] = [
-                'container' => $this->getThemeConfig(OptionsInterface::THEME_BORDER_CONTAINER),
-                'input' => $this->getThemeConfig(OptionsInterface::THEME_BORDER_INPUT),
-            ];
-        }
-        if ($this->getThemeConfig(OptionsInterface::THEME_RADII)) {
-            $theme_config[OptionsInterface::THEME_RADII] = [
-                'container' => $this->getThemeConfig(OptionsInterface::THEME_RADII_CONTAINER),
-                'input' => $this->getThemeConfig(OptionsInterface::THEME_RADII_INPUT),
-            ];
-        }
-        if ($this->getThemeConfig(OptionsInterface::THEME_FOCUS_RING)) {
-            $theme_config['shadows'] = [
-                'focusRing' => $this->getThemeConfig(OptionsInterface::THEME_FOCUS_RING_SHADOWS),
-            ];
-        }
+        $theme_config['fonts'] = [
+            'body' => $this->getThemeConfig('fonts/body'),
+        ];
+        $theme_config['colors'] = [
+            'text' => $this->getThemeConfig('colors/text'),
+            'subtleText' => $this->getThemeConfig('colors/subtle_text'),
+            'labelText' => $this->getThemeConfig('colors/label_text'),
+            'primary' => $this->getThemeConfig('colors/primary'),
+            'pageBackground' => $this->getThemeConfig('colors/page_background'),
+            'containerBackgroundUnchecked' => $this->getThemeConfig('colors/container_background_unchecked'),
+            'containerBackground' => $this->getThemeConfig('colors/container_background'),
+            'containerBorder' => $this->getThemeConfig('colors/container_border'),
+            'inputBorder' => $this->getThemeConfig('colors/input_border'),
+            'inputBackground' => $this->getThemeConfig('colors/input_background'),
+            'inputText' => $this->getThemeConfig('colors/input_text'),
+            'inputRadioBorder' => $this->getThemeConfig('colors/input_radio_border'),
+            'inputRadioBorderChecked' => $this->getThemeConfig('colors/input_radio_border_checked'),
+            'danger' => $this->getThemeConfig('colors/danger'),
+            'dangerBackground' => $this->getThemeConfig('colors/danger_background'),
+            'dangerText' => $this->getThemeConfig('colors/danger_text'),
+            'info' => $this->getThemeConfig('colors/info'),
+            'infoBackground' => $this->getThemeConfig('colors/info_background'),
+            'infoText' => $this->getThemeConfig('colors/info_text'),
+            'focus' => $this->getThemeConfig('colors/focus'),
+        ];
+        $theme_config['borderWidths'] = [
+            'container' => $this->getThemeConfig('border_widths/container'),
+            'input' => $this->getThemeConfig('border_widths/input'),
+        ];
+        $theme_config['radii'] = [
+            'container' => $this->getThemeConfig('radii/container'),
+            'input' => $this->getThemeConfig('radii/input'),
+        ];
+        $theme_config['shadows'] = [
+            'focusRing' => $this->getThemeConfig('shadows/focus_ring'),
+        ];
 
         return $theme_config;
     }
@@ -288,16 +278,13 @@ class Data extends AbstractHelper
      */
     public function buildStatementDescriptor()
     {
-        $statement_descriptor = [];
-        if ($this->getOptionsConfig(OptionsInterface::OPTIONS_STATEMENT_DESCRIPTOR)) {
-            $statement_descriptor = [
-                'name' => $this->getOptionsConfig(OptionsInterface::OPTIONS_SD_NAME),
-                'description' => $this->getOptionsConfig(OptionsInterface::OPTIONS_SD_DESCRIPTION),
-                'city' => $this->getOptionsConfig(OptionsInterface::OPTIONS_SD_CITY),
-                'phone_number' => $this->getOptionsConfig(OptionsInterface::OPTIONS_SD_PHONE),
-                'url' => $this->getOptionsConfig(OptionsInterface::OPTIONS_SD_URL),
-            ];
-        }
+        $statement_descriptor = [
+            'name' => $this->getOptionsConfig('statement_descriptor/name'),
+            'description' => $this->getOptionsConfig('statement_descriptor/description'),
+            'city' => $this->getOptionsConfig('statement_descriptor/city'),
+            'phone_number' => $this->getOptionsConfig('statement_descriptor/phone_number'),
+            'url' => $this->getOptionsConfig('statement_descriptor/url'),
+        ];
 
         return $statement_descriptor;
     }
@@ -338,7 +325,7 @@ class Data extends AbstractHelper
      */
     public function blockPartialRefund()
     {
-        return $this->getApiConfig(OptionsInterface::API_ENABLED);
+        return $this->getApiConfig(OptionsInterface::API['enabled']);
     }
 
     /**
@@ -351,7 +338,7 @@ class Data extends AbstractHelper
      */
     public function checkGr4vyReady()
     {
-        $isEnabled = $this->getApiConfig(OptionsInterface::API_ENABLED);
+        $isEnabled = $this->getApiConfig(OptionsInterface::API['enabled']);
         $privateKey = $this->getPrivateKey();
         $classExist = class_exists('\Gr4vy\Gr4vyConfig');
 

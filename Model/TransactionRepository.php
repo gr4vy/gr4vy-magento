@@ -231,6 +231,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote, $result['amount']);
+        $result['locale'] = $this->getLocaleCode();
 
         return $result;
     }

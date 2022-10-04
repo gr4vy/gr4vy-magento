@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="options" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
+        <label>Options</label>
+        <field id="payment_source" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+            <label>Payment Source</label>
+            <source_model>Gr4vy\Magento\Model\Source\PaymentSource</source_model>
+        </field>
+        <field id="payment_store" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="select">
+            <label>Payment Store</label>
+            <comment>Explicitly store the payment method or ask the buyer</comment>
+            <source_model>Gr4vy\Magento\Model\Source\PaymentStore</source_model>
+        </field>
+        <field id="custom_data" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+            <label>Custom Data</label>
+        </field>
+        <field id="ask_cvv" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="select">
+            <label>Always Request CVV</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="ask_security_code" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="select">
+            <label>Require Security Code</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <group id="statement_descriptor" translate="label" showInDefault="1" showInWebsite="1" sortOrder="200">
+            <label>Statement Descriptor</label>
+            <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                <label>Statement Name</label>
+            </field>
+            <field id="description" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text">
+                <label>Statement Description</label>
+            </field>
+            <field id="city" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="text">
+                <label>Statement City</label>
+            </field>
+            <field id="phonenumber" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="text">
+                <label>Statement Phone number</label>
+            </field>
+            <field id="url" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="80" translate="label" type="text">
+                <label>Statement Url</label>
+            </field>
+        </group>
+    </group>
+</include>

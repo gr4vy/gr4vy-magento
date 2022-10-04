@@ -11,6 +11,8 @@ use Gr4vy\Magento\Model\Payment\Gr4vy;
 
 class PaymentSource implements \Magento\Framework\Option\ArrayInterface
 {
+    const SOURCE_ECOMMERCE = 'ecommerce';
+    const SOURCE_CARD_ON_FILE = 'card_on_file';
     const SOURCE_INSTALLMENT = 'installment';
     const SOURCE_MOTO = 'moto';
     const SOURCE_RECURRING = 'recurring';
@@ -18,7 +20,8 @@ class PaymentSource implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => null, 'label' => __('Not Selected')],
+            ['value' => self::SOURCE_ECOMMERCE, 'label' => __('Ecommerce')],
+            ['value' => self::SOURCE_CARD_ON_FILE, 'label' => __('Card On File')],
             ['value' => self::SOURCE_INSTALLMENT, 'label' => __('Installment')],
             ['value' => self::SOURCE_MOTO, 'label' => __('Moto')],
             ['value' => self::SOURCE_RECURRING, 'label' => __('Recurring')]

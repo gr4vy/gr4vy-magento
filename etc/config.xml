@@ -18,36 +18,44 @@
                     <title>Gr4vy</title>
                     <allowspecific>0</allowspecific>
                 </api>
+                <options>
+                    <payment_source>ecommerce</payment_source>
+                </options>
                 <theme>
-                    <!--font-->
-                    <font_body>google:Lato, Tahoma, Arial</font_body>
-                    <!--colors-->
-                    <color_text>#0f0f0f</color_text>
-                    <color_subtle_text>#434343</color_subtle_text>
-                    <color_label_text>#0f0f0f</color_label_text>
-                    <color_primary>#006cd0</color_primary>
-                    <color_page_background>#ffffff</color_page_background>
-                    <color_container_background_unchecked>#fcfcfc</color_container_background_unchecked>
-                    <color_container_background>#ffffff</color_container_background>
-                    <color_container_border>#f2f2f2</color_container_border>
-                    <color_input_border>#b6b6b6</color_input_border>
-                    <color_input_background>#ffffff</color_input_background>
-                    <color_input_text>#0f0f0f</color_input_text>
-                    <color_danger>#d82121</color_danger>
-                    <color_danger_background>#fbf7f7</color_danger_background>
-                    <color_danger_text>#b81010</color_danger_text>
-                    <color_info>#3ea2ff</color_info>
-                    <color_info_background>#e7f2fb</color_info_background>
-                    <color_info_text>#0367c4</color_info_text>
-                    <color_focus>#4844ff</color_focus>
-                    <!--border-->
-                    <border_container>thin</border_container>
-                    <border_input>thin</border_input>
-                    <!--radii-->
-                    <radii_container>subtle</radii_container>
-                    <radii_input>subtle</radii_input>
-                    <!--focus ring-->
-                    <focus_ring_shadows>0 0 0 2px #ffffff, 0 0 0 4px #4844ff</focus_ring_shadows>
+                    <fonts>
+                        <body>google:Lato, Tahoma, Arial</body>
+                    </fonts>
+                    <colors>
+                        <text>#0f0f0f</text>
+                        <subtle_text>#434343</subtle_text>
+                        <label_text>#0f0f0f</label_text>
+                        <primary>#006cd0</primary>
+                        <page_background>#ffffff</page_background>
+                        <container_background_unchecked>#fcfcfc</container_background_unchecked>
+                        <container_background>#ffffff</container_background>
+                        <container_border>#f2f2f2</container_border>
+                        <input_border>#b6b6b6</input_border>
+                        <input_background>#ffffff</input_background>
+                        <input_text>#0f0f0f</input_text>
+                        <danger>#d82121</danger>
+                        <danger_background>#fbf7f7</danger_background>
+                        <danger_text>#b81010</danger_text>
+                        <info>#3ea2ff</info>
+                        <info_background>#e7f2fb</info_background>
+                        <info_text>#0367c4</info_text>
+                        <focus>#4844ff</focus>
+                    </colors>
+                    <border_widths>
+                        <container>thin</container>
+                        <input>thin</input>
+                    </border_widths>
+                    <radii>
+                        <container>subtle</container>
+                        <input>subtle</input>
+                    </radii>
+                    <shadows>
+                        <focus_ring>0 0 0 2px #ffffff, 0 0 0 4px #4844ff</focus_ring>
+                    </shadows>
                 </theme>
 			</gr4vy_section>
 		</payment>

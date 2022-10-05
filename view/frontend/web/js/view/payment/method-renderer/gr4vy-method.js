@@ -62,12 +62,12 @@ define(
                                 paymentSource: window.checkoutConfig.payment.gr4vy.payment_source,
                                 requireSecurityCode: window.checkoutConfig.payment.gr4vy.require_security_code,
                                 theme: window.checkoutConfig.payment.gr4vy.theme,
-                                statement_descriptor: window.checkoutConfig.payment.gr4vy.statement_descriptor,
+                                statementDescriptor: window.checkoutConfig.payment.gr4vy.statement_descriptor,
                                 token: embed_token,
                                 intent: window.checkoutConfig.payment.gr4vy.intent,
                                 cartItems: cartItems,
                                 metadata: {
-                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
+                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data || "default"
                                 },
                                 onEvent: (eventName, data) => {
                                     if (eventName === 'agumentError') {

@@ -220,6 +220,9 @@ class TransactionRepository implements TransactionRepositoryInterface
             $this->customerHelper->connectQuoteWithGr4vy($quote);
             $quote->save();
         }
+        else {
+            $this->customerHelper->updateGr4vyBuyerAddressFromQuote($quote);
+        }
 
         $buyer_id = $quote->getData('gr4vy_buyer_id');
 
@@ -232,6 +235,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote, $result['amount']);
         $result['locale'] = $this->getLocaleCode();
+
+        $this->gr4vyLogger->logMixed(["result"=>$result], "getEmbedToken");
 
         return $result;
     }

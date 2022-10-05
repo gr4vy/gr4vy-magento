@@ -91,7 +91,7 @@ class Customer extends AbstractHelper
 
         try {
             $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($display_name));
-            $this->updateGr4vyBuyerAddress();
+            $this->updateGr4vyBuyerAddressFromQuote($quote);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
@@ -187,6 +187,14 @@ class Customer extends AbstractHelper
         $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
 
         if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
+            $street = $default_billing->getStreet();
+            $street2 = null;
+            if (is_array($street)) {
+                if (count($street) > 1) {
+                    $street2 = $street[1];
+                }
+                $street = $street[0];
+            }
             $billing_details = [
                 "first_name" => $default_billing->getFirstname(),
                 "last_name" => $default_billing->getLastname(),
@@ -197,13 +205,103 @@ class Customer extends AbstractHelper
                     "country" => $default_billing->getCountryId(),
                     "postal_code" => $default_billing->getPostcode(),
                     "state" => $default_billing->getRegion(),
-                    "street" => $default_billing->getStreet(),
+                    "street" => $street,
+                    "street2" => $street2,
                     "organization" => $default_billing->getCompany()
                 ]
             ];
 
             if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {
                 $this->updateGr4vyBuyer($gr4vy_buyer_id, $billing_details);
+
+                // save billing_details to gr4vy_buyers table
+                $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));
+            }
+        }
+    }
+
+    /**
+     * update gr4vy buyer billing address from $quote
+     *
+     * @param Magento\Quote\Model\Quote $quote
+     * @return void
+     */
+    public function updateGr4vyBuyerAddressFromQuote($quote)
+    {
+
+        $customer = $this->getCurrentCustomer();
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
+
+        $billing_details = null;
+
+        if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
+            $street = $default_billing->getStreet();
+            $street2 = null;
+            if (is_array($street)) {
+                if (count($street) > 1) {
+                    $street2 = $street[1];
+                }
+                $street = $street[0];
+            }
+            $billing_details = [
+                "first_name" => $default_billing->getFirstname(),
+                "last_name" => $default_billing->getLastname(),
+                "email_address" => $customer->getEmail(),
+                "phone_number" => $default_billing->getTelephone(),
+                "address" => [
+                    "city" => $default_billing->getCity(),
+                    "country" => $default_billing->getCountryId(),
+                    "postal_code" => $default_billing->getPostcode(),
+                    "state" => $default_billing->getRegion(),
+                    "street" => $street,
+                    "street2" => $street2,
+                    "organization" => $default_billing->getCompany()
+                ]
+            ];
+        }
+        else {
+            $billingAddress = $quote->getBillingAddress();
+
+            if ($billingAddress) {
+                $billing_details = [
+                    "first_name" => $quote->getCustomerFirstname(),
+                    "last_name" => $quote->getCustomerLastname(),
+                    "email_address" => $quote->getCustomerEmail()
+                ];
+
+                $phone = $billingAddress->getData('telephone');
+                if ($phone) {
+                    $billing_details["phone_number"] = $phone;
+                }
+                $postcode = $billingAddress->getData('postcode');
+                if ($postcode) {
+                    $street = $billingAddress->getData('street');
+                    $street2 = null;
+                    if(strstr($street, "\n")) {
+                        $streetArr = explode("\n", $street);
+                        $street = $streetArr[0];
+                        if (count($streetArr) > 1) {
+                            $street2 = $streetArr[1];
+                        }
+                    }
+
+                    $billing_details["address"] = [
+                        "city" => $billingAddress->getData('city'),
+                        "country" => $billingAddress->getData('country_id'),
+                        "postal_code" => $postcode,
+                        "state" => $billingAddress->getData('region'),
+                        "street" => $street,
+                        "street2" => $street2,
+                        "organization" => ""
+                    ];
+                }
+            }
+        }
+
+        if ($buyerModel && $billing_details) {
+            if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {
+                $this->gr4vyLogger->logMixed(["billing_details"=>$billing_details], "billing address has changed");
+                $this->updateGr4vyBuyer($buyerModel->getBuyerId(), $billing_details);
 
                 // save billing_details to gr4vy_buyers table
                 $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));

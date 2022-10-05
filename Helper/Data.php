@@ -188,19 +188,9 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getAskCvv()
+    public function getRequireSecurityCode()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS['ask_cvv']);
-    }
-
-    /**
-     * retrieve ask security code
-     *
-     * @return string
-     */
-    public function getAskSecurityCode()
-    {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS['ask_security_code']);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['require_security_code']);
     }
 
     /**

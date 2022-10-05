@@ -35,8 +35,7 @@ interface OptionsInterface
         'payment_source' => 'payment_source',
         'payment_store' => 'payment_store',
         'custom_data' => 'custom_data',
-        'ask_cvv' => 'ask_cvv',
-        'ask_security_code' => 'ask_security_code',
+        'require_security_code' => 'require_security_code',
         'statement_descriptor' => [
             'name' => 'name',
             'description' => 'description',

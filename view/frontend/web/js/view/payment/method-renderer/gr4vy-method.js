@@ -60,15 +60,14 @@ define(
                                 country: window.checkoutConfig.originCountryCode,
                                 locale: locale,
                                 paymentSource: window.checkoutConfig.payment.gr4vy.payment_source,
-                                ask_cvv: window.checkoutConfig.payment.gr4vy.ask_cvv,
-                                ask_security_code: window.checkoutConfig.payment.gr4vy.ask_security_code,
+                                requireSecurityCode: window.checkoutConfig.payment.gr4vy.ask_security_code,
                                 theme: window.checkoutConfig.payment.gr4vy.theme,
-                                statement_descriptor: window.checkoutConfig.payment.gr4vy.statement_descriptor,
+                                statementDescriptor: window.checkoutConfig.payment.gr4vy.statement_descriptor,
                                 token: embed_token,
                                 intent: window.checkoutConfig.payment.gr4vy.intent,
                                 cartItems: cartItems,
                                 metadata: {
-                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
+                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data || "default"
                                 },
                                 onEvent: (eventName, data) => {
                                     if (eventName === 'agumentError') {

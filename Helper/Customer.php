@@ -273,8 +273,8 @@ class Customer extends AbstractHelper
                 if ($phone) {
                     $billing_details["phone_number"] = $phone;
                 }
-                $postcode = $billingAddress->getData('postcode');
-                if ($postcode) {
+                $city = $billingAddress->getData('city');
+                if ($city) {
                     $street = $billingAddress->getData('street');
                     $street2 = null;
                     if(strstr($street, "\n")) {
@@ -286,9 +286,9 @@ class Customer extends AbstractHelper
                     }
 
                     $billing_details["address"] = [
-                        "city" => $billingAddress->getData('city'),
+                        "city" => $city,
                         "country" => $billingAddress->getData('country_id'),
-                        "postal_code" => $postcode,
+                        "postal_code" => $billingAddress->getData('postcode'),
                         "state" => $billingAddress->getData('region'),
                         "street" => $street,
                         "street2" => $street2,

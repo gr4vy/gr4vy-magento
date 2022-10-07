@@ -16,6 +16,8 @@ use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Customer as CustomerHelper;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Framework\Locale\Resolver;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -74,6 +76,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $embedApi;
 
     /**
+     * @var Resolver
+     */
+    private $resolver;
+
+    /**
      * @var \Magento\Quote\Api\PaymentMethodManagementInterface
      */
     protected $paymentMethodManagement;
@@ -87,6 +94,11 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @var searchCriteriaBuilder
      */
     private $searchCriteriaBuilder;
+
+    /**
+     * @var categoryRepository
+     */
+    private $categoryRepository;
 
     /**
      * @param ResourceTransaction $resource
@@ -104,8 +116,10 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param Gr4vyHelper $gr4vyHelper
      * @param CustomerHelper $customerHelper
      * @param Gr4vyEmbed $embedApi
+     * @param Resolver $resolver
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
+     * @param \Magento\Catalog\Model\CategoryRepository $categoryRepository
      */
     public function __construct(
         ResourceTransaction $resource,
@@ -123,8 +137,10 @@ class TransactionRepository implements TransactionRepositoryInterface
         Gr4vyHelper $gr4vyHelper,
         CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
+        Resolver $resolver,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
+        \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement,
+        \Magento\Catalog\Model\CategoryRepository $categoryRepository
     ) {
         $this->resource = $resource;
         $this->transactionFactory = $transactionFactory;
@@ -142,7 +158,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->gr4vyHelper = $gr4vyHelper;
         $this->customerHelper = $customerHelper;
         $this->embedApi = $embedApi;
+        $this->resolver = $resolver;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -211,6 +229,9 @@ class TransactionRepository implements TransactionRepositoryInterface
             $this->customerHelper->connectQuoteWithGr4vy($quote);
             $quote->save();
         }
+        else {
+            $this->customerHelper->updateGr4vyBuyerAddressFromQuote($quote);
+        }
 
         $buyer_id = $quote->getData('gr4vy_buyer_id');
 
@@ -222,6 +243,26 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result['amount'] = $this->round_number($quote_total);
         $result['buyer_id'] = $buyer_id;
         $result['items'] = $this->getCartItemsData($quote, $result['amount']);
+        $result['locale'] = $this->getLocaleCode();
+
+        $this->gr4vyLogger->logMixed(["result"=>$result], "getEmbedToken");
+
+        return $result;
+    }
+
+    /**
+     * Get the current locale code
+     *
+     * @return string
+     */
+    public function getLocaleCode(): string
+    {
+        $result = $this->resolver->getLocale();
+        if ($result === null) {
+            return '';
+        }
+        $parts = explode('_', $result);
+        $result = $parts[0].'-'.strtoupper($parts[1]);
 
         return $result;
     }
@@ -251,6 +292,16 @@ class TransactionRepository implements TransactionRepositoryInterface
         $itemsTotal = 0;
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
+            $categories = $product->getCategoryIds();
+
+            $gr4vyCategories = [];
+            foreach ($categories as $categoryId) {
+                $category = $this->categoryRepository->get($categoryId, $quote->getStore()->getId());
+                if ($category) {
+                    $gr4vyCategories[] = $category->getName();    
+                }
+            }
+            
             $productUrl = $product->getUrlModel()->getUrl($product);
             $itemAmount = $this->round_number($item->getPriceInclTax());
             $itemsTotal += $itemAmount;
@@ -260,7 +311,8 @@ class TransactionRepository implements TransactionRepositoryInterface
                 'unitAmount' => $itemAmount,
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
-                'productType' => 'physical'
+                'productType' => 'physical',
+                'categories' => $gr4vyCategories
             ];
         }
 
@@ -274,7 +326,8 @@ class TransactionRepository implements TransactionRepositoryInterface
             'unitAmount' => $shippingAmount,
             'sku' => $shipping_address->getShippingMethod(),
             'productUrl' => $quote->getStore()->getUrl(),
-            'productType' => 'shipping_fee'
+            'productType' => 'shipping_fee',
+            'categories' => ['shipping']
         ];
 
         if ($totalAmount != $itemsTotal) {

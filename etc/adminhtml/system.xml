@@ -2,7 +2,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
 	<system>
 		<section id="payment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="1000" translate="label">
-			<group id="gr4vy" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+			<group id="gr4vy_section" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
                 <comment>
                     <![CDATA[
                     <div class="gr4vy-payment-logo"></div>
@@ -12,70 +12,67 @@
                     </div>
                     ]]>
                 </comment>
-                <field id="version" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
-					<label>Information</label>
-                    <frontend_model>Gr4vy\Magento\Block\System\Config\Version</frontend_model>
-                </field>
                 <fieldset_css>complex gr4vy-section</fieldset_css>
                 <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
-				<field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
-					<label>Enabled</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-				</field>
-				<field id="payment_type" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="15" translate="label" type="select">
-					<label>Display Type</label>
-					<source_model>Gr4vy\Magento\Model\Source\PaymentType</source_model>
-				</field>
-				<field id="id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
-					<label>Gr4vy ID</label>
-				</field>
-                <field id="private_key" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="25" showInDefault="1" showInWebsite="1" >
-                    <label>Private Key</label>
-                    <backend_model>Gr4vy\Magento\Model\Source\PrivateKey</backend_model>
-                    <upload_dir config="system" scope_info="1">gr4vy</upload_dir>
-                </field>
-				<field id="environment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label" type="select">
-					<label>Environment</label>
-                    <source_model>Gr4vy\Magento\Model\Source\Environment</source_model>
-				</field>
-				<field id="debug" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
-					<label>Enable Debug</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-				</field>
-                <field id="payment_store" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="34" translate="label" type="select">
-                    <label>Payment Store</label>
-                    <comment>Explicitly store the payment method or ask the buyer</comment>
-                    <source_model>Gr4vy\Magento\Model\Source\PaymentStore</source_model>
-                </field>
-                <field id="custom_data" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
-					<label>Custom Data</label>
-				</field>
-                <field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
-                    <label>Payment Action</label>
-                    <source_model>Gr4vy\Magento\Model\Source\PaymentAction</source_model>
-                </field>
-				<field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
-					<label>Title</label>
-				</field>
-				<field id="instructions" type="textarea" sortOrder="45" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
-					<label>Instructions</label>
-				</field>
-				<field id="order_status" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="select">
-					<label>New Order Status</label>
-					<source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
-				</field>
-				<field id="allowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="allowspecific">
-					<label>Payment from Applicable Countries</label>
-					<source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
-				</field>
-				<field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="65" translate="label" type="multiselect">
-					<label>Payment from Applicable Countries</label>
-					<source_model>Magento\Directory\Model\Config\Source\Country</source_model>
-					<can_be_empty>1</can_be_empty>
-				</field>
-				<field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="text">
-					<label>Sort Order</label>
-				</field>
+                <group id="api" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
+                    <label>API Configuration</label>
+                    <field id="version" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Information</label>
+                        <frontend_model>Gr4vy\Magento\Block\System\Config\Version</frontend_model>
+                    </field>
+                    <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                        <label>Enabled</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="payment_type" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="15" translate="label" type="select">
+                        <label>Display Type</label>
+                        <source_model>Gr4vy\Magento\Model\Source\PaymentType</source_model>
+                    </field>
+                    <field id="id" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
+                        <label>Gr4vy ID</label>
+                    </field>
+                    <field id="private_key" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="25" showInDefault="1" showInWebsite="1" >
+                        <label>Private Key</label>
+                        <backend_model>Gr4vy\Magento\Model\Source\PrivateKey</backend_model>
+                        <upload_dir config="system" scope_info="1">gr4vy</upload_dir>
+                    </field>
+                    <field id="environment" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label" type="select">
+                        <label>Environment</label>
+                        <source_model>Gr4vy\Magento\Model\Source\Environment</source_model>
+                    </field>
+                    <field id="debug" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="select">
+                        <label>Enable Debug</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="payment_action" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="35" translate="label" type="select">
+                        <label>Payment Action</label>
+                        <source_model>Gr4vy\Magento\Model\Source\PaymentAction</source_model>
+                    </field>
+                    <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                        <label>Title</label>
+                    </field>
+                    <field id="instructions" type="textarea" sortOrder="45" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+                        <label>Instructions</label>
+                    </field>
+                    <field id="order_status" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="select">
+                        <label>New Order Status</label>
+                        <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
+                    </field>
+                    <field id="allowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="allowspecific">
+                        <label>Payment from Applicable Countries</label>
+                        <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                    </field>
+                    <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                        <label>Payment from Applicable Countries</label>
+                        <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                        <can_be_empty>1</can_be_empty>
+                    </field>
+                    <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="90" translate="label" type="text">
+                        <label>Sort Order</label>
+                    </field>
+                </group>
+                <include path="Gr4vy_Magento::system/section_options.xml"/>
+                <include path="Gr4vy_Magento::system/section_theme.xml"/>
 			</group>
 		</section>
 	</system>

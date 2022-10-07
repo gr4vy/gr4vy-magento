@@ -16,6 +16,7 @@ use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class Customer extends AbstractHelper
@@ -56,6 +57,11 @@ class Customer extends AbstractHelper
     private $customer = null;
 
     /**
+     * @var CustomerSession
+     */
+    protected $visitorSession;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param CustomerHelper $customerHelper
      */
@@ -67,7 +73,8 @@ class Customer extends AbstractHelper
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
         Logger $gr4vyLogger,
-        Gr4vyHelper $gr4vyHelper
+        Gr4vyHelper $gr4vyHelper,
+        SessionManagerInterface $visitorSession
     ) {
         parent::__construct($context);
         $this->customerSession = $customerSession;
@@ -77,20 +84,19 @@ class Customer extends AbstractHelper
         $this->buyerApi = $buyerApi;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->visitorSession = $visitorSession;
     }
 
     /**
      * initialize gr4vy customer data in session. if customer not in gr4vy, create new record 
      *
-     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     * @param Magento\Quote\Model\Quote $quote
      * @return void
      */
     public function connectQuoteWithGr4vy($quote)
     {
-        $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
-
         try {
-            $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($display_name));
+            $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
             $this->updateGr4vyBuyerAddressFromQuote($quote);
         }
         catch (\Exception $e) {
@@ -140,15 +146,28 @@ class Customer extends AbstractHelper
      * 4. logged in - gr4vy_buyer_id previously stored in session (create account on checkout page)
      * 5. logged in - buyer_id not available due to unexpected issue like missing private_key
      *
-     * @param string $display_name
-     * @param string $external_identifier
+     * @param Magento\Quote\Model\Quote $quote
      * @return void
      */
-    public function getGr4vyBuyerId($display_name = null, $external_identifier = null)
+    public function getGr4vyBuyerId($quote = null)
     {
         if ($customer = $this->getCurrentCustomer()) {
             $external_identifier = $customer->getId();
             $display_name = $customer->getFirstname() . " " . $customer->getLastname();
+        }
+
+        if (!$this->customerSession->isLoggedIn()) {
+            // Customer is not logged in
+            // This can only happen when called from connectQuoteWithGr4vy
+            
+            $customerFirstname = $quote->getShippingAddress()->getData("firstname");
+            $customerLastname = $quote->getShippingAddress()->getData("lastname");
+            $display_name = $customerFirstname . " " . $customerLastname;
+            $visitor = $this->visitorSession->getVisitorData();
+            //we prefix external_identifer with visitor_ so it doesn't clash with customer ID
+            $external_identifier = "visitor_" . $visitor["visitor_id"];
+            $quote->setCustomerFirstname($customerFirstname);
+            $quote->setCustomerLastname($customerLastname);
         }
 
         $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->gr4vyHelper->getGr4vyId());
@@ -171,6 +190,7 @@ class Customer extends AbstractHelper
             $gr4vy_buyer_id = $buyerModel->getBuyerId();
         }
 
+        $this->gr4vyLogger->logMixed(["buyer_id"=>$gr4vy_buyer_id], "returning in getGr4vyBuyerId");
         return $gr4vy_buyer_id;
     }
 

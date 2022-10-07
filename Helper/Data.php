@@ -124,6 +124,16 @@ class Data extends AbstractHelper
     }
 
     /**
+     * retrieve gr4vy payment method Title
+     *
+     * @return string
+     */
+    public function getPaymentTitle()
+    {
+        return $this->getApiConfig(OptionsInterface::API['title']);
+    }
+
+    /**
      * retrieve relative path of private key
      *
      * @return string

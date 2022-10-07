@@ -18,6 +18,7 @@ interface OptionsInterface
     const API = [
         'enabled' => 'active',
         'instructions' => 'instructions',
+        'title' => 'title',
         'id' => 'id',
         'private_key' => 'private_key',
         'payment_action' => 'payment_action',

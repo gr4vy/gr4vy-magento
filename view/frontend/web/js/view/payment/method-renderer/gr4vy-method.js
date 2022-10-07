@@ -207,6 +207,9 @@ define(
             getInstructions: function () {
                 return window.checkoutConfig.payment.gr4vy.description;
             },
+            getTitle: function() {
+                return window.checkoutConfig.payment.gr4vy.title;
+            },
             /**
              * @returns {String}
              */

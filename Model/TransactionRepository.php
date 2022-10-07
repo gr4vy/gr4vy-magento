@@ -210,7 +210,17 @@ class TransactionRepository implements TransactionRepositoryInterface
         // 2. set payment information
         $quote = $this->getQuoteModel($cartId);
         $payment = $quote->getPayment();
+        $payment->setCcLast4($methodData->getLabel());
+        $payment->setCcType($methodData->getScheme());
+        $expiryDate = $methodData->getExpirationDate();
+        if ($expiryDate) {
+        $expiry = explode("/", $expiryDate);
+            $payment->setCcExpMonth($expiry[0]);
+            $payment->setCcExpYear($expiry[1]);
+        }
+        // $payment->setCcAvsStatus();
         $payment->setData('gr4vy_transaction_id', $transactionData->getGr4vyTransactionId())->save();
+
         $this->gr4vyLogger->logMixed($payment->getData());
 
         $quote_payment_id = $this->paymentMethodManagement->set($cartId, $paymentMethod);

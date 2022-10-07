@@ -275,7 +275,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function round_number($input)
     {
-        return round(floatval($input) * 100);
+        return intval(round(floatval($input) * 100));
     }
 
     /**

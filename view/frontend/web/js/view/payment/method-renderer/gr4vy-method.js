@@ -13,9 +13,10 @@ define(
         'Magento_Ui/js/model/messageList',
         'Magento_Checkout/js/action/set-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Ui/js/modal/alert'
+        'Magento_Ui/js/modal/alert',
+        'gr4vyapi'
     ],
-    function (Component, quote, urlBuilder, config, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, setPaymentInformationAction, fullScreenLoader, alertModal) {
+    function (Component, quote, urlBuilder, config, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, setPaymentInformationAction, fullScreenLoader, alertModal, gr4vy) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -35,13 +36,15 @@ define(
                     }
                 });
             },
-            //initialize: function() {
-                //var self = this;
+            initialize: function() {
+                var self = this;
 
-                //this._super();
+                this._super();
 
-                //self.initEmbedPayment();
-            //},
+                if (config.token() && config.amount() && config.buyerId) {
+                    self.initEmbedPayment();
+                }
+            },
             initEmbedPayment: function () {
                 // Verify data before setting gr4vy
                 if (config.token() && config.amount() && config.buyerId) {

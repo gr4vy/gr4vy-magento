@@ -50,7 +50,19 @@ class Buyer extends Base
             $billing_details->setFirstName($billing_address['first_name']);
             $billing_details->setLastName($billing_address['last_name']);
             $billing_details->setEmailAddress($billing_address['email_address']);
-            //$billing_details->setPhoneNumber($billing_address['phone_number']);
+            if (isset($billing_address) && isset($billing_address["phone_number"])) {
+                $phoneNumber = $billing_address['phone_number'];
+                $character = "0";
+                if (strpos($phoneNumber, $character) === 0) {
+                    $phoneNumber = substr($phoneNumber, 1);
+                }
+                $character = "+";
+                if (strpos($phoneNumber, $character) !== 0) {
+                    $phoneNumber = "+" . $phoneNumber;
+                }
+                $billing_details->setPhoneNumber($phoneNumber);  
+            }
+
         }
         catch (\InvalidArgumentException $e) {
             $this->gr4vyLogger->logException($e);
@@ -58,24 +70,20 @@ class Buyer extends Base
 
         $address = new AddressUpdate();
         try {
-            $address->setCity($billing_address['address']['city']);
-            $address->setCountry($billing_address['address']['country']);
-            $address->setPostalCode($billing_address['address']['postal_code']);
-            if ($billing_address['address']['state']) {
-                $address->setState($billing_address['address']['state']);
+            if (array_key_exists("address", $billing_address)) {
+                $address->setCity($billing_address['address']['city']);
+                $address->setCountry($billing_address['address']['country']);
+                $address->setPostalCode($billing_address['address']['postal_code']);
+                if ($billing_address['address']['state']) {
+                    $address->setState($billing_address['address']['state']);
+                }
+                else {
+                    // set state to country to fix gr4vy server error - suggested by Gr4vy
+                    $address->setState($billing_address['address']['country']);
+                }
+                $address->setLine1($billing_address['address']['street']);
+                $address->setLine2($billing_address['address']['street2']);
             }
-            else {
-                // set state to country to fix gr4vy server error - suggested by Gr4vy
-                $address->setState($billing_address['address']['country']);
-            }
-            $address->setLine1($billing_address['address']['street'][0]);
-            if (isset($billing_address['address']['street'][1])) {
-                $address->setLine2($billing_address['address']['street'][1]);
-            }
-            else {
-                $address->setLine2('');
-            }
-            $address->setOrganization($billing_address['address']['organization']);
         }
         catch (\InvalidArgumentException $e) {
             $this->gr4vyLogger->logException($e);

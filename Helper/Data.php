@@ -10,20 +10,10 @@ namespace Gr4vy\Magento\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Gr4vy\Magento\Api\Data\OptionsInterface;
 
 class Data extends AbstractHelper
 {
-    const GR4VY_ENABLED = 'payment/gr4vy/active';
-    const GR4VY_INSTRUCTION = 'payment/gr4vy/instructions';
-    const GR4VY_PRIVATE_KEY = 'payment/gr4vy/private_key';
-    const GR4VY_DEBUG = 'payment/gr4vy/debug';
-    const GR4VY_ID = 'payment/gr4vy/id';
-    const GR4VY_INTENT = 'payment/gr4vy/payment_action';
-    const GR4VY_ORDER_STATUS = 'payment/gr4vy/order_status';
-    const GR4VY_ENV = 'payment/gr4vy/environment';
-    const GR4VY_STORE = 'payment/gr4vy/payment_store';
-    const GR4VY_CUSTOM_DATA = 'payment/gr4vy/custom_data';
-
     /**
      * @var ScopeConfigInterface
      */
@@ -58,13 +48,59 @@ class Data extends AbstractHelper
     }
 
     /**
-     * check payment method enabled
+     * retrieve config value by given section and key
+     * @param string
+     * @param string
+     * @return string
+     */
+    public function getGr4vyConfigValue($section, $key)
+    {
+        $full_key = sprintf(OptionsInterface::TMPL, $section, $key);
+
+        return $this->scopeConfig->getValue($full_key, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * retrieve API config values
+     *
+     * @param string
+     * @return string
+     */
+    public function getApiConfig($key)
+    {
+        return $this->getGr4vyConfigValue(OptionsInterface::SECTION_API, $key);
+    }
+
+    /**
+     * retrieve Options config values
+     *
+     * @param string
+     * @return string
+     */
+    public function getOptionsConfig($key)
+    {
+        return $this->getGr4vyConfigValue(OptionsInterface::SECTION_OPTIONS, $key);
+    }
+
+    /**
+     * retrieve Theme config values
+     *
+     * @param string
+     * @return string
+     */
+    public function getThemeConfig($key)
+    {
+        return $this->getGr4vyConfigValue(OptionsInterface::SECTION_THEME, $key);
+    }
+
+    /**
+     * check payment debug enabled
      *
      * @return bool
      */
     public function isEnabled()
     {
-        return (bool) $this->scopeConfig->getValue(self::GR4VY_ENABLED, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['enabled']);
     }
 
     /**
@@ -74,7 +110,7 @@ class Data extends AbstractHelper
      */
     public function isDebugOn()
     {
-        return (bool) $this->scopeConfig->getValue(self::GR4VY_DEBUG, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['debug']);
     }
 
     /**
@@ -84,7 +120,17 @@ class Data extends AbstractHelper
      */
     public function getPaymentInstructions()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_INSTRUCTION, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['instructions']);
+    }
+
+    /**
+     * retrieve gr4vy payment method Title
+     *
+     * @return string
+     */
+    public function getPaymentTitle()
+    {
+        return $this->getApiConfig(OptionsInterface::API['title']);
     }
 
     /**
@@ -94,7 +140,7 @@ class Data extends AbstractHelper
      */
     public function getPrivateKey()
     {
-        return $this->scopeConfig->getValue(self::GR4VY_PRIVATE_KEY, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['private_key']);
     }
 
     /**
@@ -104,7 +150,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyId()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_ID, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['id']);
     }
 
     /**
@@ -114,7 +160,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyIntent()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_INTENT, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['intent']);
     }
 
     /**
@@ -124,7 +170,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyEnvironment()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_ENV, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['environment']);
     }
 
     /**
@@ -134,7 +180,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyPaymentStore()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_STORE, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['store']);
     }
 
     /**
@@ -144,7 +190,17 @@ class Data extends AbstractHelper
      */
     public function getGr4vyCustomData()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_CUSTOM_DATA, ScopeInterface::SCOPE_STORE);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['custom_data']);
+    }
+
+    /**
+     * retrieve ask cvv
+     *
+     * @return string
+     */
+    public function getRequireSecurityCode()
+    {
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['require_security_code']);
     }
 
     /**
@@ -154,7 +210,83 @@ class Data extends AbstractHelper
      */
     public function getGr4vyNewOrderStatus()
     {
-        return (string) $this->scopeConfig->getValue(self::GR4VY_ORDER_STATUS, ScopeInterface::SCOPE_STORE);
+        return $this->getApiConfig(OptionsInterface::API['order_status']);
+    }
+
+    /**
+     * get Payment Source
+     *
+     * @return string
+     */
+    public function getPaymentSource()
+    {
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['payment_source']);
+    }
+
+    /**
+     * build Theme config array
+     *
+     * @return array
+     */
+    public function buildThemeConfig()
+    {
+        $theme_config = [];
+        $theme_config['fonts'] = [
+            'body' => $this->getThemeConfig('fonts/body'),
+        ];
+        $theme_config['colors'] = [
+            'text' => $this->getThemeConfig('colors/text'),
+            'subtleText' => $this->getThemeConfig('colors/subtle_text'),
+            'labelText' => $this->getThemeConfig('colors/label_text'),
+            'primary' => $this->getThemeConfig('colors/primary'),
+            'pageBackground' => $this->getThemeConfig('colors/page_background'),
+            'containerBackgroundUnchecked' => $this->getThemeConfig('colors/container_background_unchecked'),
+            'containerBackground' => $this->getThemeConfig('colors/container_background'),
+            'containerBorder' => $this->getThemeConfig('colors/container_border'),
+            'inputBorder' => $this->getThemeConfig('colors/input_border'),
+            'inputBackground' => $this->getThemeConfig('colors/input_background'),
+            'inputText' => $this->getThemeConfig('colors/input_text'),
+            'inputRadioBorder' => $this->getThemeConfig('colors/input_radio_border'),
+            'inputRadioBorderChecked' => $this->getThemeConfig('colors/input_radio_border_checked'),
+            'danger' => $this->getThemeConfig('colors/danger'),
+            'dangerBackground' => $this->getThemeConfig('colors/danger_background'),
+            'dangerText' => $this->getThemeConfig('colors/danger_text'),
+            'info' => $this->getThemeConfig('colors/info'),
+            'infoBackground' => $this->getThemeConfig('colors/info_background'),
+            'infoText' => $this->getThemeConfig('colors/info_text'),
+            'focus' => $this->getThemeConfig('colors/focus'),
+        ];
+        $theme_config['borderWidths'] = [
+            'container' => $this->getThemeConfig('border_widths/container'),
+            'input' => $this->getThemeConfig('border_widths/input'),
+        ];
+        $theme_config['radii'] = [
+            'container' => $this->getThemeConfig('radii/container'),
+            'input' => $this->getThemeConfig('radii/input'),
+        ];
+        $theme_config['shadows'] = [
+            'focusRing' => $this->getThemeConfig('shadows/focus_ring'),
+        ];
+
+        return $theme_config;
+    }
+
+    /**
+     * build statement descriptor array
+     *
+     * @return array
+     */
+    public function buildStatementDescriptor()
+    {
+        $statement_descriptor = [
+            'name' => $this->getOptionsConfig('statement_descriptor/name'),
+            'description' => $this->getOptionsConfig('statement_descriptor/description'),
+            'city' => $this->getOptionsConfig('statement_descriptor/city'),
+            'phone_number' => $this->getOptionsConfig('statement_descriptor/phone_number'),
+            'url' => $this->getOptionsConfig('statement_descriptor/url'),
+        ];
+
+        return $statement_descriptor;
     }
 
     /**
@@ -193,7 +325,7 @@ class Data extends AbstractHelper
      */
     public function blockPartialRefund()
     {
-        return $this->isEnabled();
+        return $this->getApiConfig(OptionsInterface::API['enabled']);
     }
 
     /**
@@ -206,7 +338,7 @@ class Data extends AbstractHelper
      */
     public function checkGr4vyReady()
     {
-        $isEnabled = $this->isEnabled();
+        $isEnabled = $this->getApiConfig(OptionsInterface::API['enabled']);
         $privateKey = $this->getPrivateKey();
         $classExist = class_exists('\Gr4vy\Gr4vyConfig');
 

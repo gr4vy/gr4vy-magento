@@ -12,9 +12,11 @@ use Gr4vy\Magento\Api\BuyerRepositoryInterface;
 use Gr4vy\Magento\Api\Data\BuyerInterface as DataBuyerInterface;
 use Gr4vy\Magento\Model\Client\Buyer as Gr4vyBuyer;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class Customer extends AbstractHelper
@@ -55,14 +57,13 @@ class Customer extends AbstractHelper
     private $customer = null;
 
     /**
-     * @var ScopeConfigInterface
+     * @var CustomerSession
      */
-    protected $scopeConfig;
+    protected $visitorSession;
 
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param CustomerHelper $customerHelper
-     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -72,7 +73,8 @@ class Customer extends AbstractHelper
         DataBuyerInterface $buyerData,
         Gr4vyBuyer $buyerApi,
         Logger $gr4vyLogger,
-        ScopeConfigInterface $scopeConfig
+        Gr4vyHelper $gr4vyHelper,
+        SessionManagerInterface $visitorSession
     ) {
         parent::__construct($context);
         $this->customerSession = $customerSession;
@@ -81,22 +83,21 @@ class Customer extends AbstractHelper
         $this->buyerData = $buyerData;
         $this->buyerApi = $buyerApi;
         $this->gr4vyLogger = $gr4vyLogger;
-        $this->scopeConfig = $scopeConfig;
+        $this->gr4vyHelper = $gr4vyHelper;
+        $this->visitorSession = $visitorSession;
     }
 
     /**
      * initialize gr4vy customer data in session. if customer not in gr4vy, create new record 
      *
-     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     * @param Magento\Quote\Model\Quote $quote
      * @return void
      */
     public function connectQuoteWithGr4vy($quote)
     {
-        $display_name = $quote->getCustomerFirstname() . " " . $quote->getCustomerLastname();
-
         try {
-            $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($display_name));
-            $this->updateGr4vyBuyerAddress();
+            $quote->setData('gr4vy_buyer_id', $this->getGr4vyBuyerId($quote));
+            $this->updateGr4vyBuyerAddressFromQuote($quote);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
@@ -135,11 +136,6 @@ class Customer extends AbstractHelper
         }
     }
 
-    public function getGr4vyId()
-    {
-        return (string) $this->scopeConfig->getValue(\Gr4vy\Magento\Helper\Data::GR4VY_ID, ScopeInterface::SCOPE_STORE);
-    }
-
     /**
      * initialize gr4vy customer data. if customer not in gr4vy, create new record 
      *
@@ -150,18 +146,31 @@ class Customer extends AbstractHelper
      * 4. logged in - gr4vy_buyer_id previously stored in session (create account on checkout page)
      * 5. logged in - buyer_id not available due to unexpected issue like missing private_key
      *
-     * @param string $display_name
-     * @param string $external_identifier
+     * @param Magento\Quote\Model\Quote $quote
      * @return void
      */
-    public function getGr4vyBuyerId($display_name = null, $external_identifier = null)
+    public function getGr4vyBuyerId($quote = null)
     {
         if ($customer = $this->getCurrentCustomer()) {
             $external_identifier = $customer->getId();
             $display_name = $customer->getFirstname() . " " . $customer->getLastname();
         }
 
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->getGr4vyId());
+        if (!$this->customerSession->isLoggedIn()) {
+            // Customer is not logged in
+            // This can only happen when called from connectQuoteWithGr4vy
+            
+            $customerFirstname = $quote->getShippingAddress()->getData("firstname");
+            $customerLastname = $quote->getShippingAddress()->getData("lastname");
+            $display_name = $customerFirstname . " " . $customerLastname;
+            $visitor = $this->visitorSession->getVisitorData();
+            //we prefix external_identifer with visitor_ so it doesn't clash with customer ID
+            $external_identifier = "visitor_" . $visitor["visitor_id"];
+            $quote->setCustomerFirstname($customerFirstname);
+            $quote->setCustomerLastname($customerLastname);
+        }
+
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->gr4vyHelper->getGr4vyId());
 
         if (!is_object($buyerModel)) {
             $gr4vy_buyer_id = $this->createGr4vyBuyer($external_identifier, $display_name);
@@ -181,6 +190,7 @@ class Customer extends AbstractHelper
             $gr4vy_buyer_id = $buyerModel->getBuyerId();
         }
 
+        $this->gr4vyLogger->logMixed(["buyer_id"=>$gr4vy_buyer_id], "returning in getGr4vyBuyerId");
         return $gr4vy_buyer_id;
     }
 
@@ -194,9 +204,17 @@ class Customer extends AbstractHelper
     {
         $customer = $this->getCurrentCustomer();
         $gr4vy_buyer_id = $this->getGr4vyBuyerId();
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->getGr4vyId());
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
 
         if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
+            $street = $default_billing->getStreet();
+            $street2 = null;
+            if (is_array($street)) {
+                if (count($street) > 1) {
+                    $street2 = $street[1];
+                }
+                $street = $street[0];
+            }
             $billing_details = [
                 "first_name" => $default_billing->getFirstname(),
                 "last_name" => $default_billing->getLastname(),
@@ -207,13 +225,103 @@ class Customer extends AbstractHelper
                     "country" => $default_billing->getCountryId(),
                     "postal_code" => $default_billing->getPostcode(),
                     "state" => $default_billing->getRegion(),
-                    "street" => $default_billing->getStreet(),
+                    "street" => $street,
+                    "street2" => $street2,
                     "organization" => $default_billing->getCompany()
                 ]
             ];
 
             if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {
                 $this->updateGr4vyBuyer($gr4vy_buyer_id, $billing_details);
+
+                // save billing_details to gr4vy_buyers table
+                $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));
+            }
+        }
+    }
+
+    /**
+     * update gr4vy buyer billing address from $quote
+     *
+     * @param Magento\Quote\Model\Quote $quote
+     * @return void
+     */
+    public function updateGr4vyBuyerAddressFromQuote($quote)
+    {
+
+        $customer = $this->getCurrentCustomer();
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
+
+        $billing_details = null;
+
+        if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
+            $street = $default_billing->getStreet();
+            $street2 = null;
+            if (is_array($street)) {
+                if (count($street) > 1) {
+                    $street2 = $street[1];
+                }
+                $street = $street[0];
+            }
+            $billing_details = [
+                "first_name" => $default_billing->getFirstname(),
+                "last_name" => $default_billing->getLastname(),
+                "email_address" => $customer->getEmail(),
+                "phone_number" => $default_billing->getTelephone(),
+                "address" => [
+                    "city" => $default_billing->getCity(),
+                    "country" => $default_billing->getCountryId(),
+                    "postal_code" => $default_billing->getPostcode(),
+                    "state" => $default_billing->getRegion(),
+                    "street" => $street,
+                    "street2" => $street2,
+                    "organization" => $default_billing->getCompany()
+                ]
+            ];
+        }
+        else {
+            $billingAddress = $quote->getBillingAddress();
+
+            if ($billingAddress) {
+                $billing_details = [
+                    "first_name" => $quote->getCustomerFirstname(),
+                    "last_name" => $quote->getCustomerLastname(),
+                    "email_address" => $quote->getCustomerEmail()
+                ];
+
+                $phone = $billingAddress->getData('telephone');
+                if ($phone) {
+                    $billing_details["phone_number"] = $phone;
+                }
+                $city = $billingAddress->getData('city');
+                if ($city) {
+                    $street = $billingAddress->getData('street');
+                    $street2 = null;
+                    if(strstr($street, "\n")) {
+                        $streetArr = explode("\n", $street);
+                        $street = $streetArr[0];
+                        if (count($streetArr) > 1) {
+                            $street2 = $streetArr[1];
+                        }
+                    }
+
+                    $billing_details["address"] = [
+                        "city" => $city,
+                        "country" => $billingAddress->getData('country_id'),
+                        "postal_code" => $billingAddress->getData('postcode'),
+                        "state" => $billingAddress->getData('region'),
+                        "street" => $street,
+                        "street2" => $street2,
+                        "organization" => ""
+                    ];
+                }
+            }
+        }
+
+        if ($buyerModel && $billing_details) {
+            if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {
+                $this->gr4vyLogger->logMixed(["billing_details"=>$billing_details], "billing address has changed");
+                $this->updateGr4vyBuyer($buyerModel->getBuyerId(), $billing_details);
 
                 // save billing_details to gr4vy_buyers table
                 $this->buyerRepository->save($buyerModel->setBillingAddress(json_encode($billing_details)));
@@ -273,7 +381,7 @@ class Customer extends AbstractHelper
         }
 
         $this->buyerData
-             ->setGr4vyId($this->getGr4vyId())
+             ->setGr4vyId($this->gr4vyHelper->getGr4vyId())
              ->setExternalIdentifier($external_identifier)
              ->setDisplayName($display_name)
              ->setBuyerId($buyer_id);

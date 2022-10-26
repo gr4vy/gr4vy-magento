@@ -3,3 +3,4 @@
     height: 60px; width: auto; padding-left: 20rem; display:inline-block; vertical-align: middle;}
 .gr4vy-section .button-container {float: right;}
 .gr4vy-section .gr4vy-payment-text { display: inline-block; vertical-align: middle; width: 50%}
+.gr4vy-section.section-config fieldset.config { padding: 0 2rem 2rem 5rem;}

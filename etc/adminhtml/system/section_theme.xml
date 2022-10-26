@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="theme" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
+        <label>Theme</label>
+        <group id="fonts" translate="label" showInDefault="1" showInWebsite="1" sortOrder="10">
+            <label>Fonts</label>
+            <field id="body" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                <label>Font Body</label>
+                <comment>Used for all text</comment>
+            </field>
+        </group>
+        <group id="colors" translate="label" showInDefault="1" showInWebsite="1" sortOrder="20">
+            <label>Colors</label>
+            <field id="text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="110" translate="label" type="text">
+                <label>Text Color</label>
+                <comment>Main body text, labels and headers</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="subtle_text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="120" translate="label" type="text">
+                <label>Subtle Text Color</label>
+                <comment>Hints and Smaller text, e.g. Card Expiry</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="label_text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="130" translate="label" type="text">
+                <label>Lable Text Color</label>
+                <comment>Labels for inputs can be a different color</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="primary" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="140" translate="label" type="text">
+                <label>Primary Color</label>
+                <comment>Interactive elements or Brand</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="page_background" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="150" translate="label" type="text">
+                <label>Page Background Color</label>
+                <comment>The main body/page of the Embed iFrame</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="container_background_unchecked" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="160" translate="label" type="text">
+                <label>Container Background Unchecked Color</label>
+                <comment>Used for bounding elements, e.g. an individual payment option</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="container_background" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="170" translate="label" type="text">
+                <label>Container Background Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="container_border" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="180" translate="label" type="text">
+                <label>Container Border Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="input_border" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="190" translate="label" type="text">
+                <label>Input Border Color</label>
+                <comment>Used for inputs</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="input_background" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="200" translate="label" type="text">
+                <label>Input Background Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="input_text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="210" translate="label" type="text">
+                <label>Input Text Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="input_radio_border" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="220" translate="label" type="text">
+                <label>Input Radio Border Color</label>
+                <comment>defaults to container border Color</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="input_radio_border_checked" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="230" translate="label" type="text">
+                <label>Input Radio Border Checked Color</label>
+                <comment>defaults to primary color</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="danger" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="240" translate="label" type="text">
+                <label>Danger Color</label>
+                <comment>Used for Error states or Destructive Action</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="danger_background" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="250" translate="label" type="text">
+                <label>Danger Background Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="danger_text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="260" translate="label" type="text">
+                <label>Danger Text Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="info" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="270" translate="label" type="text">
+                <label>Info Color</label>
+                <comment>Used for information / loading states</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="info_background" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="280" translate="label" type="text">
+                <label>Info Background Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="info_text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="290" translate="label" type="text">
+                <label>Info Text Color</label>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+            <field id="focus" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="300" translate="label" type="text">
+                <label>Focus Color</label>
+                <comment>Color of the focus ring if shadows.focus is not set.</comment>
+                <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
+            </field>
+        </group>
+        <group id="border_widths" translate="label" showInDefault="1" showInWebsite="1" sortOrder="20">
+            <label>Borders</label>
+            <field id="container" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="410" translate="label" type="text">
+                <label>Container Border Width</label>
+                <comment>A bounding layout element</comment>
+            </field>
+            <field id="input" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="420" translate="label" type="text">
+                <label>Input Border Width</label>
+                <comment>A Form Input, e.g. Card Number</comment>
+            </field>
+        </group>
+        <group id="radii" translate="label" showInDefault="1" showInWebsite="1" sortOrder="30">
+            <label>Radii</label>
+            <field id="container" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="510" translate="label" type="text">
+                <label>Container</label>
+                <comment>A bounding layout element</comment>
+            </field>
+            <field id="input" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="520" translate="label" type="text">
+                <label>Input</label>
+                <comment>A Form Input, e.g. Card Number</comment>
+            </field>
+        </group>
+        <group id="shadows" translate="label" showInDefault="1" showInWebsite="1" sortOrder="40">
+            <label>Shadows</label>
+            <field id="focus_ring" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="610" translate="label" type="text">
+                <label>Focus ring</label>
+                <comment>Surrounds an element that is currently focused</comment>
+            </field>
+        </group>
+    </group>
+</include>

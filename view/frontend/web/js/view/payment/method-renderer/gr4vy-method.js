@@ -46,6 +46,7 @@ define(
                 }
             },
             initEmbedPayment: function () {
+                var This = this;
                 // Verify data before setting gr4vy
                 if (config.token() && config.amount() && config.buyerId) {
                     // log params

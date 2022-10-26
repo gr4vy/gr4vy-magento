@@ -69,7 +69,7 @@ define([
           .done(function (result) {
             var removeEntries = [];
 
-            // Removing Gr4vy
+            // Removing Gr4vy from payment methods list
             renderer.each(function (value, index) {
               if (value.type.startsWith('gr4vy')) {
                 removeEntries.push(value);

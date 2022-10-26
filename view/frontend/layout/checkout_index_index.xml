@@ -1,12 +1,9 @@
 <?xml version="1.0" ?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 	<body>
-        <referenceBlock name="require.js">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">Gr4vy_Magento::page/js/require_js.phtml</argument>
-            </action>
-            <block class="Gr4vy\Magento\Block\Head\Embed" name="gr4vy.embedded.checkout" ifconfig="payment/gr4vy/active" before="-" />
-        </referenceBlock>
+        <referenceContainer name="after.body.start">
+            <block class="Gr4vy\Magento\Block\Head\Embed" name="gr4vy.embed" template="Gr4vy_Magento::page/js/gr4vy_embed.phtml" before="-"/>
+        </referenceContainer>
 		<referenceBlock name="checkout.root">
 			<arguments>
 				<argument name="jsLayout" xsi:type="array">

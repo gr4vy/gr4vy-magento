@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gr4vy\Magento\Helper;
 
 use Gr4vy\model\Transaction;
+use Gr4vy\model\Refund;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory;
 
@@ -75,33 +76,22 @@ class Order extends AbstractHelper
             Transaction::STATUS_PROCESSING,
             Transaction::STATUS_CAPTURE_PENDING,
             Transaction::STATUS_AUTHORIZATION_SUCCEEDED,
-            Transaction::STATUS_AUTHORIZATION_PENDING,
-            Transaction::STATUS_BUYER_APPROVAL_SUCCEEDED,
             Transaction::STATUS_BUYER_APPROVAL_PENDING
         ];
         $cancel_statuses = [
-            Transaction::STATUS_PROCESSING_FAILED,
-            Transaction::STATUS_CAPTURE_DECLINED,
-            Transaction::STATUS_CAPTURE_FAILED,
             Transaction::STATUS_AUTHORIZATION_DECLINED,
             Transaction::STATUS_AUTHORIZATION_FAILED,
             Transaction::STATUS_AUTHORIZATION_VOIDED,
-            Transaction::STATUS_AUTHORIZATION_EXPIRED,
-            Transaction::STATUS_AUTHORIZATION_VOID_PENDING,
-            Transaction::STATUS_AUTHORIZATION_VOID_DECLINED,
-            Transaction::STATUS_AUTHORIZATION_VOID_FAILED,
-            Transaction::STATUS_BUYER_APPROVAL_DECLINED,
-            Transaction::STATUS_BUYER_APPROVAL_FAILED,
-            Transaction::STATUS_BUYER_APPROVAL_TIMEDOUT
+            Transaction::STATUS_AUTHORIZATION_VOID_PENDING
         ];
         $success_statuses = [
             Transaction::STATUS_CAPTURE_SUCCEEDED
         ];
         $refund_statuses = [
-            Transaction::STATUS_REFUND_SUCCEEDED,
-            Transaction::STATUS_REFUND_PENDING,
-            Transaction::STATUS_REFUND_DECLINED,
-            Transaction::STATUS_REFUND_FAILED
+            Refund::STATUS_SUCCEEDED,
+            Refund::STATUS_DECLINED,
+            Refund::STATUS_FAILED,
+            Refund::STATUS_VOIDED
         ];
 
         return [

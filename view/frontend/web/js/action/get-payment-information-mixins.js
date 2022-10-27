@@ -40,7 +40,7 @@ define([
                         renderer.remove(entry);
                     })
 
-                    // Adding new Gr4vy Payment
+                    // Reinit Gr4vy Payment
                     $.each(result['payment'], function (index, entry) {
                         if (index.startsWith('gr4vy')) {
                             window.checkoutConfig.payment.gr4vy = entry;

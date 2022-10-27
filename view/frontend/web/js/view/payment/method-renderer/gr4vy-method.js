@@ -50,7 +50,7 @@ define(
                 // Verify data before setting gr4vy
                 if (config.token() && config.amount() && config.buyerId) {
                     // log params
-                    console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
+                    //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
 
                     gr4vy.setup({
                         gr4vyId: config.gr4vyId,
@@ -117,17 +117,17 @@ define(
                 }
                 else {
                     // log error
-                    console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
+                    //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
 
-                    //var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
-                    //address_collection[0].style.display = 'none';
+                    var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
+                    address_collection[0].style.display = 'none';
 
-                    //var button_collection = document.querySelectorAll('.gr4vy-payment-method .gr4vy-actions-toolbar');
-                    //button_collection[0].style.display = 'none';
+                    var button_collection = document.querySelectorAll('.gr4vy-payment-method .gr4vy-actions-toolbar');
+                    button_collection[0].style.display = 'none';
 
-                    //var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
-                    //placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
-                    //placeholder_collection[0].style.display = 'block';
+                    var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
+                    placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
+                    placeholder_collection[0].style.display = 'block';
                 }
             },
             /**

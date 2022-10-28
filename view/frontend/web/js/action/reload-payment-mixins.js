@@ -65,37 +65,14 @@ define([
       }
 
       if (recalculate_params) {
-        storage.post(config.reloadConfigUrl, JSON.stringify(ajax_params), false, 'application/json')
-          .done(function (result) {
-            var removeEntries = [];
+          var gr4vy_entry = {
+              type: 'gr4vy',
+              component: 'Gr4vy_Magento/js/view/payment/method-renderer/gr4vy-method'
+          };
 
-            // Removing Gr4vy from payment methods list
-            renderer.each(function (value, index) {
-              if (value.type.startsWith('gr4vy')) {
-                removeEntries.push(value);
-              }
-            });
-
-            $.each(removeEntries, function (index, entry) {
-              renderer.remove(entry);
-            })
-
-            // Adding new Gr4vy Payment
-            $.each(result['payment'], function (index, entry) {
-              if (index.startsWith('gr4vy')) {
-                window.checkoutConfig.payment.gr4vy = entry;
-                config.token(entry.token);
-                config.amount(entry.total_amount);
-                config.cartItems(entry.items);
-                config.intent(entry.intent);
-
-                renderer.push({
-                  type: index,
-                  component: 'Gr4vy_Magento/js/view/payment/method-renderer/gr4vy-method'
-                });
-              }
-            });
-          });
+          renderer.remove(gr4vy_entry);
+          renderer.push(gr4vy_entry);
+          config.reloadEmbed(new Date().getTime());
       }
 
       return originalResult;

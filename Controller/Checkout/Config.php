@@ -9,9 +9,14 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Checkout\Model\CompositeConfigProvider;
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Model\Session;
+use Magento\Quote\Api\CartRepositoryInterface;
 
 class Config extends Action implements HttpPostActionInterface
 {
+    /**
+     * @var CartRepositoryInterface
+     */
+    protected $quoteRepository;
     /**
      * @var CompositeConfigProvider
      */
@@ -27,6 +32,7 @@ class Config extends Action implements HttpPostActionInterface
 
     /**
      * @param Context $context
+     * @param CartRepositoryInterface $quoteRepository
      * @param CompositeConfigProvider $compositeConfigProvider
      * @param JsonResult $jsonResult
      * @param Session $session
@@ -34,12 +40,14 @@ class Config extends Action implements HttpPostActionInterface
      */
     public function __construct(
         Context $context,
+        CartRepositoryInterface $quoteRepository,
         CompositeConfigProvider $compositeConfigProvider,
         JsonResult $jsonResult,
         Session $session
     ) {
         parent::__construct($context);
 
+        $this->quoteRepository = $quoteRepository;
         $this->compositeConfigProvider = $compositeConfigProvider;
         $this->jsonResult = $jsonResult;
         $this->session = $session;
@@ -71,6 +79,7 @@ class Config extends Action implements HttpPostActionInterface
             $quote->getBillingAddress()
                 ->setCompany($parameter['billing_company']);
         }
+        $this->quoteRepository->save($quote);
 
         $result = $this->compositeConfigProvider->getConfig();
         return $this->jsonResult->getJsonResult(200, $result);

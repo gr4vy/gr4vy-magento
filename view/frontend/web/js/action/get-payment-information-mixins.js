@@ -3,10 +3,11 @@ define([
     'mage/utils/wrapper',
     'mage/storage',
     'Magento_Checkout/js/model/payment/renderer-list',
+    'Magento_Checkout/js/model/quote',
     'Gr4vy_Magento/js/model/config',
     'Magento_Checkout/js/model/full-screen-loader',
     'jquery'
-], function (wrapper, storage, renderer, config, loader, $) {
+], function (wrapper, storage, renderer, quote, config, loader, $) {
     'use strict';
 
     /**
@@ -25,7 +26,20 @@ define([
 
             loader.startLoader();
 
-            storage.post(config.reloadConfigUrl, {}, false, 'application/json')
+            if (quote.isVirtual()) {
+                var ajax_params = {
+                    billing_country_id: quote.billingAddress().countryId,
+                    billing_company: quote.billingAddress().company
+                };
+            }
+            else {
+                var ajax_params = {
+                    shipping_country_id: quote.shippingAddress().countryId,
+                    shipping_company: quote.shippingAddress().company
+                };
+            }
+
+            storage.post(config.reloadConfigUrl, JSON.stringify(ajax_params), false, 'application/json')
                 .done(function (result) {
                     var removeEntries = [];
 

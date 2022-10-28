@@ -102,7 +102,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         $quote = $this->cart->getQuote();
         // collect totals to have correct shipping and totals
         $quote->collectTotals();
-        $quote_total = $quote->getGrandTotal();
+        $quote_total = $quote->getBaseGrandTotal();
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
         if (!$quote->getData('gr4vy_buyer_id')) {
             $this->customerHelper->connectQuoteWithGr4vy($quote);
@@ -143,6 +143,7 @@ class PaymentFormProvider implements ConfigProviderInterface
                 ]
             ]
         ];
+        $this->gr4vyLogger->logMixed($config);
 
         return $config;
     }

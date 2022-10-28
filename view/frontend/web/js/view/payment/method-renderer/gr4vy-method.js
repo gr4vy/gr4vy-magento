@@ -41,94 +41,95 @@ define(
 
                 this._super();
 
-                if (config.token() && config.amount() && config.buyerId) {
-                    self.initEmbedPayment();
-                }
+                self.initEmbedPayment();
             },
             initEmbedPayment: function () {
                 var This = this;
-                // Verify data before setting gr4vy
-                if (config.token() && config.amount() && config.buyerId) {
-                    // log params
-                    //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
+                // monitor & refresh Gr4vy embed config using ko.observable
+                config.reloadEmbed();
+                storage.post(config.reloadConfigUrl, JSON.stringify({}), false, 'application/json')
+                    .done(function (result) {
+                        var config2 = result.payment.gr4vy;
+                        // Verify data before setting gr4vy
+                        if (config2.token && config2.total_amount && config.buyerId) {
+                            gr4vy.setup({
+                                gr4vyId: config.gr4vyId,
+                                buyerId: config.buyerId,
+                                externalIdentifier: config.externalIdentifier,
+                                environment: config.environment,
+                                store: config.store,
+                                element: config.element,
+                                form: config.form,
+                                amount: config2.total_amount,
+                                currency: config.currency,
+                                country: config.country,
+                                locale: config.locale,
+                                paymentSource: config.paymentSource,
+                                requireSecurityCode: config.requireSecurityCode,
+                                theme: config.theme,
+                                statementDescriptor: config.statementDescriptor,
+                                token: config2.token,
+                                intent: config2.intent,
+                                cartItems: config2.items,
+                                metadata: config.metadata,
+                                onEvent: (eventName, data) => {
+                                    if (eventName === 'agumentError') {
+                                        console.log(data)
+                                    }
+                                    if (eventName === 'transactionCreated') {
+                                        console.log(data)
+                                    }
+                                    if (eventName === 'transactionFailed') {
+                                        console.log(data)
+                                    }
+                                    if (eventName === 'apiError') {
+                                        console.log(data)
+                                    }
+                                },
+                                onComplete: (transaction) => {
+                                    // send api requests to transaction web api
+                                    var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
+                                    //console.log(transaction);
+                                    var payload = {
+                                        cartId: quote.getQuoteId(),
+                                        paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
+                                        methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
+                                        serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
+                                        transactionData: This.getGr4vyTransactionData(transaction)
+                                    };
+                                    return storage.post(
+                                        serviceUrl,
+                                        JSON.stringify(payload)
+                                    ).done(
+                                        function (response) {
+                                            // success - trigger default placeorder request from magento library
+                                            This.placeOrder();
+                                        }
+                                    ).fail(
+                                        function (response) {
+                                            errorProcessor.process(response);
+                                            This.displayMessage(response);
+                                            fullScreenLoader.stopLoader(true);
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                        else {
+                            // log error
+                            //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
 
-                    gr4vy.setup({
-                        gr4vyId: config.gr4vyId,
-                        buyerId: config.buyerId,
-                        externalIdentifier: config.externalIdentifier,
-                        environment: config.environment,
-                        store: config.store,
-                        element: config.element,
-                        form: config.form,
-                        amount: config.amount(),
-                        currency: config.currency,
-                        country: config.country,
-                        locale: config.locale,
-                        paymentSource: config.paymentSource,
-                        requireSecurityCode: config.requireSecurityCode,
-                        theme: config.theme,
-                        statementDescriptor: config.statementDescriptor,
-                        token: config.token(),
-                        intent: config.intent(),
-                        cartItems: config.cartItems(),
-                        metadata: config.metadata,
-                        onEvent: (eventName, data) => {
-                            if (eventName === 'agumentError') {
-                                console.log(data)
-                            }
-                            if (eventName === 'transactionCreated') {
-                                console.log(data)
-                            }
-                            if (eventName === 'transactionFailed') {
-                                console.log(data)
-                            }
-                            if (eventName === 'apiError') {
-                                console.log(data)
-                            }
-                        },
-                        onComplete: (transaction) => {
-                            // send api requests to transaction web api
-                            var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
-                            //console.log(transaction);
-                            var payload = {
-                                cartId: quote.getQuoteId(),
-                                paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
-                                methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
-                                serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
-                                transactionData: This.getGr4vyTransactionData(transaction)
-                            };
-                            return storage.post(
-                                serviceUrl,
-                                JSON.stringify(payload)
-                            ).done(
-                                function (response) {
-                                    // success - trigger default placeorder request from magento library
-                                    This.placeOrder();
-                                }
-                            ).fail(
-                                function (response) {
-                                    errorProcessor.process(response);
-                                    This.displayMessage(response);
-                                    fullScreenLoader.stopLoader(true);
-                                }
-                            );
+                            var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
+                            address_collection[0].style.display = 'none';
+
+                            var button_collection = document.querySelectorAll('.gr4vy-payment-method .gr4vy-actions-toolbar');
+                            button_collection[0].style.display = 'none';
+
+                            var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
+                            placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
+                            placeholder_collection[0].style.display = 'block';
                         }
                     });
-                }
-                else {
-                    // log error
-                    //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
-
-                    var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
-                    address_collection[0].style.display = 'none';
-
-                    var button_collection = document.querySelectorAll('.gr4vy-payment-method .gr4vy-actions-toolbar');
-                    button_collection[0].style.display = 'none';
-
-                    var placeholder_collection = document.getElementsByClassName('gr4vy-placeholder');
-                    placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
-                    placeholder_collection[0].style.display = 'block';
-                }
             },
             /**
              * @returns {Object}

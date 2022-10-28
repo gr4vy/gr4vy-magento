@@ -15,9 +15,6 @@ var config = {
             },
             'Magento_Checkout/js/action/set-shipping-information': {
                 'Gr4vy_Magento/js/action/reload-payment-mixins': true
-            },
-            'Magento_Checkout/js/sidebar': {
-                'Gr4vy_Magento/js/sidebar-mixins': true
             }
         }
     }

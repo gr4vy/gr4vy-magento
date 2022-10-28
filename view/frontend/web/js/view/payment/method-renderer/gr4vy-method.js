@@ -51,10 +51,10 @@ define(
                     .done(function (result) {
                         var config2 = result.payment.gr4vy;
                         // Verify data before setting gr4vy
-                        if (config2.token && config2.total_amount && config.buyerId) {
+                        if (config2.token && config2.total_amount && config2.buyer_id) {
                             gr4vy.setup({
                                 gr4vyId: config.gr4vyId,
-                                buyerId: config.buyerId,
+                                buyerId: config2.buyer_id,
                                 externalIdentifier: config.externalIdentifier,
                                 environment: config.environment,
                                 store: config.store,
@@ -116,9 +116,6 @@ define(
                             });
                         }
                         else {
-                            // log error
-                            //console.log({embed_token: config.token(), amount: config.amount(), buyerId: config.buyerId});
-
                             var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
                             address_collection[0].style.display = 'none';
 

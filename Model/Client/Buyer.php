@@ -51,16 +51,18 @@ class Buyer extends Base
             $billing_details->setLastName($billing_address['last_name']);
             $billing_details->setEmailAddress($billing_address['email_address']);
             if (isset($billing_address) && isset($billing_address["phone_number"])) {
-                $phoneNumber = $billing_address['phone_number'];
-                $character = "0";
-                if (strpos($phoneNumber, $character) === 0) {
-                    $phoneNumber = substr($phoneNumber, 1);
+                $phoneNumber = preg_replace("/[^0-9]/", "", $billing_address['phone_number']);
+                if ($phoneNumber) {
+                    $character = "0";
+                    if (strpos($phoneNumber, $character) === 0) {
+                        $phoneNumber = substr($phoneNumber, 1);
+                    }
+                    $character = "+";
+                    if (strpos($phoneNumber, $character) !== 0) {
+                        $phoneNumber = "+" . $phoneNumber;
+                    }
+                    $billing_details->setPhoneNumber($phoneNumber);  
                 }
-                $character = "+";
-                if (strpos($phoneNumber, $character) !== 0) {
-                    $phoneNumber = "+" . $phoneNumber;
-                }
-                $billing_details->setPhoneNumber($phoneNumber);  
             }
 
         }

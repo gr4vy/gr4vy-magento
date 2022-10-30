@@ -254,7 +254,11 @@ class Customer extends AbstractHelper
 
         $billing_details = null;
 
-        if ($buyerModel && ($default_billing = $customer->getDefaultBillingAddress())) {
+        if (
+            $buyerModel 
+            && ($default_billing = $customer->getDefaultBillingAddress()) 
+            && ($city = $default_billing->getCity())
+        ) {
             $street = $default_billing->getStreet();
             $street2 = null;
             if (is_array($street)) {
@@ -269,7 +273,7 @@ class Customer extends AbstractHelper
                 "email_address" => $customer->getEmail(),
                 "phone_number" => $default_billing->getTelephone(),
                 "address" => [
-                    "city" => $default_billing->getCity(),
+                    "city" => $city,
                     "country" => $default_billing->getCountryId(),
                     "postal_code" => $default_billing->getPostcode(),
                     "state" => $default_billing->getRegion(),

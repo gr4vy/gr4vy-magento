@@ -8,7 +8,7 @@ use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 
 class Embed extends \Magento\Framework\View\Element\AbstractBlock
 {
-    const EMBED_TEMPLATE = '<script src="https://cdn.{gr4vyId}.gr4vy.app/embed.latest.js" ></script>';
+    const EMBED_TEMPLATE = '<script>require.config({ config: { mixins: { \'Magento_Checkout/js/sidebar\': { \'Gr4vy_Magento/js/sidebar-mixins\': true } } }, map: { \'*\': { gr4vyapi: \'https://cdn.{gr4vyId}.gr4vy.app/embed.latest.js\' } } });</script>';
 
     /**
      * @var Gr4vyHelper

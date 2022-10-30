@@ -3,6 +3,7 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/url-builder',
+        'Gr4vy_Magento/js/model/config',
         'mage/storage',
         'mage/url',
         'mage/translate',
@@ -10,10 +11,12 @@ define(
         'Magento_Customer/js/model/customer',
         'Magento_Customer/js/customer-data',
         'Magento_Ui/js/model/messageList',
+        'Magento_Checkout/js/action/set-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Ui/js/modal/alert'
+        'Magento_Ui/js/modal/alert',
+        'gr4vyapi'
     ],
-    function (Component, quote, urlBuilder, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, fullScreenLoader, alertModal) {
+    function (Component, quote, urlBuilder, config, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, setPaymentInformationAction, fullScreenLoader, alertModal, gr4vy) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -33,42 +36,42 @@ define(
                     }
                 });
             },
-            initEmbedPayment: function () {
-                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/get-embed-token', {});
-                var payload = { cartId: quote.getQuoteId() };
-                var This = this;
-                storage.post( serviceUrl, JSON.stringify(payload)).done(
-                    function (response) {
-                        var embed_token = response[0];
-                        var amount = response[1];
-                        var buyer_id = response[2];
-                        var cartItems = response[3];
-                        var locale = response[4];
+            initialize: function() {
+                var self = this;
 
+                this._super();
+
+                self.initEmbedPayment();
+            },
+            initEmbedPayment: function () {
+                var This = this;
+                // monitor & refresh Gr4vy embed config using ko.observable
+                config.reloadEmbed();
+                storage.post(config.reloadConfigUrl, JSON.stringify({}), false, 'application/json')
+                    .done(function (result) {
+                        var config2 = result.payment.gr4vy;
                         // Verify data before setting gr4vy
-                        if (embed_token && amount && buyer_id) {
+                        if (config2.token && config2.total_amount && config2.buyer_id) {
                             gr4vy.setup({
-                                gr4vyId: window.checkoutConfig.payment.gr4vy.gr4vy_id,
-                                buyerId: buyer_id,
-                                externalIdentifier: window.checkoutConfig.payment.gr4vy.external_identifier,
-                                environment: window.checkoutConfig.payment.gr4vy.environment,
-                                store: window.checkoutConfig.payment.gr4vy.store,
-                                element: ".container",
-                                form: "#co-payment-form",
-                                amount: amount,
-                                currency: window.checkoutConfig.quoteData.quote_currency_code,
-                                country: window.checkoutConfig.originCountryCode,
-                                locale: locale,
-                                paymentSource: window.checkoutConfig.payment.gr4vy.payment_source,
-                                requireSecurityCode: window.checkoutConfig.payment.gr4vy.require_security_code,
-                                theme: window.checkoutConfig.payment.gr4vy.theme,
-                                statementDescriptor: window.checkoutConfig.payment.gr4vy.statement_descriptor,
-                                token: embed_token,
-                                intent: window.checkoutConfig.payment.gr4vy.intent,
-                                cartItems: cartItems,
-                                metadata: {
-                                    "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data || "default"
-                                },
+                                gr4vyId: config.gr4vyId,
+                                buyerId: config2.buyer_id,
+                                externalIdentifier: config.externalIdentifier,
+                                environment: config.environment,
+                                store: config.store,
+                                element: config.element,
+                                form: config.form,
+                                amount: config2.total_amount,
+                                currency: config.currency,
+                                country: config.country,
+                                locale: config.locale,
+                                paymentSource: config.paymentSource,
+                                requireSecurityCode: config.requireSecurityCode,
+                                theme: config.theme,
+                                statementDescriptor: config.statementDescriptor,
+                                token: config2.token,
+                                intent: config2.intent,
+                                cartItems: config2.items,
+                                metadata: config.metadata,
                                 onEvent: (eventName, data) => {
                                     if (eventName === 'agumentError') {
                                         console.log(data)
@@ -113,9 +116,6 @@ define(
                             });
                         }
                         else {
-                            // log error
-                            console.log({embed_token: embed_token, amount: amount, buyer_id: buyer_id});
-
                             var address_collection = document.querySelectorAll('.gr4vy-payment-method .payment-method-billing-address');
                             address_collection[0].style.display = 'none';
 
@@ -126,14 +126,7 @@ define(
                             placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
                             placeholder_collection[0].style.display = 'block';
                         }
-                    }
-                ).fail(
-                    function (response) {
-                        errorProcessor.process(response);
-                        fullScreenLoader.stopLoader(true);
-                    }
-                );
-
+                    });
             },
             /**
              * @returns {Object}

@@ -94,7 +94,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * check payment debug enabled
+     * check payment method active status
      *
      * @return bool
      */

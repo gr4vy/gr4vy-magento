@@ -160,6 +160,22 @@ class Gr4vy extends \Magento\Payment\Model\Method\AbstractMethod
         $this->transactionApi = $transactionApi;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigData($field, $storeId = null)
+    {
+        // modify logic for custom title config key
+        if ($field == 'title') {
+            return $this->gr4vyHelper->getPaymentTitle();
+        }
+
+        return parent::getConfigData($field, $storeId);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isAvailable(
         \Magento\Quote\Api\Data\CartInterface $quote = null
     ) {

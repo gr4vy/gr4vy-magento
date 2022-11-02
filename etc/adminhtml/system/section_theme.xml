@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
-    <group id="theme" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" translate="label">
+    <group id="theme" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
         <label>Theme</label>
-        <group id="fonts" translate="label" showInDefault="1" showInWebsite="1" sortOrder="10">
+        <group id="fonts" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="10">
             <label>Fonts</label>
             <field id="body" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
                 <label>Font Body</label>
                 <comment>Used for all text</comment>
             </field>
         </group>
-        <group id="colors" translate="label" showInDefault="1" showInWebsite="1" sortOrder="20">
+        <group id="colors" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="20">
             <label>Colors</label>
             <field id="text" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="110" translate="label" type="text">
                 <label>Text Color</label>
@@ -104,7 +104,7 @@
                 <frontend_model>Gr4vy\Magento\Block\Adminhtml\System\Config\Fieldset\ColorPicker</frontend_model>
             </field>
         </group>
-        <group id="border_widths" translate="label" showInDefault="1" showInWebsite="1" sortOrder="20">
+        <group id="border_widths" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="20">
             <label>Borders</label>
             <field id="container" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="410" translate="label" type="text">
                 <label>Container Border Width</label>
@@ -115,7 +115,7 @@
                 <comment>A Form Input, e.g. Card Number</comment>
             </field>
         </group>
-        <group id="radii" translate="label" showInDefault="1" showInWebsite="1" sortOrder="30">
+        <group id="radii" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="30">
             <label>Radii</label>
             <field id="container" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="510" translate="label" type="text">
                 <label>Container</label>
@@ -126,7 +126,7 @@
                 <comment>A Form Input, e.g. Card Number</comment>
             </field>
         </group>
-        <group id="shadows" translate="label" showInDefault="1" showInWebsite="1" sortOrder="40">
+        <group id="shadows" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="40">
             <label>Shadows</label>
             <field id="focus_ring" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="610" translate="label" type="text">
                 <label>Focus ring</label>

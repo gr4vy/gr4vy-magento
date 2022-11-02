@@ -13,7 +13,10 @@
 	<preference for="Gr4vy\Magento\Api\Data\ServiceInterface" type="Gr4vy\Magento\Model\Data\Service"/>
 	<preference for="Gr4vy\Magento\Api\Data\ServiceSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
-    <!--override quote data model-->
+    <!--override Payment Helper Data-->
+    <type name="Magento\Payment\Helper\Data">
+        <plugin sortOrder="90" name="gr4vyPaymentData" type="Gr4vy\Magento\Plugin\Magento\Payment\Helper\Data"/>
+    </type>
 
     <!--plugins-->
 	<type name="Magento\Quote\Api\CartRepositoryInterface">

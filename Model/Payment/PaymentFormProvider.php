@@ -100,7 +100,7 @@ class PaymentFormProvider implements ConfigProviderInterface
             : boolval($this->gr4vyHelper->getGr4vyPaymentStore());
 
         $quote = $this->cart->getQuote();
-        $quote_total = $quote->getGrandTotal();
+        $quote_total = $this->roundNumber($quote->getGrandTotal());
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
         if (!$quote->getData('gr4vy_buyer_id')) {
             $this->customerHelper->connectQuoteWithGr4vy($quote);
@@ -134,8 +134,8 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'theme' => $this->gr4vyHelper->buildThemeConfig(),
                     'statement_descriptor' => $this->gr4vyHelper->buildStatementDescriptor(),
                     'token' => $token,
-                    'total_amount' => $this->roundNumber($quote_total),
-                    'items' => $this->getCartItemsData($quote, $this->roundNumber($quote_total)),
+                    'total_amount' => $quote_total,
+                    'items' => $this->getCartItemsData($quote, $quote_total),
                     'locale' => $this->getLocaleCode(),
                     'reload_config_url' => $this->urlBuilder->getUrl('gr4vy/checkout/config')
                 ]

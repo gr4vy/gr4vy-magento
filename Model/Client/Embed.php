@@ -11,6 +11,7 @@ class Embed extends Base
 {
     /**
      * retrieve embed token for frotend checkout form
+     * $amount must be integer and mulitplied by 100 before calling this function
      *
      * @param string
      * @param string
@@ -22,7 +23,7 @@ class Embed extends Base
     {
         try {
             $embed_params = array(
-                "amount" => intval($amount*100), // amount must be integer , so we multiply float by 100 and cast type to integer
+                "amount" => $amount,
                 "currency" => $currency,
                 "environment" => $this->gr4vyHelper->getGr4vyEnvironment(),
                 "buyer_id" => $buyer_id

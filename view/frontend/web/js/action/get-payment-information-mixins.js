@@ -31,9 +31,12 @@ define([
                 component: 'Gr4vy_Magento/js/view/payment/method-renderer/gr4vy-method'
             };
 
-            renderer.remove(gr4vy_entry);
-            renderer.push(gr4vy_entry);
-            config.reloadEmbed(new Date().getTime());
+            // only reload if gr4vy payment form was rendered before
+            if (window.checkoutConfig.payment.gr4vy.rendered) {
+                renderer.remove(gr4vy_entry);
+                renderer.push(gr4vy_entry);
+                config.reloadEmbed(new Date().getTime());
+            }
 
             return originalGetPaymentInformation().then(function () {
                 loader.stopLoader();

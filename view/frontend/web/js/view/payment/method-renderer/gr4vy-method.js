@@ -126,6 +126,9 @@ define(
                             placeholder_collection[0].innerHTML += $t('<span class="gr4vy-checkout-notice">Payment method is not available. Please contact us for support</span>');
                             placeholder_collection[0].style.display = 'block';
                         }
+
+                        // mark payment form rendered once after pageload
+                        window.checkoutConfig.payment.gr4vy.rendered = true;
                     });
             },
             /**

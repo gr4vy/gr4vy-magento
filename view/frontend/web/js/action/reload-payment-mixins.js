@@ -64,7 +64,8 @@ define([
         last_shipping_country_id = ajax_params['shipping_country_id'];
       }
 
-      if (recalculate_params) {
+      // only reload if params require recalculation and gr4vy payment form was rendered before
+      if (recalculate_params && window.checkoutConfig.payment.gr4vy.rendered) {
           var gr4vy_entry = {
               type: 'gr4vy',
               component: 'Gr4vy_Magento/js/view/payment/method-renderer/gr4vy-method'

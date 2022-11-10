@@ -33,9 +33,9 @@ define([
 
             // only reload if gr4vy payment form was rendered before
             if (window.checkoutConfig.payment.gr4vy.rendered) {
+                config.reloadEmbed(new Date().getTime());
                 renderer.remove(gr4vy_entry);
                 renderer.push(gr4vy_entry);
-                config.reloadEmbed(new Date().getTime());
             }
 
             return originalGetPaymentInformation().then(function () {

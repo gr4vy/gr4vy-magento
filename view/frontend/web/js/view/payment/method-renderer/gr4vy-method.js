@@ -41,7 +41,9 @@ define(
 
                 this._super();
 
-                self.initEmbedPayment();
+                if (window.checkoutConfig.payment.gr4vy.rendered) {
+                    self.initEmbedPayment();
+                }
             },
             initEmbedPayment: function () {
                 var This = this;

@@ -137,7 +137,8 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'total_amount' => $quote_total,
                     'items' => $this->getCartItemsData($quote, $quote_total),
                     'locale' => $this->getLocaleCode(),
-                    'reload_config_url' => $this->urlBuilder->getUrl('gr4vy/checkout/config')
+                    'reload_config_url' => $this->urlBuilder->getUrl('gr4vy/checkout/config'),
+                    'rendered' => false
                 ]
             ]
         ];

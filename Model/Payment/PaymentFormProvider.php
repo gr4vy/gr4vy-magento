@@ -184,7 +184,9 @@ class PaymentFormProvider implements ConfigProviderInterface
             
             $productUrl = $product->getUrlModel()->getUrl($product);
             $itemAmount = $this->roundNumber($item->getPriceInclTax());
-            $itemsTotal += $itemAmount;
+            
+            $itemsTotal += $itemAmount * $item->getQty();
+            
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
@@ -211,6 +213,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         ];
 
         if ($totalAmount != $itemsTotal) {
+            $this->gr4vyLogger->logMixed(['totalAmount' => $totalAmount, 'itemsTotal' => $itemsTotal], "Item to Total mismatch");
             return [];
         }
 

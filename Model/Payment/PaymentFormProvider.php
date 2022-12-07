@@ -100,7 +100,8 @@ class PaymentFormProvider implements ConfigProviderInterface
             : boolval($this->gr4vyHelper->getGr4vyPaymentStore());
 
         $quote = $this->cart->getQuote();
-        $quote_total = $this->roundNumber($quote->getGrandTotal());
+        //$quote_total = $this->roundNumber($quote->getGrandTotal());
+        quote_total = 1
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
         if (!$quote->getData('gr4vy_buyer_id')) {
             $this->customerHelper->connectQuoteWithGr4vy($quote);

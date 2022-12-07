@@ -181,9 +181,9 @@ class PaymentFormProvider implements ConfigProviderInterface
                     $gr4vyCategories[] = $category->getName();    
                 }
             }
-            
+
             $productUrl = $product->getUrlModel()->getUrl($product);
-            $itemAmount = $this->roundNumber($item->getPriceInclTax());
+            $itemAmount = $this->roundNumber($item->getFinalPrice());
             
             $itemsTotal += $itemAmount * $item->getQty();
             

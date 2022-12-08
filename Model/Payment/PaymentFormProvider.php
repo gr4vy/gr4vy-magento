@@ -170,6 +170,7 @@ class PaymentFormProvider implements ConfigProviderInterface
     {
         $items = [];
         $itemsTotal = 0;
+        $itemsTax = 0;
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
             $categories = $product->getCategoryIds();
@@ -219,7 +220,6 @@ class PaymentFormProvider implements ConfigProviderInterface
             'productType' => 'shipping_fee',
             'categories' => ['shipping']
         ];
-
 
         // calculate tax amount as cart item
         if ($itemsTax > 0) {

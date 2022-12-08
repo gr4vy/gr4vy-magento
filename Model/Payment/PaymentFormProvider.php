@@ -170,6 +170,8 @@ class PaymentFormProvider implements ConfigProviderInterface
     {
         $items = [];
         $itemsTotal = 0;
+        $discountTotal = 0;
+        $taxAmount = 0;
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
             $categories = $product->getCategoryIds();
@@ -183,10 +185,13 @@ class PaymentFormProvider implements ConfigProviderInterface
             }
             
             $productUrl = $product->getUrlModel()->getUrl($product);
-            $itemAmount = $this->roundNumber($item->getPriceInclTax());
+            $itemAmount = $this->roundNumber($item->getPrice());
             
             $itemsTotal += $itemAmount * $item->getQty();
-            
+
+            $discountTotal += $this->roundNumber($item->getDiscountAmount());
+            $taxAmount += $this->roundNumber($item->getTaxAmount());
+
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
@@ -195,6 +200,30 @@ class PaymentFormProvider implements ConfigProviderInterface
                 'productUrl' => $productUrl,
                 'productType' => 'physical',
                 'categories' => $gr4vyCategories
+            ];
+        }
+
+        if ($discountTotal > 0) {
+            $itemsTotal -= $discountTotal;
+            $items[] = [
+                'name' => 'discount',
+                'quantity' => 1,
+                'unitAmount' => 0,
+                'discountAmount'=> $discountTotal,
+                'sku' => 'n/a',
+                'productType' => 'discount',
+                'categories' => ['discount']
+            ];
+        }
+        if ($taxAmount > 0) {
+            $itemsTotal += $taxAmount;
+            $items[] = [
+                'name' => 'tax',
+                'quantity' => 1,
+                'unitAmount' => $taxAmount,
+                'sku' => 'n/a',
+                'productType' => 'sales_tax',
+                'categories' => ['tax']
             ];
         }
 

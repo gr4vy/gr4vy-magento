@@ -209,7 +209,7 @@ class PaymentFormProvider implements ConfigProviderInterface
 
         // calculate shipping fee as cart item
         $shippingAddress = $quote->getShippingAddress();
-        $shippingAmount = $this->roundNumber($shippingAddress->getShippingAmount());
+        $shippingAmount = $this->roundNumber($shippingAddress->getShippingInclTax());
         $itemsTotal += $shippingAmount;
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',
@@ -222,7 +222,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         ];
 
         // calculate tax amount as cart item
-        if ($itemsTax > 0) {
+        /* if ($itemsTax > 0) {
             $items[] = [
                 'name' => 'Tax',
                 'quantity' => 1,
@@ -232,7 +232,7 @@ class PaymentFormProvider implements ConfigProviderInterface
                 'productType' => 'sales_tax',
                 'categories' => ['sales_tax']
             ];
-        }
+        } */
 
 
         if ($totalAmount != $itemsTotal) {

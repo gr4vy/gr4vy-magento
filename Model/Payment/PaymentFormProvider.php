@@ -190,7 +190,11 @@ class PaymentFormProvider implements ConfigProviderInterface
             }
             
             $itemsTotal += $itemAmount * $item->getQty();
-            
+
+            $itemsTax += $item->getTaxAmount();
+
+            $itemsTotal += $itemsTax;
+
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
@@ -215,6 +219,21 @@ class PaymentFormProvider implements ConfigProviderInterface
             'productType' => 'shipping_fee',
             'categories' => ['shipping']
         ];
+
+
+        // calculate tax amount as cart item
+        if ($itemsTax > 0) {
+            $items[] = [
+                'name' => 'Tax',
+                'quantity' => 1,
+                'unitAmount' => $itemsTax,
+                'sku' => 'Tax',
+                'productUrl' => $quote->getStore()->getUrl(),
+                'productType' => 'sales_tax',
+                'categories' => ['sales_tax']
+            ];
+        }
+
 
         if ($totalAmount != $itemsTotal) {
             $this->gr4vyLogger->logMixed(['totalAmount' => $totalAmount, 'itemsTotal' => $itemsTotal], "Item to Total mismatch");

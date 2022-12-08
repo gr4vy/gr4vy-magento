@@ -194,7 +194,7 @@ class PaymentFormProvider implements ConfigProviderInterface
 
             $itemsTax += roundNumber($item->getTaxPercent() * $item->itemsTotal());
 
-            $itemsTotal += $itemsTax;
+            //$itemsTotal += $itemsTax;
 
             $items[] = [
                 'name' => $item->getName(),

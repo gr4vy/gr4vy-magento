@@ -192,7 +192,7 @@ class PaymentFormProvider implements ConfigProviderInterface
             
             $itemsTotal += $itemAmount * $item->getQty();
 
-            $itemsTax += $item->getTaxAmount();
+            $itemsTax += roundNumber($item->getTaxPercent() * $item->itemsTotal());
 
             $itemsTotal += $itemsTax;
 
@@ -209,7 +209,7 @@ class PaymentFormProvider implements ConfigProviderInterface
 
         // calculate shipping fee as cart item
         $shippingAddress = $quote->getShippingAddress();
-        $shippingAmount = $this->roundNumber($shippingAddress->getShippingInclTax());
+        $shippingAmount = $this->roundNumber($shippingAddress->getShippingAmount());
         $itemsTotal += $shippingAmount;
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',

@@ -182,8 +182,12 @@ class PaymentFormProvider implements ConfigProviderInterface
                 }
             }
             $productUrl = $product->getUrlModel()->getUrl($product);
-            $itemDiscountAmount = $item->getDiscountAmount() / $item->getQty();
-            $itemAmount = $this->roundNumber($item->getPrice() - $itemDiscountAmount);
+            if ($item->getDiscountAmount() > 0) {
+                $itemDiscountAmount = $item->getDiscountAmount() / $item->getQty();
+                $itemAmount = $this->roundNumber($item->getPrice() - $itemDiscountAmount);
+            } else {
+                $itemAmount = $this->roundNumber($item->getPrice())
+            }
             
             $itemsTotal += $itemAmount * $item->getQty();
             

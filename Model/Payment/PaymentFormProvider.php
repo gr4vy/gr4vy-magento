@@ -178,15 +178,15 @@ class PaymentFormProvider implements ConfigProviderInterface
             foreach ($categories as $categoryId) {
                 $category = $this->categoryRepository->get($categoryId, $quote->getStore()->getId());
                 if ($category) {
-                    $gr4vyCategories[] = $category->getName();    
+                    $gr4vyCategories[] = $category->getName();
                 }
             }
-            
+
             $productUrl = $product->getUrlModel()->getUrl($product);
             $itemAmount = $this->roundNumber($item->getPriceInclTax());
-            
+
             $itemsTotal += $itemAmount * $item->getQty();
-            
+
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
@@ -201,7 +201,8 @@ class PaymentFormProvider implements ConfigProviderInterface
         // calculate shipping fee as cart item
         $shippingAddress = $quote->getShippingAddress();
         $shippingAmount = $this->roundNumber($shippingAddress->getShippingInclTax());
-        $itemsTotal += $shippingAmount;
+        $discountAmount = $this->roundNumber($shippingAddress->getBaseDiscountAmount());
+        $itemsTotal += $shippingAmount + $discountAmount;
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'quantity' => 1,
@@ -211,6 +212,18 @@ class PaymentFormProvider implements ConfigProviderInterface
             'productType' => 'shipping_fee',
             'categories' => ['shipping']
         ];
+        if ($discountAmount < 0) {
+            $items[] = [
+                'name' => 'Discount',
+                'quantity' => 1,
+                'unitAmount' => 0,
+                'discount_amount'=> $discountAmount * -1,
+                'sku' => 'discount',
+                'productUrl' => $quote->getStore()->getUrl(),
+                'productType' => 'discount',
+                'categories' => ['discount']
+            ];
+        }
 
         if ($totalAmount != $itemsTotal) {
             $this->gr4vyLogger->logMixed(['totalAmount' => $totalAmount, 'itemsTotal' => $itemsTotal], "Item to Total mismatch");

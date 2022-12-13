@@ -183,7 +183,8 @@ class PaymentFormProvider implements ConfigProviderInterface
             }
 
             $productUrl = $product->getUrlModel()->getUrl($product);
-            $itemAmount = $this->roundNumber($item->getPriceInclTax());
+            $itemAmount = $this->roundNumber($item->getPrice());
+            $itemTaxAmount = $this->roundNumber($item->getTaxAmount());
 
             $itemsTotal += $itemAmount * $item->getQty();
 
@@ -191,22 +192,26 @@ class PaymentFormProvider implements ConfigProviderInterface
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
                 'unitAmount' => $itemAmount,
+                'tax_amount'=> $itemTaxAmount,
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
                 'productType' => 'physical',
                 'categories' => $gr4vyCategories
             ];
         }
-
         // calculate shipping fee as cart item
         $shippingAddress = $quote->getShippingAddress();
-        $shippingAmount = $this->roundNumber($shippingAddress->getShippingInclTax());
+        $shippingAmount = $this->roundNumber($shippingAddress->getBaseShippingAmount());
         $discountAmount = $this->roundNumber($shippingAddress->getBaseDiscountAmount());
-        $itemsTotal += $shippingAmount + $discountAmount;
+        $taxAmount = $this->roundNumber($shippingAddress->getTaxAmount());
+        $baseShippingTaxAmount = $this->roundNumber($shippingAddress->getBaseShippingTaxAmount());
+
+        $itemsTotal += $shippingAmount + $discountAmount + $taxAmount;
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'quantity' => 1,
             'unitAmount' => $shippingAmount,
+            'tax_amount' => $baseShippingTaxAmount,
             'sku' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'productUrl' => $quote->getStore()->getUrl(),
             'productType' => 'shipping_fee',
@@ -218,6 +223,7 @@ class PaymentFormProvider implements ConfigProviderInterface
                 'quantity' => 1,
                 'unitAmount' => 0,
                 'discount_amount'=> $discountAmount * -1,
+                'tax_amount'=> 0,
                 'sku' => 'discount',
                 'productUrl' => $quote->getStore()->getUrl(),
                 'productType' => 'discount',

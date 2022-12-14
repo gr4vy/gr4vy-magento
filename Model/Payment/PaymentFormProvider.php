@@ -11,6 +11,7 @@ use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Customer as CustomerHelper;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class BillingAgreementConfigProvider
@@ -64,7 +65,21 @@ class PaymentFormProvider implements ConfigProviderInterface
     private $resolver;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storemanager;
+
+    /**
      * @param CurrentCustomer $currentCustomer
+     * @param UrlInterface $urlBuilder
+     * @param Cart $cart
+     * @param Gr4vyLogger $gr4vyLogger
+     * @param Gr4vyHelper $gr4vyHelper
+     * @param CustomerHelper $customerHelper
+     * @param Gr4vyEmbed $embedApi
+     * @param CategoryRepositoryInterface $categoryRepository
+     * @param Resolver $resolver
+     * @param StoreManagerInterface $storemanager
      */
     public function __construct(
         CurrentCustomer $currentCustomer,
@@ -75,7 +90,8 @@ class PaymentFormProvider implements ConfigProviderInterface
         CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
         CategoryRepositoryInterface $categoryRepository,
-        Resolver $resolver
+        Resolver $resolver,
+        StoreManagerInterface $storemanager
     ) {
         $this->currentCustomer = $currentCustomer;
         $this->urlBuilder = $urlBuilder;
@@ -86,6 +102,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         $this->embedApi = $embedApi;
         $this->categoryRepository = $categoryRepository;
         $this->resolver = $resolver;
+        $this->storemanager = $storemanager;
     }
 
     /**
@@ -170,6 +187,7 @@ class PaymentFormProvider implements ConfigProviderInterface
     {
         $items = [];
         $itemsTotal = 0;
+        $store = $this->storemanager->getStore();
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
             $categories = $product->getCategoryIds();
@@ -183,11 +201,12 @@ class PaymentFormProvider implements ConfigProviderInterface
             }
 
             $productUrl = $product->getUrlModel()->getUrl($product);
+            $productImageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
+                . 'catalog/product' .$product->getSmallImage();
             $itemAmount = $this->roundNumber($item->getPrice());
             $itemTaxAmount = $this->roundNumber($item->getTaxAmount());
 
             $itemsTotal += $itemAmount * $item->getQty();
-
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
@@ -195,6 +214,7 @@ class PaymentFormProvider implements ConfigProviderInterface
                 'tax_amount'=> $itemTaxAmount,
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
+                'image_url' => $productImageUrl,
                 'productType' => 'physical',
                 'categories' => $gr4vyCategories
             ];

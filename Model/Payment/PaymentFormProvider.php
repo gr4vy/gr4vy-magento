@@ -11,6 +11,7 @@ use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Customer as CustomerHelper;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class BillingAgreementConfigProvider
@@ -64,7 +65,21 @@ class PaymentFormProvider implements ConfigProviderInterface
     private $resolver;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storemanager;
+
+    /**
      * @param CurrentCustomer $currentCustomer
+     * @param UrlInterface $urlBuilder
+     * @param Cart $cart
+     * @param Gr4vyLogger $gr4vyLogger
+     * @param Gr4vyHelper $gr4vyHelper
+     * @param CustomerHelper $customerHelper
+     * @param Gr4vyEmbed $embedApi
+     * @param CategoryRepositoryInterface $categoryRepository
+     * @param Resolver $resolver
+     * @param StoreManagerInterface $storemanager
      */
     public function __construct(
         CurrentCustomer $currentCustomer,
@@ -75,7 +90,8 @@ class PaymentFormProvider implements ConfigProviderInterface
         CustomerHelper $customerHelper,
         Gr4vyEmbed $embedApi,
         CategoryRepositoryInterface $categoryRepository,
-        Resolver $resolver
+        Resolver $resolver,
+        StoreManagerInterface $storemanager
     ) {
         $this->currentCustomer = $currentCustomer;
         $this->urlBuilder = $urlBuilder;
@@ -86,6 +102,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         $this->embedApi = $embedApi;
         $this->categoryRepository = $categoryRepository;
         $this->resolver = $resolver;
+        $this->storemanager = $storemanager;
     }
 
     /**
@@ -170,6 +187,7 @@ class PaymentFormProvider implements ConfigProviderInterface
     {
         $items = [];
         $itemsTotal = 0;
+        $store = $this->storemanager->getStore();
         foreach ($quote->getAllVisibleItems() as $item){
             $product = $item->getProduct();
             $categories = $product->getCategoryIds();
@@ -178,39 +196,60 @@ class PaymentFormProvider implements ConfigProviderInterface
             foreach ($categories as $categoryId) {
                 $category = $this->categoryRepository->get($categoryId, $quote->getStore()->getId());
                 if ($category) {
-                    $gr4vyCategories[] = $category->getName();    
+                    $gr4vyCategories[] = $category->getName();
                 }
             }
-            
+
             $productUrl = $product->getUrlModel()->getUrl($product);
-            $itemAmount = $this->roundNumber($item->getPriceInclTax());
-            
+            $productImageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
+                . 'catalog/product' .$product->getSmallImage();
+            $itemAmount = $this->roundNumber($item->getPrice());
+            $itemTaxAmount = $this->roundNumber($item->getTaxAmount());
+
             $itemsTotal += $itemAmount * $item->getQty();
-            
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
                 'unitAmount' => $itemAmount,
+                'tax_amount'=> $itemTaxAmount,
                 'sku' => $item->getSku(),
                 'productUrl' => $productUrl,
+                'image_url' => $productImageUrl,
                 'productType' => 'physical',
                 'categories' => $gr4vyCategories
             ];
         }
-
         // calculate shipping fee as cart item
         $shippingAddress = $quote->getShippingAddress();
-        $shippingAmount = $this->roundNumber($shippingAddress->getShippingInclTax());
-        $itemsTotal += $shippingAmount;
+        $shippingAmount = $this->roundNumber($shippingAddress->getBaseShippingAmount());
+        $discountAmount = $this->roundNumber($shippingAddress->getBaseDiscountAmount());
+        $taxAmount = $this->roundNumber($shippingAddress->getTaxAmount());
+        $baseShippingTaxAmount = $this->roundNumber($shippingAddress->getBaseShippingTaxAmount());
+
+        $itemsTotal += $shippingAmount + $discountAmount + $taxAmount;
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'quantity' => 1,
             'unitAmount' => $shippingAmount,
+            'tax_amount' => $baseShippingTaxAmount,
             'sku' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'productUrl' => $quote->getStore()->getUrl(),
             'productType' => 'shipping_fee',
             'categories' => ['shipping']
         ];
+        if ($discountAmount < 0) {
+            $items[] = [
+                'name' => 'Discount',
+                'quantity' => 1,
+                'unitAmount' => 0,
+                'discount_amount'=> $discountAmount * -1,
+                'tax_amount'=> 0,
+                'sku' => 'discount',
+                'productUrl' => $quote->getStore()->getUrl(),
+                'productType' => 'discount',
+                'categories' => ['discount']
+            ];
+        }
 
         if ($totalAmount != $itemsTotal) {
             $this->gr4vyLogger->logMixed(['totalAmount' => $totalAmount, 'itemsTotal' => $itemsTotal], "Item to Total mismatch");

@@ -10,23 +10,26 @@ namespace Gr4vy\Magento\Model\Client;
 class Embed extends Base
 {
     /**
-     * retrieve embed token for frotend checkout form
-     * $amount must be integer and mulitplied by 100 before calling this function
+     * retrieve embed token for frontend checkout form
+     * $amount must be integer and multiplied by 100 before calling this function
      *
-     * @param string
-     * @param string
-     * @param string
-     *
+     * @param $amount
+     * @param $currency
+     * @param $buyer_id
+     * @param $cartItems
+     * @param $metadata
      * @return string
      */
-    public function getEmbedToken($amount, $currency, $buyer_id)
+    public function getEmbedToken($amount, $currency, $buyer_id, $cartItems, $metadata)
     {
         try {
             $embed_params = array(
                 "amount" => $amount,
                 "currency" => $currency,
                 "environment" => $this->gr4vyHelper->getGr4vyEnvironment(),
-                "buyer_id" => $buyer_id
+                "buyer_id" => $buyer_id,
+                "cart_items" => $cartItems,
+                "metadata" => $metadata
             );
             $token = $this->getGr4vyConfig()->getEmbedToken($embed_params);
             $this->gr4vyLogger->logMixed($embed_params);

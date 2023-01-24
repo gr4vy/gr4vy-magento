@@ -119,6 +119,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         $quote = $this->cart->getQuote();
         $quote_total = $this->roundNumber($quote->getGrandTotal());
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
+
         if (!$quote->getData('gr4vy_buyer_id')) {
             $this->customerHelper->connectQuoteWithGr4vy($quote);
             $quote->save();
@@ -126,7 +127,9 @@ class PaymentFormProvider implements ConfigProviderInterface
         else {
             $this->customerHelper->updateGr4vyBuyerAddressFromQuote($quote);
         }
-        $token = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id);
+        $cartItems = $this->getCartItemsData($quote, $quote_total);
+        $customData = $this->gr4vyHelper->getGr4vyCustomData();
+        $token = $this->embedApi->getEmbedToken($quote_total, $currency, $buyer_id, $cartItems, $customData);
         $buyer_id = $quote->getData('gr4vy_buyer_id');
         // NOTE: $quote->getGrandTotal after shipping method specified contains calculated shipping amount
         $this->gr4vyLogger->logMixed([$token], "Embed Token");
@@ -145,14 +148,14 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'title' => $this->gr4vyHelper->getPaymentTitle(),
                     'intent' => $this->gr4vyHelper->getGr4vyIntent(),
                     'isActive' => $this->gr4vyHelper->isEnabled(),
-                    'custom_data' => $this->gr4vyHelper->getGr4vyCustomData(),
+                    'custom_data' => $customData,
                     'payment_source' => $this->gr4vyHelper->getPaymentSource(),
                     'require_security_code' => boolval($this->gr4vyHelper->getRequireSecurityCode()),
                     'theme' => $this->gr4vyHelper->buildThemeConfig(),
                     'statement_descriptor' => $this->gr4vyHelper->buildStatementDescriptor(),
                     'token' => $token,
                     'total_amount' => $quote_total,
-                    'items' => $this->getCartItemsData($quote, $quote_total),
+                    'items' => $cartItems,
                     'locale' => $this->getLocaleCode(),
                     'reload_config_url' => $this->urlBuilder->getUrl('gr4vy/checkout/config'),
                     'rendered' => false
@@ -210,12 +213,12 @@ class PaymentFormProvider implements ConfigProviderInterface
             $items[] = [
                 'name' => $item->getName(),
                 'quantity' => $item->getQty(),
-                'unitAmount' => $itemAmount,
+                'unit_amount' => $itemAmount,
                 'tax_amount'=> $itemTaxAmount,
                 'sku' => $item->getSku(),
-                'productUrl' => $productUrl,
+                'product_url' => $productUrl,
                 'image_url' => $productImageUrl,
-                'productType' => 'physical',
+                'product_type' => 'physical',
                 'categories' => $gr4vyCategories
             ];
         }
@@ -230,23 +233,23 @@ class PaymentFormProvider implements ConfigProviderInterface
         $items[] = [
             'name' => $shippingAddress->getShippingMethod() ?? 'n/a',
             'quantity' => 1,
-            'unitAmount' => $shippingAmount,
+            'unit_amount' => $shippingAmount,
             'tax_amount' => $baseShippingTaxAmount,
             'sku' => $shippingAddress->getShippingMethod() ?? 'n/a',
-            'productUrl' => $quote->getStore()->getUrl(),
-            'productType' => 'shipping_fee',
+            'product_url' => $quote->getStore()->getUrl(),
+            'product_type' => 'shipping_fee',
             'categories' => ['shipping']
         ];
         if ($discountAmount < 0) {
             $items[] = [
                 'name' => 'Discount',
                 'quantity' => 1,
-                'unitAmount' => 0,
+                'unit_amount' => 0,
                 'discount_amount'=> $discountAmount * -1,
                 'tax_amount'=> 0,
                 'sku' => 'discount',
-                'productUrl' => $quote->getStore()->getUrl(),
-                'productType' => 'discount',
+                'product_url' => $quote->getStore()->getUrl(),
+                'product_type' => 'discount',
                 'categories' => ['discount']
             ];
         }

@@ -28,7 +28,7 @@ define(
             intent = ko.observable(window.checkoutConfig.payment.gr4vy.intent),
             cartItems = ko.observable(window.checkoutConfig.payment.gr4vy.items),
             metadata = {
-                "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data || "default"
+                "magento_custom_data": window.checkoutConfig.payment.gr4vy.custom_data
             };
 
         return {

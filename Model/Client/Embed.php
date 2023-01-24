@@ -29,7 +29,7 @@ class Embed extends Base
                 "environment" => $this->gr4vyHelper->getGr4vyEnvironment(),
                 "buyer_id" => $buyer_id,
                 "cart_items" => $cartItems,
-                "metadata" => $metadata
+                "metadata" => ['magento_custom_data' => $metadata]
             );
             $token = $this->getGr4vyConfig()->getEmbedToken($embed_params);
             $this->gr4vyLogger->logMixed($embed_params);

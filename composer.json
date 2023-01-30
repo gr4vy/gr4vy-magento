@@ -2,7 +2,7 @@
     "name": "gr4vy/magento",
     "description": "Magento 2 Payment module from Gr4vy",
     "type": "magento2-module",
-    "version": "1.0.22",
+    "version": "1.0.24",
     "license": [
         "OSL-3.0",
         "AFL-3.0"

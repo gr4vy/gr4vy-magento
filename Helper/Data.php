@@ -190,7 +190,7 @@ class Data extends AbstractHelper
      */
     public function getGr4vyCustomData()
     {
-        return $this->getOptionsConfig(OptionsInterface::OPTIONS['custom_data']);
+        return $this->getOptionsConfig(OptionsInterface::OPTIONS['custom_data']) ?: 'default';
     }
 
     /**

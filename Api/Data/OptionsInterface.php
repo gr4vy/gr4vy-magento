@@ -22,11 +22,9 @@ interface OptionsInterface
         'id' => 'id',
         'private_key' => 'private_key',
         'payment_action' => 'payment_action',
-        'order_status' => 'order_status',
         'environment' => 'environment',
         'debug' => 'debug',
         'intent' => 'payment_action',
-        'order_status' => 'order_status',
         'env' => 'environment',
         'store' => 'payment_store',
     ];

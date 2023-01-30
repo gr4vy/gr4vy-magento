@@ -14,13 +14,32 @@ define(
         'Magento_Checkout/js/action/set-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Ui/js/modal/alert',
+        'jquery',
         'gr4vyapi'
     ],
-    function (Component, quote, urlBuilder, config, storage, url, $t, errorProcessor, customer, customerData, globalMessageList, setPaymentInformationAction, fullScreenLoader, alertModal, gr4vy) {
+    function (
+        Component,
+        quote,
+        urlBuilder,
+        config,
+        storage,
+        url,
+        $t,
+        errorProcessor,
+        customer,
+        customerData,
+        globalMessageList,
+        setPaymentInformationAction,
+        fullScreenLoader,
+        alertModal,
+        $,
+        gr4vy
+    ) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Gr4vy_Magento/payment/gr4vy'
+                template: 'Gr4vy_Magento/payment/gr4vy',
+                orderId: null
             },
             displayMessage: function(msg) {
                 alertModal({
@@ -38,6 +57,7 @@ define(
             },
             initialize: function() {
                 var self = this;
+                var isFormValid = false;
 
                 this._super();
 
@@ -52,8 +72,15 @@ define(
                 storage.post(config.reloadConfigUrl, JSON.stringify({}), false, 'application/json')
                     .done(function (result) {
                         var config2 = result.payment.gr4vy;
+
                         // Verify data before setting gr4vy
                         if (config2.token && config2.total_amount && config2.buyer_id) {
+                            //bind click event first to place order before triggering gr4vy event
+                            $(document).on('click', '#gr4vy-place-order-btn', function () {
+                                if (self.isFormValid) {
+                                    This.customPlaceOrder();
+                                }
+                            });
                             gr4vy.setup({
                                 gr4vyId: config.gr4vyId,
                                 buyerId: config2.buyer_id,
@@ -75,17 +102,47 @@ define(
                                 cartItems: config2.items,
                                 metadata: config.metadata,
                                 onEvent: (eventName, data) => {
-                                    if (eventName === 'agumentError') {
-                                        console.log(data)
+                                    if (eventName === 'paymentMethodSelected'){
+                                        if ((typeof(data['mode']) !== 'undefined') && data['mode'] === 'card') {
+                                            if (typeof(data['id']) !== 'undefined') {
+                                                self.isFormValid = true;
+                                            } else {
+                                                self.isFormValid = false;
+                                            }
+                                        } else {
+                                            self.isFormValid = true;
+                                        }
                                     }
-                                    if (eventName === 'transactionCreated') {
-                                        console.log(data)
+                                    if(eventName === 'formUpdate') {
+                                        if (data === true) {
+                                            self.isFormValid = true;
+                                        } else {
+                                            self.isFormValid = false;
+                                        }
                                     }
-                                    if (eventName === 'transactionFailed') {
+                                     if (eventName === 'transactionCreated') {
                                         console.log(data)
+                                         if (
+                                             (
+                                             data['intent']  === 'authorize'
+                                             && data['status'] !== 'authorization_succeeded'
+                                             ) ||
+                                             (
+                                                 data['intent']  === 'capture'
+                                                 && data['status'] !== 'capture_succeeded'
+                                             )
+                                         ) {
+                                             This.cancelCustomOrder(This.orderId);
+                                         }
                                     }
-                                    if (eventName === 'apiError') {
-                                        console.log(data)
+                                     if (
+                                         eventName === 'transactionFailed'
+                                         || eventName === 'apiError'
+                                         || eventName === 'argumentError'
+                                     ) {
+                                         This.cancelCustomOrder(This.orderId);
+                                         fullScreenLoader.stopLoader();
+                                         console.log(data)
                                     }
                                 },
                                 onComplete: (transaction) => {
@@ -104,8 +161,10 @@ define(
                                         JSON.stringify(payload)
                                     ).done(
                                         function (response) {
-                                            // success - trigger default placeorder request from magento library
-                                            This.placeOrder();
+                                            This.processGr4vyResponse(quote.getQuoteId());
+                                            window.location.replace(url.build(
+                                                config.successPageUrl
+                                            ));
                                         }
                                     ).fail(
                                         function (response) {
@@ -132,6 +191,54 @@ define(
                         // mark payment form rendered once after pageload
                         window.checkoutConfig.payment.gr4vy.rendered = true;
                     });
+            },
+            /**
+             * Place order in Magento before gr4vy transaction
+             */
+            customPlaceOrder: function () {
+                var self = this;
+                fullScreenLoader.startLoader();
+                $.ajaxSetup({
+                    async: false
+                });
+                this.getPlaceOrderDeferredObject()
+                    .fail(
+                        function() {
+                            fullScreenLoader.stopLoader();
+                        })
+                    .done(
+                        function(orderId) {
+                            self.orderId = orderId;
+                            self.afterPlaceOrder();
+                        });
+                },
+            /**
+             * Cancel order in Magento if gr4vy transaction fails
+             */
+            cancelCustomOrder: function (lastOrderId) {
+                let params = {orderId: lastOrderId};
+                $.ajax({
+                    url: BASE_URL + 'gr4vy/checkout/cancelorder',
+                    type: 'POST',
+                    data: params,
+                    async: false,
+                    success: function (data) {
+                    }
+                });
+            },
+            /**
+             * Process gr4vy response after successful gr4vy transaction
+             * @param activeQuoteId
+             */
+            processGr4vyResponse: function(activeQuoteId) {
+                let params = {quoteId: activeQuoteId, orderId: this.orderId};
+                $.ajax({
+                    url: BASE_URL + 'gr4vy/checkout/process',
+                    type: 'POST',
+                    data: params,
+                    success: function (data) {
+                    }
+                });
             },
             /**
              * @returns {Object}

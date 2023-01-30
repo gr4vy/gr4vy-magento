@@ -204,16 +204,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * retrieve Gr4vy New Order Status
-     *
-     * @return string
-     */
-    public function getGr4vyNewOrderStatus()
-    {
-        return $this->getApiConfig(OptionsInterface::API['order_status']);
-    }
-
-    /**
      * get Payment Source
      *
      * @return string

@@ -62,6 +62,10 @@ class Config extends Action implements HttpPostActionInterface
         $rawParameter = $this->getRequest()->getContent();
         $parameter = json_decode($rawParameter, true);
         $quote = $this->session->getQuote();
+        if (!$quote->getReservedOrderId()) {
+            $quote = $quote->reserveOrderId();
+            $this->quoteRepository->save($quote);
+        }
 
         if (isset($parameter['shipping_country_id'])) {
             $quote->getShippingAddress()

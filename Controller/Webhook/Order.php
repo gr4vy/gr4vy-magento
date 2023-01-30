@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Controller\Webhook;
 
+use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -23,6 +24,12 @@ use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 class Order extends Action implements HttpPostActionInterface, CsrfAwareActionInterface
 {
     /**
+     * Order statuses
+     */
+    const ORDER_STATUS_PENDING = 'pending';
+    const ORDER_STATUS_PROCESSING = 'processing';
+
+    /**
      * @var Gr4vyTransaction
      */
     public $transactionApi;
@@ -38,6 +45,11 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
     public $gr4vyOrder;
 
     /**
+     * @var Gr4vyHelper
+     */
+    private $gr4vyHelper;
+
+    /**
      * @var Gr4vyLogger
      */
     private $gr4vyLogger;
@@ -47,6 +59,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
         Gr4vyTransaction $transactionApi,
         TransactionRepositoryInterface $transactionRepositoryInterface,
         \Gr4vy\Magento\Helper\Order $gr4vyOrder,
+        Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger
     ) {
         parent::__construct($context);
@@ -54,6 +67,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
         $this->transactionApi = $transactionApi;
         $this->transactionRepository = $transactionRepositoryInterface;
         $this->gr4vyOrder = $gr4vyOrder;
+        $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
     }
 
@@ -124,6 +138,35 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
                     || in_array($gr4vy_status, $statuses['refund'])
                 ) {
                     // ignore refunded or succeeded orders
+                }
+
+                $order = $this->gr4vyOrder->getOrderByGr4vyTransactionId($gr4vy_transaction_id);
+                /** @var \Magento\Sales\Model\Order $order */
+                if ($order) {
+                    $orderStatus = $order->getStatus();
+                    if ($gr4vy_status == 'authorization_succeeded') {
+                        if ($orderStatus !== self::ORDER_STATUS_PENDING) {
+                            $this->gr4vyOrder->updateOrderStatus($order, self::ORDER_STATUS_PENDING);
+                        }
+                    }
+                    elseif ($gr4vy_status == 'capture_succeeded') {
+                        if (!$order->hasInvoices()){
+                            $this->gr4vyOrder->generatePaidInvoice($order, $gr4vy_transaction_id);
+                        }
+                        if ($orderStatus !== self::ORDER_STATUS_PROCESSING) {
+                            $msg = __(
+                                "Captured amount of %1 online. Transaction ID: '%2'.",
+                                $this->gr4vyHelper->formatCurrency($dataModel->getAmount()/100),
+                                strval($dataModel->getGr4vyTransactionId())
+                            );
+                            $this->gr4vyOrder->updateOrderStatus($order, self::ORDER_STATUS_PROCESSING);
+                            $this->gr4vyOrder->updateOrderHistoryData(
+                                $order->getEntityId(),
+                            self::ORDER_STATUS_PROCESSING,
+                                $msg,
+                            true);
+                        }
+                    }
                 }
 
                 $dataModel->setStatus($gr4vy_status);

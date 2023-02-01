@@ -50,12 +50,4 @@
             <argument name="logger" xsi:type="object">Gr4vy\Magento\Logger\Logger</argument>
         </arguments>
     </type>
-    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
-        <plugin name="Gr4vyPaymentInformationResetOrderId" type="Gr4vy\Magento\Plugin\Magento\Checkout\Api\PaymentInformationResetOrderId"
-                sortOrder="10"/>
-    </type>
-    <type name="Magento\Checkout\Api\GuestPaymentInformationManagementInterface">
-        <plugin name="GuestGr4vyPaymentInformationResetOrderId" type="Gr4vy\Magento\Plugin\Magento\Checkout\Api\GuestPaymentInformationResetOrderId"
-                sortOrder="10"/>
-    </type>
 </config>

@@ -84,7 +84,7 @@ define(
                             gr4vy.setup({
                                 gr4vyId: config.gr4vyId,
                                 buyerId: config2.buyer_id,
-                                externalIdentifier: config.externalIdentifier,
+                                externalIdentifier: config2.external_identifier,
                                 environment: config.environment,
                                 store: config.store,
                                 element: config.element,

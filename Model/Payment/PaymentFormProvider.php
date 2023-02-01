@@ -119,13 +119,15 @@ class PaymentFormProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        $buyer_id = $this->cart->getQuote()->getData('gr4vy_buyer_id');
-        $external_identifier = $this->cart->getQuote()->getData('entity_id');
-        $store = $this->gr4vyHelper->getGr4vyPaymentStore() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_STORE_ASK
+        $quote = $this->cart->getQuote();
+        $buyer_id = $quote->getData('gr4vy_buyer_id');
+        $quoteId = $quote->getData('entity_id');
+        $reservedOrderId = $quote->getReservedOrderId();
+        $external_identifier = $reservedOrderId ? $reservedOrderId : $quoteId;
+        $store = $this->gr4vyHelper->getGr4vyPaymentStore() === Gr4vy::PAYMENT_STORE_ASK
             ? $this->gr4vyHelper->getGr4vyPaymentStore()
             : boolval($this->gr4vyHelper->getGr4vyPaymentStore());
 
-        $quote = $this->cart->getQuote();
         $quote_total = $this->roundNumber($quote->getGrandTotal());
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
 

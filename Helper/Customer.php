@@ -254,73 +254,43 @@ class Customer extends AbstractHelper
 
         $billing_details = null;
 
-        if (
-            $buyerModel 
-            && ($default_billing = $customer->getDefaultBillingAddress()) 
-            && ($city = $default_billing->getCity())
-        ) {
-            $street = $default_billing->getStreet();
-            $street2 = null;
-            if (is_array($street)) {
-                if (count($street) > 1) {
-                    $street2 = $street[1];
-                }
-                $street = $street[0];
-            }
+        $billingAddress = $quote->getBillingAddress();
+
+        if ($billingAddress) {
             $billing_details = [
-                "first_name" => $default_billing->getFirstname(),
-                "last_name" => $default_billing->getLastname(),
-                "email_address" => $customer->getEmail(),
-                "phone_number" => $default_billing->getTelephone(),
-                "address" => [
+                "first_name" => $quote->getCustomerFirstname(),
+                "last_name" => $quote->getCustomerLastname(),
+                "email_address" => $quote->getCustomerEmail()
+            ];
+
+            $phone = $billingAddress->getData('telephone');
+            if ($phone) {
+                $billing_details["phone_number"] = $phone;
+            }
+            $city = $billingAddress->getData('city');
+            if ($city) {
+                $street = $billingAddress->getData('street');
+                $street2 = null;
+                if(strstr($street, "\n")) {
+                    $streetArr = explode("\n", $street);
+                    $street = $streetArr[0];
+                    if (count($streetArr) > 1) {
+                        $street2 = $streetArr[1];
+                    }
+                }
+
+                $billing_details["address"] = [
                     "city" => $city,
-                    "country" => $default_billing->getCountryId(),
-                    "postal_code" => $default_billing->getPostcode(),
-                    "state" => $default_billing->getRegion(),
+                    "country" => $billingAddress->getData('country_id'),
+                    "postal_code" => $billingAddress->getData('postcode'),
+                    "state" => $billingAddress->getData('region'),
                     "street" => $street,
                     "street2" => $street2,
-                    "organization" => $default_billing->getCompany()
-                ]
-            ];
-        }
-        else {
-            $billingAddress = $quote->getBillingAddress();
-
-            if ($billingAddress) {
-                $billing_details = [
-                    "first_name" => $quote->getCustomerFirstname(),
-                    "last_name" => $quote->getCustomerLastname(),
-                    "email_address" => $quote->getCustomerEmail()
+                    "organization" => ""
                 ];
-
-                $phone = $billingAddress->getData('telephone');
-                if ($phone) {
-                    $billing_details["phone_number"] = $phone;
-                }
-                $city = $billingAddress->getData('city');
-                if ($city) {
-                    $street = $billingAddress->getData('street');
-                    $street2 = null;
-                    if(strstr($street, "\n")) {
-                        $streetArr = explode("\n", $street);
-                        $street = $streetArr[0];
-                        if (count($streetArr) > 1) {
-                            $street2 = $streetArr[1];
-                        }
-                    }
-
-                    $billing_details["address"] = [
-                        "city" => $city,
-                        "country" => $billingAddress->getData('country_id'),
-                        "postal_code" => $billingAddress->getData('postcode'),
-                        "state" => $billingAddress->getData('region'),
-                        "street" => $street,
-                        "street2" => $street2,
-                        "organization" => ""
-                    ];
-                }
             }
         }
+        
 
         if ($buyerModel && $billing_details) {
             if ($buyerModel->getBillingAddress() != json_encode($billing_details)) {

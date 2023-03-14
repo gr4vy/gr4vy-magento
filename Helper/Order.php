@@ -10,6 +10,8 @@ namespace Gr4vy\Magento\Helper;
 use Gr4vy\model\Transaction;
 use Gr4vy\model\Refund;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory;
 use Magento\Sales\Model\Order\Status\HistoryFactory as OrderStatusHistoryFactory;
 
@@ -51,6 +53,16 @@ class Order extends AbstractHelper
     private $orderStatusHistoryFactory;
 
     /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    /**
+     * @var OrderInterface|null
+     */
+    private $order;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param Data $gr4vyHelper
      * @param Logger $gr4vyLogger
@@ -59,6 +71,7 @@ class Order extends AbstractHelper
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
      * @param \Magento\Sales\Model\Service\InvoiceService $invoiceService
      * @param OrderStatusHistoryFactory $orderStatusHistoryFactory
+     * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -68,7 +81,8 @@ class Order extends AbstractHelper
         \Magento\Framework\DB\Transaction $transaction,
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
         \Magento\Sales\Model\Service\InvoiceService $invoiceService,
-        OrderStatusHistoryFactory $orderStatusHistoryFactory
+        OrderStatusHistoryFactory $orderStatusHistoryFactory,
+        OrderRepositoryInterface $orderRepository
     ) {
         parent::__construct($context);
         $this->gr4vyHelper = $gr4vyHelper;
@@ -78,6 +92,7 @@ class Order extends AbstractHelper
         $this->orderManagement = $orderManagement;
         $this->_invoiceService = $invoiceService;
         $this->orderStatusHistoryFactory = $orderStatusHistoryFactory;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -250,6 +265,19 @@ class Order extends AbstractHelper
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
         }
+    }
+
+    /**
+     * @param $orderId
+     * @return string|null
+     */
+    public function getIncrementId($orderId)
+    {
+        if (!$this->order) {
+            $this->order = $this->orderRepository->get($orderId);
+            return $this->order->getIncrementId();
+        }
+        return null;
     }
 }
 

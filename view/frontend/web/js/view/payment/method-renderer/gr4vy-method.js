@@ -39,7 +39,8 @@ define(
         return Component.extend({
             defaults: {
                 template: 'Gr4vy_Magento/payment/gr4vy',
-                orderId: null
+                orderId: null,
+                incrementId: null
             },
             displayMessage: function(msg) {
                 alertModal({
@@ -57,7 +58,6 @@ define(
             },
             initialize: function() {
                 var self = this;
-                var isFormValid = false;
 
                 this._super();
 
@@ -76,15 +76,9 @@ define(
                         // Verify data before setting gr4vy
                         if (config2.token && config2.total_amount && config2.buyer_id) {
                             //bind click event first to place order before triggering gr4vy event
-                            $(document).on('click', '#gr4vy-place-order-btn', function () {
-                                if (self.isFormValid) {
-                                    This.customPlaceOrder();
-                                }
-                            });
                             gr4vy.setup({
                                 gr4vyId: config.gr4vyId,
                                 buyerId: config2.buyer_id,
-                                externalIdentifier: config2.external_identifier,
                                 environment: config.environment,
                                 store: config.store,
                                 element: config.element,
@@ -102,24 +96,6 @@ define(
                                 cartItems: config2.items,
                                 metadata: config.metadata,
                                 onEvent: (eventName, data) => {
-                                    if (eventName === 'paymentMethodSelected'){
-                                        if ((typeof(data['mode']) !== 'undefined') && data['mode'] === 'card') {
-                                            if (typeof(data['id']) !== 'undefined') {
-                                                self.isFormValid = true;
-                                            } else {
-                                                self.isFormValid = false;
-                                            }
-                                        } else {
-                                            self.isFormValid = true;
-                                        }
-                                    }
-                                    if(eventName === 'formUpdate') {
-                                        if (data === true) {
-                                            self.isFormValid = true;
-                                        } else {
-                                            self.isFormValid = false;
-                                        }
-                                    }
                                      if (eventName === 'transactionCreated') {
                                         console.log(data)
                                          if (
@@ -142,7 +118,15 @@ define(
                                      ) {
                                          This.cancelCustomOrder(This.orderId);
                                          fullScreenLoader.stopLoader();
+                                         This.initEmbedPayment();
                                          console.log(data)
+                                    }
+                                },
+                                onBeforeTransaction: async () => {
+                                    This.customPlaceOrder();
+                                    console.log('onBeforeTransaction');
+                                    return {
+                                        externalIdentifier: This.incrementId,
                                     }
                                 },
                                 onComplete: (transaction) => {
@@ -165,6 +149,7 @@ define(
                                             window.location.replace(url.build(
                                                 config.successPageUrl
                                             ));
+
                                         }
                                     ).fail(
                                         function (response) {
@@ -209,14 +194,34 @@ define(
                     .done(
                         function(orderId) {
                             self.orderId = orderId;
+                            self.setIncrementId(orderId);
                             self.afterPlaceOrder();
                         });
                 },
             /**
+             * get and set increment id of the last placed order
+             */
+            setIncrementId: function (lastOrderId) {
+                var self = this;
+                let params = {orderId: lastOrderId};
+                $.ajax({
+                    url: BASE_URL + 'gr4vy/checkout/orderdetails',
+                    type: 'POST',
+                    data: params,
+                    async: false,
+                    success: function (data) {
+                        self.incrementId = data.incrementId;
+                    },
+                    fail: function (data) {
+                    }
+                });
+            },
+            /**
              * Cancel order in Magento if gr4vy transaction fails
              */
             cancelCustomOrder: function (lastOrderId) {
-                let params = {orderId: lastOrderId};
+                let formKeyVal = $('input[name="form_key"]').val();
+                let params = {orderId: lastOrderId, form_key: formKeyVal};
                 $.ajax({
                     url: BASE_URL + 'gr4vy/checkout/cancelorder',
                     type: 'POST',

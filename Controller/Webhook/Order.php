@@ -15,6 +15,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Gr4vy\Magento\Model\Client\Transaction as Gr4vyTransaction;
 use Gr4vy\Magento\Api\TransactionRepositoryInterface;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
+use Gr4vy\Magento\Api\Data\TransactionInterface;
 
 /**
  * Gr4vy Payment Webhook Order Controller
@@ -53,11 +54,16 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
      * @var Gr4vyLogger
      */
     private $gr4vyLogger;
+    /**
+     * @var TransactionInterface
+     */
+    private $transactionInterface;
 
     public function __construct(
         Context $context,
         Gr4vyTransaction $transactionApi,
         TransactionRepositoryInterface $transactionRepositoryInterface,
+        TransactionInterface $transactionInterface,
         \Gr4vy\Magento\Helper\Order $gr4vyOrder,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger
@@ -66,6 +72,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
 
         $this->transactionApi = $transactionApi;
         $this->transactionRepository = $transactionRepositoryInterface;
+        $this->transactionInterface = $transactionInterface;
         $this->gr4vyOrder = $gr4vyOrder;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
@@ -119,20 +126,45 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
         try {
             $gr4vy_transaction_id = $request->target->id;
             $statuses = $this->gr4vyOrder->getGr4vyTransactionStatuses();
+
             if ($gr4vy_status = $this->transactionApi->getStatus($gr4vy_transaction_id)) {
                 $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
 
+
                 if (!isset($dataModel)) {
-                    $this->gr4vyLogger->logMixed(
-                        [],
-                        __('Cannot find transaction "%1"', $gr4vy_transaction_id)
-                    );
-                    return $result;
+
+                    $transactionDetail = $this->transactionApi->getTransactionDetail($gr4vy_transaction_id);
+                    $externalIdentifier = $transactionDetail->getExternalIdentifier();
+
+                    $order = $this->transactionRepository->getOrderByIncrementId($externalIdentifier);
+                    if ($order) {
+                        $this->transactionRepository->updateOrderPayment($order, $gr4vy_transaction_id);
+                        $this->transactionInterface->setGr4vyTransactionId($gr4vy_transaction_id);
+                        $this->transactionInterface->setMethodId($transactionDetail->getPaymentMethod()->getId());
+                        $this->transactionInterface->setBuyerId($transactionDetail->getBuyer()->getId());
+                        $this->transactionInterface->setServiceId($transactionDetail->getPaymentService()->getId());
+                        $this->transactionInterface->setStatus($transactionDetail->getStatus());
+                        $this->transactionInterface->setAmount($transactionDetail->getAmount());
+                        $this->transactionInterface->setCapturedAmount($transactionDetail->getCapturedAmount());
+                        $this->transactionInterface->setRefundedAmount($transactionDetail->getRefundedAmount());
+                        $this->transactionInterface->setCurrency($transactionDetail->getCurrency());
+                        $this->transactionRepository->save($this->transactionInterface);
+                    }
+
+                    else {
+                        $this->gr4vyLogger->logMixed(
+                            [],
+                            __('Cannot find transaction "%1"', $gr4vy_transaction_id)
+                        );
+                        return $result;
+                    }
+                    $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
                 }
 
-                if (in_array($gr4vy_status, $statuses['cancel'])) {
-                    $this->gr4vyOrder->cancelOrderByGr4vyTransactionId($dataModel->getGr4vyTransactionId());
-                }
+                    if (in_array($gr4vy_status, $statuses['cancel'])) {
+                        $this->gr4vyOrder->cancelOrderByGr4vyTransactionId($dataModel->getGr4vyTransactionId());
+                    }
+
 
                 if (in_array($gr4vy_status, $statuses['success'])
                     || in_array($gr4vy_status, $statuses['refund'])

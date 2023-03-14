@@ -5,9 +5,14 @@ namespace Gr4vy\Magento\Controller\Checkout;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Sales\Model\Order;
 
 /**
@@ -22,6 +27,11 @@ class CancelOrder implements ActionInterface
     private $resultJsonFactory;
 
     /**
+     * @var ResultRedirectFactory
+     */
+    private $resultRedirectFactory;
+
+    /**
      * @var Context
      */
     private $context;
@@ -32,28 +42,43 @@ class CancelOrder implements ActionInterface
     private $orderHelper;
 
     /**
-     * DisableQuote constructor.
+     * @var Validator
+     */
+    private $formKeyValidator;
+
+    /**
+     * CancelOrder constructor.
      * @param JsonFactory $resultJsonFactory
+     * @param ResultRedirectFactory $resultRedirectFactory
      * @param Context $context
      * @param OrderHelper $orderHelper
+     * @param Validator $formKeyValidator
      */
     public function __construct(
         JsonFactory $resultJsonFactory,
+        ResultRedirectFactory $resultRedirectFactory,
         Context $context,
-        OrderHelper $orderHelper
+        OrderHelper $orderHelper,
+        Validator $formKeyValidator
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->resultRedirectFactory = $resultRedirectFactory;
         $this->context = $context;
         $this->orderHelper = $orderHelper;
+        $this->formKeyValidator = $formKeyValidator;
     }
 
     /**
      * Cancel order if gr4vy transaction fails
      *
-     * @return Json
+     * @return ResponseInterface|Json|Redirect|ResultInterface
      */
     public function execute()
     {
+        if (!$this->formKeyValidator->validate($this->context->getRequest())) {
+            return $this->resultRedirectFactory->create()
+                ->setPath('/');
+        }
         $params = $this->context->getRequest()->getParams();
         $orderId = isset($params['orderId']) ? $params['orderId'] : null;
         if ($orderId) {

@@ -12,10 +12,8 @@ use Gr4vy\Magento\Api\Data\TransactionSearchResultsInterfaceFactory;
 use Gr4vy\Magento\Api\TransactionRepositoryInterface;
 use Gr4vy\Magento\Model\ResourceModel\Transaction as ResourceTransaction;
 use Gr4vy\Magento\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
-use Gr4vy\Magento\Model\Client\Embed as Gr4vyEmbed;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -25,11 +23,18 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Reflection\DataObjectProcessor;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\PaymentMethodManagementInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Gr4vy\Magento\Helper\Order as OrderHelper;
+use Magento\Sales\Api\OrderPaymentRepositoryInterface;
+use Magento\Sales\Model\OrderFactory;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
+    const ORDER_STATUS_PENDING = 'pending';
 
     protected $resource;
 
@@ -64,12 +69,12 @@ class TransactionRepository implements TransactionRepositoryInterface
     protected $gr4vyHelper;
 
     /**
-     * @var \Magento\Quote\Api\PaymentMethodManagementInterface
+     * @var PaymentMethodManagementInterface
      */
     protected $paymentMethodManagement;
 
     /**
-     * @var \Magento\Quote\Api\CartRepositoryInterface
+     * @var CartRepositoryInterface
      */
     private $cartRepository;
 
@@ -77,6 +82,22 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @var searchCriteriaBuilder
      */
     private $searchCriteriaBuilder;
+
+    /**
+     * @var OrderPaymentRepositoryInterface
+     */
+    protected $orderPaymentRepository;
+
+    /**
+     * @var OrderHelper
+     */
+    protected $orderHelper;
+
+    /**
+     * @var OrderFactory
+     */
+    private $orderFactory;
+
 
     /**
      * @param ResourceTransaction $resource
@@ -93,7 +114,10 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
+     * @param PaymentMethodManagementInterface $paymentMethodManagement
+     * @param CartRepositoryInterface $cartRepository
+     * @param OrderPaymentRepositoryInterface $orderPaymentRepository
+     * @param OrderHelper $orderHelper
      */
     public function __construct(
         ResourceTransaction $resource,
@@ -110,7 +134,11 @@ class TransactionRepository implements TransactionRepositoryInterface
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
+        PaymentMethodManagementInterface $paymentMethodManagement,
+        CartRepositoryInterface $cartRepository,
+        OrderPaymentRepositoryInterface $orderPaymentRepository,
+        OrderHelper $orderHelper,
+        OrderFactory $orderFactory
     ) {
         $this->resource = $resource;
         $this->transactionFactory = $transactionFactory;
@@ -127,6 +155,10 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->cartRepository = $cartRepository;
+        $this->orderPaymentRepository = $orderPaymentRepository;
+        $this->orderHelper = $orderHelper;
+        $this->orderFactory = $orderFactory;
     }
 
     /**
@@ -139,15 +171,15 @@ class TransactionRepository implements TransactionRepositoryInterface
             $storeId = $this->storeManager->getStore()->getId();
             $transaction->setStoreId($storeId);
         } */
-        
+
         $transactionData = $this->extensibleDataObjectConverter->toNestedArray(
             $transaction,
             [],
             \Gr4vy\Magento\Api\Data\TransactionInterface::class
         );
-        
+
         $transactionModel = $this->transactionFactory->create()->setData($transactionData);
-        
+
         try {
             $this->resource->save($transactionModel);
         } catch (\Exception $exception) {
@@ -203,7 +235,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     private function getQuoteModel($cartId)
     {
         $cartId = $this->gr4vyHelper->getQuoteIdFromMask($cartId);
-        /** @var \Magento\Quote\Api\CartRepositoryInterface $quoteRepository */
+        /** @var CartRepositoryInterface $quoteRepository */
         $quoteRepository = $this->getCartRepository();
 
         /** @var \Magento\Quote\Model\Quote $quote */
@@ -213,14 +245,14 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * Get Cart repository
      *
-     * @return \Magento\Quote\Api\CartRepositoryInterface
+     * @return CartRepositoryInterface
      * @deprecated 100.2.0
      */
     private function getCartRepository()
     {
         if (!$this->cartRepository) {
             $this->cartRepository = ObjectManager::getInstance()
-                ->get(\Magento\Quote\Api\CartRepositoryInterface::class);
+                ->get(CartRepositoryInterface::class);
         }
         return $this->cartRepository;
     }
@@ -264,22 +296,22 @@ class TransactionRepository implements TransactionRepositoryInterface
         \Magento\Framework\Api\SearchCriteriaInterface $criteria
     ) {
         $collection = $this->transactionCollectionFactory->create();
-        
+
         $this->extensionAttributesJoinProcessor->process(
             $collection,
             \Gr4vy\Magento\Api\Data\TransactionInterface::class
         );
-        
+
         $this->collectionProcessor->process($criteria, $collection);
-        
+
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($criteria);
-        
+
         $items = [];
         foreach ($collection as $model) {
             $items[] = $model->getDataModel();
         }
-        
+
         $searchResults->setItems($items);
         $searchResults->setTotalCount($collection->getSize());
         return $searchResults;
@@ -310,6 +342,23 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function deleteById($transactionId)
     {
         return $this->delete($this->get($transactionId));
+    }
+
+    /**
+     * @param $orderIncrementId
+     */
+    public function getOrderByIncrementId($orderIncrementId){
+        return $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
+    }
+
+    public function updateOrderPayment($order, $gr4vy_transaction_id)
+    {
+        /** @var Payment $payment */
+        $orderPayment = $order->getPayment();
+        $orderPayment->setData('gr4vy_transaction_id', $gr4vy_transaction_id);
+        $orderPayment->setData('transaction_id', $gr4vy_transaction_id);
+        $orderPayment->setData('last_trans_id', $gr4vy_transaction_id);
+        $this->orderPaymentRepository->save($orderPayment);
     }
 }
 

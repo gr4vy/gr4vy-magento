@@ -24,6 +24,7 @@ define(
             theme = window.checkoutConfig.payment.gr4vy.theme,
             statementDescriptor = window.checkoutConfig.payment.gr4vy.statement_descriptor,
             reloadConfigUrl = window.checkoutConfig.payment.gr4vy.reload_config_url,
+            successPageUrl = window.checkoutConfig.payment.gr4vy.success_page_url,
             token = ko.observable(window.checkoutConfig.payment.gr4vy.authorization_token),
             intent = ko.observable(window.checkoutConfig.payment.gr4vy.intent),
             cartItems = ko.observable(window.checkoutConfig.payment.gr4vy.items),
@@ -54,7 +55,8 @@ define(
             intent: intent,
             cartItems: cartItems,
             metadata: metadata,
-            reloadConfigUrl: reloadConfigUrl
+            reloadConfigUrl: reloadConfigUrl,
+            successPageUrl: successPageUrl
         };
     }
 );

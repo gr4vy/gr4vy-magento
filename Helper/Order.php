@@ -10,7 +10,10 @@ namespace Gr4vy\Magento\Helper;
 use Gr4vy\model\Transaction;
 use Gr4vy\model\Refund;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory;
+use Magento\Sales\Model\Order\Status\HistoryFactory as OrderStatusHistoryFactory;
 
 class Order extends AbstractHelper
 {
@@ -20,7 +23,7 @@ class Order extends AbstractHelper
     protected $_transaction;
 
     /**
-     * @var \Magento\Sales\Api\OrderManagementInterface 
+     * @var \Magento\Sales\Api\OrderManagementInterface
      */
     protected $orderManagement;
 
@@ -45,7 +48,30 @@ class Order extends AbstractHelper
     protected $gr4vyLogger;
 
     /**
+     * @var OrderStatusHistoryFactory
+     */
+    private $orderStatusHistoryFactory;
+
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    /**
+     * @var OrderInterface|null
+     */
+    private $order;
+
+    /**
      * @param \Magento\Framework\App\Helper\Context $context
+     * @param Data $gr4vyHelper
+     * @param Logger $gr4vyLogger
+     * @param CollectionFactory $collectionFactory
+     * @param \Magento\Framework\DB\Transaction $transaction
+     * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
+     * @param \Magento\Sales\Model\Service\InvoiceService $invoiceService
+     * @param OrderStatusHistoryFactory $orderStatusHistoryFactory
+     * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -54,7 +80,9 @@ class Order extends AbstractHelper
         CollectionFactory $collectionFactory,
         \Magento\Framework\DB\Transaction $transaction,
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
-        \Magento\Sales\Model\Service\InvoiceService $invoiceService
+        \Magento\Sales\Model\Service\InvoiceService $invoiceService,
+        OrderStatusHistoryFactory $orderStatusHistoryFactory,
+        OrderRepositoryInterface $orderRepository
     ) {
         parent::__construct($context);
         $this->gr4vyHelper = $gr4vyHelper;
@@ -63,6 +91,8 @@ class Order extends AbstractHelper
         $this->_transaction = $transaction;
         $this->orderManagement = $orderManagement;
         $this->_invoiceService = $invoiceService;
+        $this->orderStatusHistoryFactory = $orderStatusHistoryFactory;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -113,10 +143,27 @@ class Order extends AbstractHelper
     {
         $order->addStatusHistoryComment($msg);
         $order->setState($status)->setStatus($status);
-
         try {
             $order->save();
             $this->gr4vyLogger->logMixed(['msg' => $msg, 'status' => $status]);
+        }
+        catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
+    /**
+     * Update Order Status
+     *
+     * @param \Magento\Sales\Model\Order
+     * @param String
+     */
+    public function updateOrderStatus($order, $status)
+    {
+        $order->setState($status)->setStatus($status);
+        try {
+            $order->save();
+            $this->gr4vyLogger->logMixed(['status' => $status]);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
@@ -137,6 +184,40 @@ class Order extends AbstractHelper
             $this->orderManagement->cancel($order->getId());
         }
     }
+
+    /**
+     * Cancel Order
+     *
+     * @param int $orderId
+     */
+    public function cancelMagentoOrder($orderId)
+    {
+        $this->orderManagement->cancel($orderId);
+    }
+
+    /**
+     * Update order history data
+     *
+     * @param int $orderId
+     * @param string $orderStatus
+     * @param string $orderComment
+     * @param bool $isCustomerNotified
+     */
+    public function updateOrderHistoryData($orderId, $orderStatus, $orderComment, $isCustomerNotified = false)
+    {
+        try {
+            $orderStatusHistory = $this->orderStatusHistoryFactory->create()
+                ->setParentId($orderId)
+                ->setEntityName('order')
+                ->setStatus($orderStatus)
+                ->setComment($orderComment)
+                ->setIsCustomerNotified($isCustomerNotified);
+            $this->orderManagement->addComment($orderId, $orderStatusHistory);
+        } catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
 
     /**
      * Retrieve magento order using gr4vy_transaction_id
@@ -184,6 +265,19 @@ class Order extends AbstractHelper
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);
         }
+    }
+
+    /**
+     * @param $orderId
+     * @return string|null
+     */
+    public function getIncrementId($orderId)
+    {
+        if (!$this->order) {
+            $this->order = $this->orderRepository->get($orderId);
+            return $this->order->getIncrementId();
+        }
+        return null;
     }
 }
 

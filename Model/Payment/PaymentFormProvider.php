@@ -3,6 +3,7 @@ namespace Gr4vy\Magento\Model\Payment;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Customer\Helper\Session\CurrentCustomer;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Checkout\Model\Cart;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
@@ -70,6 +71,11 @@ class PaymentFormProvider implements ConfigProviderInterface
     private $storemanager;
 
     /**
+     * @var RequestInterface
+     */
+    private $request;
+
+    /**
      * @param CurrentCustomer $currentCustomer
      * @param UrlInterface $urlBuilder
      * @param Cart $cart
@@ -80,6 +86,7 @@ class PaymentFormProvider implements ConfigProviderInterface
      * @param CategoryRepositoryInterface $categoryRepository
      * @param Resolver $resolver
      * @param StoreManagerInterface $storemanager
+     * @param RequestInterface $request
      */
     public function __construct(
         CurrentCustomer $currentCustomer,
@@ -91,7 +98,8 @@ class PaymentFormProvider implements ConfigProviderInterface
         Gr4vyEmbed $embedApi,
         CategoryRepositoryInterface $categoryRepository,
         Resolver $resolver,
-        StoreManagerInterface $storemanager
+        StoreManagerInterface $storemanager,
+        RequestInterface $request
     ) {
         $this->currentCustomer = $currentCustomer;
         $this->urlBuilder = $urlBuilder;
@@ -103,6 +111,7 @@ class PaymentFormProvider implements ConfigProviderInterface
         $this->categoryRepository = $categoryRepository;
         $this->resolver = $resolver;
         $this->storemanager = $storemanager;
+        $this->request = $request;
     }
 
     /**
@@ -110,13 +119,15 @@ class PaymentFormProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        $buyer_id = $this->cart->getQuote()->getData('gr4vy_buyer_id');
-        $external_identifier = $this->cart->getQuote()->getData('entity_id');
-        $store = $this->gr4vyHelper->getGr4vyPaymentStore() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_STORE_ASK
+        $quote = $this->cart->getQuote();
+        $buyer_id = $quote->getData('gr4vy_buyer_id');
+        $quoteId = $quote->getData('entity_id');
+        $reservedOrderId = $quote->getReservedOrderId();
+        $external_identifier = $reservedOrderId ? $reservedOrderId : $quoteId;
+        $store = $this->gr4vyHelper->getGr4vyPaymentStore() === Gr4vy::PAYMENT_STORE_ASK
             ? $this->gr4vyHelper->getGr4vyPaymentStore()
             : boolval($this->gr4vyHelper->getGr4vyPaymentStore());
 
-        $quote = $this->cart->getQuote();
         $quote_total = $this->roundNumber($quote->getGrandTotal());
         $currency = $quote->getStore()->getCurrentCurrency()->getCode();
 
@@ -158,6 +169,10 @@ class PaymentFormProvider implements ConfigProviderInterface
                     'items' => $cartItems,
                     'locale' => $this->getLocaleCode(),
                     'reload_config_url' => $this->urlBuilder->getUrl('gr4vy/checkout/config'),
+                    'success_page_url' => $this->urlBuilder->getUrl(
+                        'checkout/onepage/success',
+                        ['_secure' => $this->request->isSecure()]
+                    ),
                     'rendered' => false
                 ]
             ]

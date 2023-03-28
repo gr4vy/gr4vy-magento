@@ -21,6 +21,7 @@ use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 /**
  * Disable quote after successful payment
@@ -55,6 +56,11 @@ class ProcessResponse extends AbstractModel
     protected $orderPaymentRepository;
 
     /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
      * @var Gr4vyHelper
      */
     protected $gr4vyHelper;
@@ -81,6 +87,7 @@ class ProcessResponse extends AbstractModel
      * @param Gr4vyHelper $gr4vyHelper
      * @param Gr4vyLogger $gr4vyLogger
      * @param OrderHelper $orderHelper
+     * @param CheckoutSession $checkoutSession
      * @param AbstractResource|null $resource
      * @param AbstractDb|null $resourceCollection
      * @param array $data
@@ -96,6 +103,7 @@ class ProcessResponse extends AbstractModel
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger,
         OrderHelper $orderHelper,
+        CheckoutSession $checkoutSession,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
@@ -106,6 +114,7 @@ class ProcessResponse extends AbstractModel
         $this->cartRepository = $cartRepository;
         $this->quoteRepository = $quoteRepository;
         $this->orderPaymentRepository = $orderPaymentRepository;
+        $this->checkoutSession = $checkoutSession;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->orderHelper = $orderHelper;
@@ -115,12 +124,11 @@ class ProcessResponse extends AbstractModel
      * Process Gr4vy response
      *
      * @param int $orderId
-     * @param int $quoteId
      * @throws NoSuchEntityException
      */
-    public function processGr4vyResponse($orderId, $quoteId)
+    public function processGr4vyResponse($orderId)
     {
-        $quote = $this->quoteRepository->get($quoteId);
+        $quote = $this->quoteRepository->get($this->checkoutSession->getQuoteId());
         if ($this->gr4vyHelper->checkGr4vyReady()) {
             /** @var \Magento\Sales\Model\Order $order */
             $order = $this->orderRepository->get($orderId);

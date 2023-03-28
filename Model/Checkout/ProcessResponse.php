@@ -173,9 +173,9 @@ class ProcessResponse extends AbstractModel
                         $this->gr4vyHelper->formatCurrency($transaction->getCapturedAmount()/100),
                         strval($transaction->getGr4vyTransactionId())
                     );
+                    $this->orderHelper->generatePaidInvoice($order, $gr4vy_transaction_id);
                 }
 
-                $this->orderHelper->generatePaidInvoice($order, $gr4vy_transaction_id);
                 $this->orderHelper->updateOrderStatus($order, $newOrderStatus);
                 $this->orderHelper->updateOrderHistoryData(
                     $order->getEntityId(),

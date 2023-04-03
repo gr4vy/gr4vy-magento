@@ -56,12 +56,9 @@ class Process implements ActionInterface
     public function execute()
     {
         $params = $this->context->getRequest()->getParams();
-        $quoteId = $params['quoteId'];
         $orderId = $params['orderId'];
         //Process Gr4vy response data
-        $this->processResponse->processGr4vyResponse($orderId, $quoteId);
-        //Disable active quote after place order
-        $this->processResponse->disableQuote($quoteId);
+        $this->processResponse->processGr4vyResponse($orderId);
 
         return $this->resultJsonFactory->create();
     }

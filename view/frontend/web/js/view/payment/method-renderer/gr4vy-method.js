@@ -145,7 +145,7 @@ define(
                                         JSON.stringify(payload)
                                     ).done(
                                         function (response) {
-                                            This.processGr4vyResponse(quote.getQuoteId());
+                                            This.processGr4vyResponse();
                                             window.location.replace(url.build(
                                                 config.successPageUrl
                                             ));
@@ -233,10 +233,9 @@ define(
             },
             /**
              * Process gr4vy response after successful gr4vy transaction
-             * @param activeQuoteId
              */
-            processGr4vyResponse: function(activeQuoteId) {
-                let params = {quoteId: activeQuoteId, orderId: this.orderId};
+            processGr4vyResponse: function() {
+                let params = {orderId: this.orderId};
                 $.ajax({
                     url: BASE_URL + 'gr4vy/checkout/process',
                     type: 'POST',

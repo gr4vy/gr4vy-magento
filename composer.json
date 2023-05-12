@@ -13,6 +13,12 @@
             "name": "Gr4vy"
         }
     ],
+    "repositories": {
+        "composer-magento": {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    },
     "minimum-stability": "dev",
     "require": {
         "ext-hash": "*",
@@ -24,7 +30,7 @@
         "magento/module-config": ">=100 <103",
         "magento/module-payment": "100.*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": ">=0.13.0"
+        "gr4vy/gr4vy-php": "dev-add_postlistpaymentoptions"
     },
     "autoload": {
         "files": [

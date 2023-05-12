@@ -127,27 +127,28 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
             $gr4vy_transaction_id = $request->target->id;
             $statuses = $this->gr4vyOrder->getGr4vyTransactionStatuses();
 
-            if ($gr4vy_status = $this->transactionApi->getStatus($gr4vy_transaction_id)) {
-                $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
+            $transactionDetail = $this->transactionApi->getTransactionDetail($gr4vy_transaction_id);
 
+            if ($gr4vy_status = $transactionDetail["status"]) {
+
+                $dataModel = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
 
                 if (!isset($dataModel)) {
 
-                    $transactionDetail = $this->transactionApi->getTransactionDetail($gr4vy_transaction_id);
-                    $externalIdentifier = $transactionDetail->getExternalIdentifier();
+                    $externalIdentifier = $transactionDetail["external_identifier"];
 
                     $order = $this->transactionRepository->getOrderByIncrementId($externalIdentifier);
                     if ($order) {
                         $this->transactionRepository->updateOrderPayment($order, $gr4vy_transaction_id);
                         $this->transactionInterface->setGr4vyTransactionId($gr4vy_transaction_id);
-                        $this->transactionInterface->setMethodId($transactionDetail->getPaymentMethod()->getId());
-                        $this->transactionInterface->setBuyerId($transactionDetail->getBuyer()->getId());
-                        $this->transactionInterface->setServiceId($transactionDetail->getPaymentService()->getId());
-                        $this->transactionInterface->setStatus($transactionDetail->getStatus());
-                        $this->transactionInterface->setAmount($transactionDetail->getAmount());
-                        $this->transactionInterface->setCapturedAmount($transactionDetail->getCapturedAmount());
-                        $this->transactionInterface->setRefundedAmount($transactionDetail->getRefundedAmount());
-                        $this->transactionInterface->setCurrency($transactionDetail->getCurrency());
+                        $this->transactionInterface->setMethodId($transactionDetail["payment_method"]["id"]);
+                        $this->transactionInterface->setBuyerId($transactionDetail["buyer"]["id"]);
+                        $this->transactionInterface->setServiceId($transactionDetail["payment_service"]["id"]);
+                        $this->transactionInterface->setStatus($transactionDetail["status"]);
+                        $this->transactionInterface->setAmount($transactionDetail["amount"]);
+                        $this->transactionInterface->setCapturedAmount($transactionDetail["captured_amount"]);
+                        $this->transactionInterface->setRefundedAmount($transactionDetail["refunded_amount"]);
+                        $this->transactionInterface->setCurrency($transactionDetail["currency"]);
                         $this->transactionRepository->save($this->transactionInterface);
                     }
 

@@ -128,8 +128,6 @@ class ProcessResponse extends AbstractModel
      */
     public function processGr4vyResponse($orderId)
     {
-        $this->gr4vyLogger->logMixed(array("Starting processGr4vyResponse", $this->checkoutSession->getQuoteId(), $orderId));
-
         $quote = $this->quoteRepository->get($this->checkoutSession->getQuoteId());
         if ($this->gr4vyHelper->checkGr4vyReady()) {
             /** @var \Magento\Sales\Model\Order $order */

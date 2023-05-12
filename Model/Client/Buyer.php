@@ -7,13 +7,6 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Model\Client;
 
-// use Gr4vy\api\BuyersApi;
-// use Gr4vy\model\BuyerRequest;
-// use Gr4vy\model\BuyerUpdate;
-// use Gr4vy\model\BillingDetailsUpdateRequest;
-// use Gr4vy\model\Address as AddressUpdate;
-// use Gr4vy\model\Tax;
-
 class Buyer extends Base
 {
     const ERROR_CODE_GENERIC = '400';

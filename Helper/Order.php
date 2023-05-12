@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Helper;
 
-use Gr4vy\model\Transaction;
-use Gr4vy\model\Refund;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -103,25 +101,25 @@ class Order extends AbstractHelper
     public function getGr4vyTransactionStatuses()
     {
         $processing_statuses = [
-            Transaction::STATUS_PROCESSING,
-            Transaction::STATUS_CAPTURE_PENDING,
-            Transaction::STATUS_AUTHORIZATION_SUCCEEDED,
-            Transaction::STATUS_BUYER_APPROVAL_PENDING
+            "processing",
+            "capture_pending",
+            "authorization_succeeded",
+            "buyer_approval_pending"
         ];
         $cancel_statuses = [
-            Transaction::STATUS_AUTHORIZATION_DECLINED,
-            Transaction::STATUS_AUTHORIZATION_FAILED,
-            Transaction::STATUS_AUTHORIZATION_VOIDED,
-            Transaction::STATUS_AUTHORIZATION_VOID_PENDING
+            "authorization_declined",
+            "authorization_failed",
+            "authorization_voided",
+            "authorization_void_pending"
         ];
         $success_statuses = [
-            Transaction::STATUS_CAPTURE_SUCCEEDED
+            "capture_succeeded"
         ];
         $refund_statuses = [
-            Refund::STATUS_SUCCEEDED,
-            Refund::STATUS_DECLINED,
-            Refund::STATUS_FAILED,
-            Refund::STATUS_VOIDED
+            "succeeded",
+            "declined",
+            "failed",
+            "voided"
         ];
 
         return [

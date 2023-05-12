@@ -13,12 +13,6 @@
             "name": "Gr4vy"
         }
     ],
-    "repositories": {
-        "composer-magento": {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        }
-    },
     "minimum-stability": "dev",
     "require": {
         "ext-hash": "*",

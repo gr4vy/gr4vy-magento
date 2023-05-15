@@ -314,7 +314,7 @@ class Customer extends AbstractHelper
     protected function updateGr4vyBuyer($buyer_id, $billing_details)
     {
         if ($buyer_id) {
-            $buyer_id = $this->buyerApi->updateBuyer($buyer_id, $billing_details);
+            $buyer = $this->buyerApi->updateBuyer($buyer_id, $billing_details);
         }
 
         return $buyer_id;
@@ -333,7 +333,7 @@ class Customer extends AbstractHelper
 
         if ($buyer_id == Gr4vyBuyer::ERROR_DUPLICATE) {
             if ($buyer = $this->buyerApi->getBuyer($external_identifier)) {
-                $buyer_id = $buyer->getId();
+                $buyer_id = $buyer["id"];
             }
         }
 

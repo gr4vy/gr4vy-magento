@@ -52,6 +52,11 @@ class Customer extends AbstractHelper
     protected $gr4vyLogger;
 
     /**
+     * @var Gr4vyHelper
+     */
+    protected $gr4vyHelper;
+
+    /**
      * @var Customer
      */
     private $customer = null;

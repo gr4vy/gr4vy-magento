@@ -48,7 +48,7 @@ class Buyer extends Base
         }
 
         if (array_key_exists("address", $billing_address)) {
-            $buyer_update["address"] = array(
+            $buyer_update["billing_details"]["address"] = array(
                 "city"=>$billing_address['address']['city'],
                 "country"=>$billing_address['address']['country'],
                 "postal_code"=>$billing_address['address']['postal_code'],
@@ -57,17 +57,17 @@ class Buyer extends Base
 
             );
             if ($billing_address['address']['state']) {
-                $buyer_update["address"]["state"] = $billing_address['address']['state'];
+                $buyer_update["billing_details"]["address"]["state"] = $billing_address['address']['state'];
             }
             else {
                 // set state to country to fix gr4vy server error - suggested by Gr4vy
-                $buyer_update["address"]["state"] = $billing_address['address']['country'];
+                $buyer_update["billing_details"]["address"]["state"] = $billing_address['address']['country'];
             }
         }
 
         try {
             $buyer = $this->getGr4vyConfig()->updateBuyer($buyer_id, $buyer_update);
-
+            $this->gr4vyLogger->logMixed(["buyer"=>$buyer], "updateBuyer response");
             return $buyer;
         }
         catch (\Exception $e) {

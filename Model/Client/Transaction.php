@@ -69,7 +69,7 @@ class Transaction extends Base
     {
         try {
             $refund_request = array("amount"=>$amount);
-            return $this->getApiInstance()->refundTransaction($transaction_id, $refund_request);
+            return $this->getGr4vyConfig()->refundTransaction($transaction_id, $refund_request);
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

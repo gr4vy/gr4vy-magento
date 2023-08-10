@@ -1,4 +1,9 @@
 var config = {
+    map: { 
+        '*': { 
+            'Magento_Checkout/js/view/form/element/email':'Gr4vy_Magento/js/view/form/element/email' 
+        } 
+    },
     config: {
         mixins: {
             'Magento_Checkout/js/action/get-payment-information': {

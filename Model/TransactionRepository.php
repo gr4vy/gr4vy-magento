@@ -227,6 +227,18 @@ class TransactionRepository implements TransactionRepositoryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setGuestEmail($cartId, $email)
+    {
+        $quote = $this->getQuoteModel($cartId);
+        $quote->setCustomerEmail($email);
+        $quote->save();
+
+        return true;
+    }
+
+    /**
      * retrieve fully loaded quote model to interact with Quote Properly
      *
      * @param string

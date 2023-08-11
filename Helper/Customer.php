@@ -253,9 +253,19 @@ class Customer extends AbstractHelper
      */
     public function updateGr4vyBuyerAddressFromQuote($quote)
     {
-
+        $external_identifier = null;
         $customer = $this->getCurrentCustomer();
-        $buyerModel = $this->buyerRepository->getByExternalIdentifier($customer->getId(), $this->gr4vyHelper->getGr4vyId());
+
+        if (!$this->customerSession->isLoggedIn()) {
+            $visitor = $this->visitorSession->getVisitorData();
+            //we prefix external_identifer with visitor_ so it doesn't clash with customer ID
+            $external_identifier = "visitor_" . $visitor["visitor_id"];
+        }
+        else {
+            $external_identifier = $customer->getId();
+        }
+        
+        $buyerModel = $this->buyerRepository->getByExternalIdentifier($external_identifier, $this->gr4vyHelper->getGr4vyId());
 
         $billing_details = null;
 

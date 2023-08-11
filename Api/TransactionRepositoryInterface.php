@@ -41,6 +41,18 @@ interface TransactionRepositoryInterface
     );
 
     /**
+     * Set Guest Email - store a guest email against the session
+     * @param string
+     * @param string
+     * @return boolean
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function setGuestEmail(
+        $cartId, 
+        $email
+    );
+
+    /**
      * Retrieve Transaction
      * @param string $transactionId
      * @return \Gr4vy\Magento\Api\Data\TransactionInterface

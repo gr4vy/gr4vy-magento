@@ -91,8 +91,13 @@ class Buyer extends Base
         
         try {
             $buyer = $this->getGr4vyConfig()->addBuyer($buyer_request);
-
-            return $buyer["id"];
+            if (array_key_exists("id", $buyer)) {
+                return $buyer["id"];    
+            }
+            else {
+                $this->gr4vyLogger->logMixed(["buyer"=>$buyer], "createBuyer response");
+                return self::ERROR_DUPLICATE;
+            }
         }
         catch (\Exception $e) {
             $this->gr4vyLogger->logException($e);

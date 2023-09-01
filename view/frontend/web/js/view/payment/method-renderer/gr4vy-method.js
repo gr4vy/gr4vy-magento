@@ -125,6 +125,7 @@ define(
                                 onBeforeTransaction: async () => {
                                     This.customPlaceOrder();
                                     console.log('onBeforeTransaction');
+                                    fullScreenLoader.stopLoader();
                                     return {
                                         externalIdentifier: This.incrementId,
                                     }

@@ -123,10 +123,17 @@ define(
                                     }
                                 },
                                 onBeforeTransaction: async () => {
-                                    This.customPlaceOrder();
-                                    console.log('onBeforeTransaction');
-                                    return {
-                                        externalIdentifier: This.incrementId,
+                                    try {
+                                        await This.customPlaceOrder();
+                                        console.log('onBeforeTransaction updated with fix');
+                                        return {
+                                            externalIdentifier: This.incrementId,
+                                        };
+                                    } catch (error) {
+                                        console.error('An error occurred:', error);
+                                        fullScreenLoader.stopLoader(); // Stop the loader when something goes wrong
+                                        // Optionally, you can re-throw the error or handle it in some other way.
+                                        throw error;
                                     }
                                 },
                                 onComplete: (transaction) => {

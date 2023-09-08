@@ -123,15 +123,12 @@ define(
                                     }
                                 },
                                 onBeforeTransaction: async () => {
-                                    try {
-                                        await This.customPlaceOrder();
-                                        console.log('onBeforeTransaction updated with fix');
-                                        return {
-                                            externalIdentifier: This.incrementId,
-                                        };
-                                    } catch (error) {
-                                        fullScreenLoader.stopLoader();
-                                    }
+                                    This.customPlaceOrder();
+                                    console.log('onBeforeTransaction updated with fix');
+                                    fullScreenLoader.stopLoader();
+                                    return {
+                                        externalIdentifier: This.incrementId,
+                                    };
                                 },
                                 onComplete: (transaction) => {
                                     // send api requests to transaction web api

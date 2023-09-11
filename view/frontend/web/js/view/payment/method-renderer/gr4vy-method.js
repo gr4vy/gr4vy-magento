@@ -127,7 +127,7 @@ define(
                                     console.log('onBeforeTransaction');
                                     return {
                                         externalIdentifier: This.incrementId,
-                                    };
+                                    }
                                 },
                                 onComplete: (transaction) => {
                                     // send api requests to transaction web api

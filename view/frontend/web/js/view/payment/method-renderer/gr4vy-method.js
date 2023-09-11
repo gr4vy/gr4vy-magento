@@ -196,6 +196,7 @@ define(
                             self.orderId = orderId;
                             self.setIncrementId(orderId);
                             self.afterPlaceOrder();
+                            fullScreenLoader.stopLoader();
                         });
                 },
             /**

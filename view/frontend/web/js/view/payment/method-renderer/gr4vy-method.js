@@ -124,8 +124,7 @@ define(
                                 },
                                 onBeforeTransaction: async () => {
                                     This.customPlaceOrder();
-                                    console.log('onBeforeTransaction updated with fix');
-                                    fullScreenLoader.stopLoader();
+                                    console.log('onBeforeTransaction');
                                     return {
                                         externalIdentifier: This.incrementId,
                                     };
@@ -197,6 +196,7 @@ define(
                             self.orderId = orderId;
                             self.setIncrementId(orderId);
                             self.afterPlaceOrder();
+                            fullScreenLoader.stopLoader();
                         });
                 },
             /**

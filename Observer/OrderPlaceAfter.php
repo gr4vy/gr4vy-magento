@@ -7,6 +7,7 @@ use Gr4vy\Magento\Api\TransactionRepositoryInterface;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
+use Gr4vy\Magento\Model\Client\Transaction as TransactionApi;
 
 class OrderPlaceAfter implements ObserverInterface
 {
@@ -31,19 +32,27 @@ class OrderPlaceAfter implements ObserverInterface
     protected $orderHelper;
 
     /**
+     * @var TransactionApi
+     */
+    protected $transactionApi;
+
+    /**
      * @param Gr4vyHelper $gr4vyHelper
+     * @param Gr4vyLogger $gr4vyLogger
      * @param OrderHelper $orderHelper
      */
     public function __construct(
         TransactionRepositoryInterface $transactionRepository,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger,
-        OrderHelper $orderHelper
+        OrderHelper $orderHelper,
+        TransactionApi $transactionApi
     ) {
         $this->transactionRepository = $transactionRepository;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->orderHelper = $orderHelper;
+        $this->transactionApi = $transactionApi;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -68,6 +77,24 @@ class OrderPlaceAfter implements ObserverInterface
             $this->gr4vyLogger->logMixed([ 'method' => $payment->getMethod(), 'gr4vy_transaction_id' => $gr4vy_transaction_id ]);
 
             $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
+
+            $orderAmount = intval($order->getGrandTotal() * 100);
+            $transactionAmount = $transaction->getAmount();
+
+            if ($orderAmount != $transactionAmount) {
+                $this->transactionApi->refund($gr4vy_transaction_id);
+                $canceledStatus = \Magento\Sales\Model\Order::STATE_CANCELED;
+                $this->orderHelper->updateOrderStatus($order, $canceledStatus);
+
+                $msg = __(
+                    "Payment amount '%1' was different to order amount '%2'.",
+                    $transactionAmount,
+                    $orderAmount
+                );
+                $this->orderHelper->updateOrderHistory($order, $msg, $canceledStatus);
+                return;
+            }
+
             if ($this->gr4vyHelper->getGr4vyIntent() === \Gr4vy\Magento\Model\Payment\Gr4vy::PAYMENT_TYPE_AUCAP) {
                 // always set $newOrderStatus to processing if payment intent is authorize and capture
                 $newOrderStatus = \Magento\Sales\Model\Order::STATE_PROCESSING;

@@ -27,22 +27,6 @@ class Transaction extends Base
     }
 
     /**
-     * void transaction
-     *
-     * @param string
-     * @return Array
-     */
-    public function voidTransaction($transaction_id)
-    {
-        try {
-            return $this->getGr4vyConfig()->refundTransaction($transaction_id);
-        }
-        catch (\Exception $e) {
-            $this->gr4vyLogger->logException($e);
-        }
-    }
-
-    /**
      * authorize new transaction
      *
      * @return boolean
@@ -91,6 +75,23 @@ class Transaction extends Base
             $this->gr4vyLogger->logException($e);
         }
     }
+
+    /**
+     * void transaction
+     *
+     * @param string
+     * @return Array
+     */
+    public function void($transaction_id)
+    {
+        try {
+            return $this->getGr4vyConfig()->voidTransaction($transaction_id);
+        }
+        catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
 
     /**
      * receive transaction status

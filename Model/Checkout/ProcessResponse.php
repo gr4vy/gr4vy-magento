@@ -16,6 +16,7 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Gr4vy\Magento\Api\TransactionRepositoryInterface;
+use Gr4vy\Magento\Model\Client\Transaction as Gr4vyTransaction;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
@@ -76,6 +77,11 @@ class ProcessResponse extends AbstractModel
     protected $orderHelper;
 
     /**
+     * @var Gr4vyTransaction
+     */
+    public $transactionApi;
+
+    /**
      * DisableQuote constructor.
      * @param Context $context
      * @param Registry $registry
@@ -84,6 +90,7 @@ class ProcessResponse extends AbstractModel
      * @param CartRepositoryInterface $cartRepository
      * @param QuoteRepository $quoteRepository
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
+     * @param Gr4vyTransaction $transactionApi
      * @param Gr4vyHelper $gr4vyHelper
      * @param Gr4vyLogger $gr4vyLogger
      * @param OrderHelper $orderHelper
@@ -100,6 +107,7 @@ class ProcessResponse extends AbstractModel
         CartRepositoryInterface $cartRepository,
         QuoteRepository $quoteRepository,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
+        Gr4vyTransaction $transactionApi,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyLogger $gr4vyLogger,
         OrderHelper $orderHelper,
@@ -115,6 +123,7 @@ class ProcessResponse extends AbstractModel
         $this->quoteRepository = $quoteRepository;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->checkoutSession = $checkoutSession;
+        $this->transactionApi = $transactionApi;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->orderHelper = $orderHelper;
@@ -166,14 +175,9 @@ class ProcessResponse extends AbstractModel
 
             $orderAmount = intval($order->getGrandTotal() * 100);
             $transactionAmount = $transaction->getAmount();
-            
-            $this->gr4vyLogger->logMixed([
-                "order"=>$orderAmount,
-                "transaction"=>$transactionAmount
-            ], "processGr4vyResponse");
 
             if ($orderAmount != $transactionAmount) {
-                // $this->transactionApi->voidTransaction($gr4vy_transaction_id)
+                $this->transactionApi->refund($gr4vy_transaction_id);
                 $canceledStatus = Order::STATE_CANCELED;
                 $this->orderHelper->updateOrderStatus($order, $canceledStatus);
 

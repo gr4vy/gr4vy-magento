@@ -185,5 +185,24 @@ class Order extends AbstractHelper
             $this->gr4vyLogger->logException($e);
         }
     }
+
+        /**
+     * Update Order Status
+     *
+     * @param \Magento\Sales\Model\Order
+     * @param String
+     */
+    public function updateOrderStatus($order, $status)
+    {
+        $order->setState($status)->setStatus($status);
+        try {
+            $order->save();
+            $this->gr4vyLogger->logMixed(['status' => $status]);
+        }
+        catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
 }
 

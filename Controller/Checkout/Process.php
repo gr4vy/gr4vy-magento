@@ -58,8 +58,12 @@ class Process implements ActionInterface
         $params = $this->context->getRequest()->getParams();
         $orderId = $params['orderId'];
         //Process Gr4vy response data
-        $this->processResponse->processGr4vyResponse($orderId);
+        $success = $this->processResponse->processGr4vyResponse($orderId);
 
-        return $this->resultJsonFactory->create();
+        $result = $this->resultJsonFactory->create();
+        $myArray = [];
+        $myArray['success'] = $success;
+        $result->setData($myArray);
+        return $result;  
     }
 }

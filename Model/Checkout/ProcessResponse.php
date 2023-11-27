@@ -124,6 +124,7 @@ class ProcessResponse extends AbstractModel
      * Process Gr4vy response
      *
      * @param int $orderId
+     * @return boolean
      * @throws NoSuchEntityException
      */
     public function processGr4vyResponse($orderId)
@@ -157,7 +158,7 @@ class ProcessResponse extends AbstractModel
             if ($payment->getMethod() != Gr4vy::PAYMENT_METHOD_CODE
                 || strlen($gr4vy_transaction_id) < 1)
             {
-                return;
+                return false;
             }
             $this->gr4vyLogger->logMixed([ 'method' => $payment->getMethod(), 'gr4vy_transaction_id' => $gr4vy_transaction_id ]);
 
@@ -188,7 +189,7 @@ class ProcessResponse extends AbstractModel
                 );
                 // We are going to keep the quote as active to allow for a retry
                 // $this->disableQuote($quote);
-                return;
+                return false;
             }
 
             if ($this->gr4vyHelper->getGr4vyIntent() === Gr4vy::PAYMENT_TYPE_AUCAP) {
@@ -229,6 +230,7 @@ class ProcessResponse extends AbstractModel
             }
         }
         $this->disableQuote($quote);
+        return true;
     }
 
     /**

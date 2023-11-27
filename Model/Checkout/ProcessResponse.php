@@ -162,6 +162,35 @@ class ProcessResponse extends AbstractModel
             $this->gr4vyLogger->logMixed([ 'method' => $payment->getMethod(), 'gr4vy_transaction_id' => $gr4vy_transaction_id ]);
 
             $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
+
+            $orderAmount = intval($order->getGrandTotal() * 100);
+            $transactionAmount = $transaction->getAmount();
+            
+            $this->gr4vyLogger->logMixed([
+                "order"=>$orderAmount,
+                "transaction"=>$transactionAmount
+            ], "processGr4vyResponse");
+
+            if ($orderAmount != $transactionAmount) {
+                // $this->transactionApi->voidTransaction($gr4vy_transaction_id)
+                $canceledStatus = Order::STATE_CANCELED;
+                $this->orderHelper->updateOrderStatus($order, $canceledStatus);
+
+                $msg = __(
+                    "Payment amount '%1' was different to order amount '%2'.",
+                    $transactionAmount,
+                    $orderAmount
+                );
+                $this->orderHelper->updateOrderHistoryData(
+                    $order->getEntityId(),
+                    $canceledStatus,
+                    $msg
+                );
+                // We are going to keep the quote as active to allow for a retry
+                // $this->disableQuote($quote);
+                return;
+            }
+
             if ($this->gr4vyHelper->getGr4vyIntent() === Gr4vy::PAYMENT_TYPE_AUCAP) {
                 // always set $newOrderStatus to processing if payment intent is authorize and capture
                 $newOrderStatus = Order::STATE_PROCESSING;

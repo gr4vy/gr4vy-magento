@@ -77,6 +77,23 @@ class Transaction extends Base
     }
 
     /**
+     * void transaction
+     *
+     * @param string
+     * @return Array
+     */
+    public function void($transaction_id)
+    {
+        try {
+            return $this->getGr4vyConfig()->voidTransaction($transaction_id);
+        }
+        catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+    }
+
+
+    /**
      * receive transaction status
      *
      * @param string

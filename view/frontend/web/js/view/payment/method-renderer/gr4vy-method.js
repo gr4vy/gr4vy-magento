@@ -145,11 +145,7 @@ define(
                                         JSON.stringify(payload)
                                     ).done(
                                         function (response) {
-                                            This.processGr4vyResponse();
-                                            window.location.replace(url.build(
-                                                config.successPageUrl
-                                            ));
-
+                                            This.processGr4vyResponse()
                                         }
                                     ).fail(
                                         function (response) {
@@ -242,6 +238,21 @@ define(
                     type: 'POST',
                     data: params,
                     success: function (data) {
+                        if (data && data.success) {
+                            window.location.replace(url.build(
+                                config.successPageUrl
+                            ));    
+                        }
+                        else {
+                            window.location.replace(url.build(
+                                config.successPageUrl.replace("success", "failure")
+                            ));
+                        }
+                    },
+                    error: function (data, textStatus, errorThrown) {
+                        window.location.replace(url.build(
+                            config.successPageUrl.replace("success", "failure")
+                        ));
                     }
                 });
             },

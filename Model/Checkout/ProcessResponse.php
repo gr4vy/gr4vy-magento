@@ -176,7 +176,6 @@ class ProcessResponse extends AbstractModel
             $orderAmount = intval(round(floatval($order->getGrandTotal()) * 100));
             $transactionAmount = intval($transaction->getAmount());
 
-            $orderAmount = $orderAmount + 1;
             $remaining = $orderAmount - $transactionAmount;
             # allow order to be within 100 ($1.00)
             if ($remaining > 99 || $remaining < -99) {

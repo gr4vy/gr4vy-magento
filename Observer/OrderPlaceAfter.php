@@ -2,6 +2,7 @@
 
 namespace Gr4vy\Magento\Observer;
 
+use Gr4vy\Magento\Model\Payment\Gr4vy;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
@@ -62,10 +63,16 @@ class OrderPlaceAfter implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $order = $observer->getEvent()->getData('order');
+        $payment = $order->getPayment();
+
+        if ($payment->getMethod() != Gr4vy::PAYMENT_METHOD_CODE) {
+            $this->gr4vyLogger->logMixed(['Processing Non Gr4vy Order']);
+            return;
+        }
+    
         if ($this->gr4vyHelper->checkGr4vyReady()) {
             try {
-                /** @var Order $order */
-                $order = $observer->getEvent()->getData('order');
                 $order->setState(self::NEW_ORDER_STATUS)->setStatus(self::NEW_ORDER_STATUS);
                 $order->setIsCustomerNotified(false);
                 $this->orderHelper->updateOrderHistoryData(

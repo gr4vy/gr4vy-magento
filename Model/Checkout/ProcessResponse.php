@@ -173,10 +173,12 @@ class ProcessResponse extends AbstractModel
 
             $transaction = $this->transactionRepository->getByGr4vyTransactionId($gr4vy_transaction_id);
 
-            $orderAmount = intval($order->getGrandTotal() * 100);
-            $transactionAmount = $transaction->getAmount();
+            $orderAmount = intval(round(floatval($order->getGrandTotal()) * 100));
+            $transactionAmount = intval($transaction->getAmount());
 
-            if ($orderAmount != $transactionAmount) {
+            $remaining = $orderAmount - $transactionAmount;
+            # allow order to be within 100 ($1.00)
+            if ($remaining > 99 || $remaining < -99) {
                 $this->transactionApi->refund($gr4vy_transaction_id);
                 $canceledStatus = Order::STATE_CANCELED;
                 $this->orderHelper->updateOrderStatus($order, $canceledStatus);

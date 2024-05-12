@@ -216,8 +216,7 @@ class ProcessResponse extends AbstractModel
                 $this->orderHelper->updateOrderHistoryData(
                     $order->getEntityId(),
                     $newOrderStatus,
-                    $msg,
-                    true
+                    $msg
                 );
             }
 

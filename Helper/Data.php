@@ -12,7 +12,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Gr4vy\Magento\Api\Data\OptionsInterface;
-use Gr4vy\Magento\Helper\Magento246NonceProvider;
 
 class Data extends AbstractHelper
 {
@@ -63,13 +62,14 @@ class Data extends AbstractHelper
      */
     public function getNonce()
     {
-        $cspNonceProvider = $this->objectManager->create(Magento246NonceProvider::class);
+        $nonce = bin2hex(random_bytes(16));
 
         if (class_exists(\Magento\Csp\Helper\CspNonceProvider::class)) {
             $cspNonceProvider = $this->objectManager->create(\Magento\Csp\Helper\CspNonceProvider::class);
+            $nonce = $cspNonceProvider->generateNonce();
         }
 
-        return $cspNonceProvider->generateNonce();
+        return $nonce;
     }
 
     /**

@@ -10,10 +10,16 @@ namespace Gr4vy\Magento\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\ObjectManagerInterface;
 use Gr4vy\Magento\Api\Data\OptionsInterface;
 
 class Data extends AbstractHelper
 {
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
     /**
      * @var ScopeConfigInterface
      */
@@ -34,17 +40,36 @@ class Data extends AbstractHelper
      * @param \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceHelper
      * @param ScopeConfigInterface $scopeConfig
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceHelper,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ObjectManagerInterface $objectManager
     ) {
         parent::__construct($context);
         $this->quoteIdMaskFactory = $quoteIdMaskFactory;
         $this->scopeConfig = $scopeConfig;
         $this->_priceHelper = $priceHelper;
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * retrieve a random generated nonce
+     * @return string
+     */
+    public function getNonce()
+    {
+        $nonce = bin2hex(random_bytes(16));
+
+        if (class_exists(\Magento\Csp\Helper\CspNonceProvider::class)) {
+            $cspNonceProvider = $this->objectManager->create(\Magento\Csp\Helper\CspNonceProvider::class);
+            $nonce = $cspNonceProvider->generateNonce();
+        }
+
+        return $nonce;
     }
 
     /**

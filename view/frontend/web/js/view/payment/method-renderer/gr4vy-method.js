@@ -121,6 +121,7 @@ define(
                                          eventName === 'transactionFailed'
                                          || eventName === 'apiError'
                                          || eventName === 'argumentError'
+                                         || eventName === 'transactionCancelled'
                                     ) {
                                         var payload = {
                                             cartId: quote.getQuoteId(),
@@ -256,21 +257,6 @@ define(
                 });
             },
             /**
-             * Cancel order in Magento if gr4vy transaction fails
-             */
-            cancelCustomOrder: function (lastOrderId) {
-                let formKeyVal = $('input[name="form_key"]').val();
-                let params = {orderId: lastOrderId, form_key: formKeyVal};
-                $.ajax({
-                    url: BASE_URL + 'gr4vy/checkout/cancelorder',
-                    type: 'POST',
-                    data: params,
-                    async: false,
-                    success: function (data) {
-                    }
-                });
-            },
-            /**
              * Process gr4vy response after successful gr4vy transaction
              */
             processGr4vyResponse: function() {
@@ -303,16 +289,27 @@ define(
              */
             getPaymentMethodData: function (payment,service) {
                 // bypass error when there is no expirationDate
-                var expirationDate = payment.expirationDate ?? '12/25';
                 var data = {
                     'method': this.getCode(),
                     'additional_data': {
-                        'cc_type': payment.scheme,
-                        'cc_exp_year': expirationDate.substr(-2),
-                        'cc_exp_month': expirationDate.substr(0,2),
-                        'cc_last_4': payment.label
+                        'cc_type': "",
+                        'cc_exp_year': "",
+                        'cc_exp_month': "",
+                        'cc_last_4': ""
                     },
                 };
+                if (payment) {
+                    var expirationDate = payment.expirationDate ?? '12/25';
+                    data = {
+                        'method': this.getCode(),
+                        'additional_data': {
+                            'cc_type': payment.scheme,
+                            'cc_exp_year': expirationDate.substr(-2),
+                            'cc_exp_month': expirationDate.substr(0,2),
+                            'cc_last_4': payment.label
+                        },
+                    };
+                }
 
                 return data;
             },
@@ -321,40 +318,67 @@ define(
              */
             getGr4vyTransactionData: function (transaction) {
                 var data = {
-                    method_id: transaction.paymentMethod.id,
-                    buyer_id: transaction.buyer.id,
-                    service_id: this.safeGetPaymentServiceId(transaction.paymentService, ""),
-                    status: transaction.status,
-                    amount: transaction.amount,
-                    captured_amount: transaction.capturedAmount,
-                    refunded_amount: transaction.refundedAmount,
-                    currency: transaction.currency,
-                    gr4vy_transaction_id: transaction.id,
-                    environment: transaction.environment
+                    method_id: "",
+                    buyer_id: "",
+                    service_id: "",
+                    status: "",
+                    amount: "",
+                    captured_amount: "",
+                    refunded_amount: "",
+                    currency: "",
+                    gr4vy_transaction_id: "",
+                    environment: ""
+                }
+
+                if (transaction) {
+                    data.status = transaction.status;
+                    data.amount = transaction.amount;
+                    data.captured_amount = transaction.capturedAmount;
+                    data.refunded_amount = transaction.refundedAmount;
+                    data.currency = transaction.currency;
+                    data.gr4vy_transaction_id = transaction.id;
+                    data.environment = transaction.environment;
+
+                    if(transaction.paymentMethod) {
+                        data.method_id = transaction.paymentMethod.id;
+                    }
+
+                    if(transaction.buyer) {
+                        data.buyer_id = transaction.buyer.id;
+                    }
+
+                    if(transaction.paymentService) {
+                        data.service_id = transaction.paymentService.id;
+                    }
                 }
 
                 return data;
-            },
-            safeGetPaymentServiceId: function(paymentService, defaultValue) {
-                if (paymentService) {
-                    return paymentService.id;
-                } else {
-                    return defaultValue;
-                }
             },
             /**
              * @returns {Object}
              */
             getGr4vyPaymentMethodData: function (payment) {
                 var data = {
-                    method_id: payment.id,
-                    method: payment.method,
-                    label: payment.label,
-                    scheme: payment.scheme,
-                    external_identifier: payment.externalIdentifier,
-                    expiration_date: payment.expirationDate,
-                    approval_url: payment.approvalUrlc
+                    method_id: "",
+                    method: "",
+                    label: "",
+                    scheme: "",
+                    external_identifier: "",
+                    expiration_date: "",
+                    approval_url: ""
                 };
+
+                if (payment) {
+                    data = {
+                        method_id: payment.id,
+                        method: payment.method,
+                        label: payment.label,
+                        scheme: payment.scheme,
+                        external_identifier: payment.externalIdentifier,
+                        expiration_date: payment.expirationDate,
+                        approval_url: payment.approvalUrlc
+                    };
+                }
 
                 return data;
             },

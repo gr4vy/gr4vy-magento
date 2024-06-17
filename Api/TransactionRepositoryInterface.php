@@ -41,6 +41,24 @@ interface TransactionRepositoryInterface
     );
 
     /**
+     * Set Payment Information - Associate transaction payment detail with magento payment object
+     * @param string
+     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
+     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function saveFailedOrder(
+        $cartId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
+        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+    );
+
+    /**
      * Set Guest Email - store a guest email against the session
      * @param string
      * @param string

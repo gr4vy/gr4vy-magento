@@ -31,6 +31,8 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Gr4vy\Magento\Helper\Order as OrderHelper;
 use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Quote\Model\QuoteManagement;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
@@ -57,6 +59,10 @@ class TransactionRepository implements TransactionRepositoryInterface
     private $collectionProcessor;
 
     protected $extensibleDataObjectConverter;
+
+    private $orderManagement;
+
+    protected $quoteManagement;
 
     /**
      * @var Gr4vyLogger
@@ -118,6 +124,9 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param CartRepositoryInterface $cartRepository
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param OrderHelper $orderHelper
+     * @param OrderFactory $orderFactory
+     * @param QuoteManagement $quoteManagement
+     * @param OrderManagementInterface $orderManagement
      */
     public function __construct(
         ResourceTransaction $resource,
@@ -138,7 +147,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         CartRepositoryInterface $cartRepository,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         OrderHelper $orderHelper,
-        OrderFactory $orderFactory
+        OrderFactory $orderFactory,
+        QuoteManagement $quoteManagement,
+        OrderManagementInterface $orderManagement
     ) {
         $this->resource = $resource;
         $this->transactionFactory = $transactionFactory;
@@ -159,6 +170,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->orderHelper = $orderHelper;
         $this->orderFactory = $orderFactory;
+        $this->orderManagement = $orderManagement;
+        $this->quoteManagement = $quoteManagement;
     }
 
     /**
@@ -226,6 +239,61 @@ class TransactionRepository implements TransactionRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function saveFailedOrder(
+        $cartId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
+        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+    )
+    {
+        $this->gr4vyLogger->logMixed(['Going to save a failed tx as a cancelled Magento order.']);
+
+        try {
+            // Load the quote
+            $quote = $this->getQuoteModel($cartId);
+            $payment = $quote->getPayment();
+            $payment->setCcLast4($methodData->getLabel());
+            $payment->setCcType($methodData->getScheme());
+            $expiryDate = $methodData->getExpirationDate();
+            if ($expiryDate) {
+            $expiry = explode("/", $expiryDate);
+                $payment->setCcExpMonth($expiry[0]);
+                $payment->setCcExpYear($expiry[1]);
+            }
+            // $payment->setCcAvsStatus();
+            $payment->setData('gr4vy_transaction_id', $transactionData->getGr4vyTransactionId())->save();
+    
+            // Saving the actual customer email 
+            $customerEmail = $quote->getCustomerEmail();
+            // Changing the customer email to a fake email to avoid sending order confirmation email for this order
+            $quote->setCustomerEmail("fake@email.com");
+    
+            $quote->save();
+
+            // Create Order From Quote
+            $order = $this->quoteManagement->submit($quote);
+            if ($order) {
+                $this->gr4vyLogger->logMixed(['Order created successfully. Order ID: ' => $order->getIncrementId()]);
+                $this->orderManagement->cancel($order->getId());
+                $this->gr4vyLogger->logMixed(['Order cancelled successfully. Order ID: ' => $order->getIncrementId()]);
+            } else {
+                $this->gr4vyLogger->logMixed(['Failed to create order.']);
+            }
+            // Setting the customer email back to the original value for both the quote and the stored order
+            $quote->setCustomerEmail($customerEmail);
+            $order->setCustomerEmail($customerEmail);
+            $quote->save();
+            $order->save();
+        } catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+        }
+
+        return true;
+    }
     /**
      * {@inheritdoc}
      */

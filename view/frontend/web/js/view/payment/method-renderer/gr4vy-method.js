@@ -97,8 +97,7 @@ define(
                                 metadata: config.metadata,
                                 onEvent: (eventName, data) => {
                                      if (eventName === 'transactionCreated') {
-                                        console.log(data)
-                                         if (
+                                        if (
                                              (
                                              data['intent']  === 'authorize'
                                              && data['status'] !== 'authorization_succeeded'
@@ -107,53 +106,42 @@ define(
                                                  data['intent']  === 'capture'
                                                  && data['status'] !== 'capture_succeeded'
                                              )
-                                         ) {
-                                             This.cancelCustomOrder(This.orderId);
-                                         }
+                                        ) {
+                                            var payload = {
+                                                cartId: quote.getQuoteId(),
+                                                paymentMethod: This.getPaymentMethodData(data.paymentMethod),
+                                                methodData: This.getGr4vyPaymentMethodData(data.paymentMethod),
+                                                serviceData: This.getGr4vyPaymentServiceData(data.paymentService),
+                                                transactionData: This.getGr4vyTransactionData(data)
+                                            };
+                                            This.saveFailedOrder(payload);            
+                                        }
                                     }
-                                     if (
+                                    if (
                                          eventName === 'transactionFailed'
                                          || eventName === 'apiError'
                                          || eventName === 'argumentError'
-                                     ) {
-                                         This.cancelCustomOrder(This.orderId);
-                                         fullScreenLoader.stopLoader();
-                                         This.initEmbedPayment();
-                                         console.log(data)
+                                    ) {
+                                        var payload = {
+                                            cartId: quote.getQuoteId(),
+                                            paymentMethod: This.getPaymentMethodData(data.paymentMethod),
+                                            methodData: This.getGr4vyPaymentMethodData(data.paymentMethod),
+                                            serviceData: This.getGr4vyPaymentServiceData(data.paymentService),
+                                            transactionData: This.getGr4vyTransactionData(data)
+                                        };
+                                        This.saveFailedOrder(payload);            
+                                        fullScreenLoader.stopLoader();
+                                        // This.initEmbedPayment();
                                     }
                                 },
                                 onBeforeTransaction: async () => {
-                                    This.customPlaceOrder();
-                                    console.log('onBeforeTransaction');
+                                    fullScreenLoader.startLoader();
                                     return {
                                         externalIdentifier: This.incrementId,
                                     }
                                 },
                                 onComplete: (transaction) => {
-                                    // send api requests to transaction web api
-                                    var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
-                                    //console.log(transaction);
-                                    var payload = {
-                                        cartId: quote.getQuoteId(),
-                                        paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
-                                        methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
-                                        serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
-                                        transactionData: This.getGr4vyTransactionData(transaction)
-                                    };
-                                    return storage.post(
-                                        serviceUrl,
-                                        JSON.stringify(payload)
-                                    ).done(
-                                        function (response) {
-                                            This.processGr4vyResponse()
-                                        }
-                                    ).fail(
-                                        function (response) {
-                                            errorProcessor.process(response);
-                                            This.displayMessage(response);
-                                            fullScreenLoader.stopLoader(true);
-                                        }
-                                    );
+                                    This.finishGr4vyTransaction(transaction);
                                 }
                             });
                         }
@@ -174,11 +162,10 @@ define(
                     });
             },
             /**
-             * Place order in Magento before gr4vy transaction
+             * Place order in Magento
              */
             customPlaceOrder: function () {
                 var self = this;
-                fullScreenLoader.startLoader();
                 $.ajaxSetup({
                     async: false
                 });
@@ -192,10 +179,65 @@ define(
                             self.orderId = orderId;
                             self.setIncrementId(orderId);
                             self.afterPlaceOrder();
+                            self.processGr4vyResponse();
                             fullScreenLoader.stopLoader();
                         });
-                },
-            /**
+            },
+            saveFailedOrder: function (payload) {
+                var self = this;
+                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/save-failed-order', {});
+                return storage.post(
+                    serviceUrl,
+                    JSON.stringify(payload)
+                ).done(
+                    function (response) {
+                        window.location.replace(url.build(
+                            config.successPageUrl.replace("success", "failure")
+                        ));
+                    }
+                ).fail(
+                    function (response) {
+                        window.location.replace(url.build(
+                            config.successPageUrl.replace("success", "failure")
+                        ));
+                    }
+                );
+            },
+            finishGr4vyTransaction: function (transaction) {
+                this.transaction = transaction;
+                var self = this;
+                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
+                var payload = {
+                    cartId: quote.getQuoteId(),
+                    paymentMethod: this.getPaymentMethodData(transaction.paymentMethod),
+                    methodData: this.getGr4vyPaymentMethodData(transaction.paymentMethod),
+                    serviceData: this.getGr4vyPaymentServiceData(transaction.paymentService),
+                    transactionData: this.getGr4vyTransactionData(transaction)
+                };
+                return storage.post(
+                    serviceUrl,
+                    JSON.stringify(payload)
+                ).done(
+                    function (response) {
+                        if (self.transaction.status == "processing" || 
+                            self.transaction.status == "capture_pending" || 
+                            self.transaction.status == "authorization_succeeded" || 
+                            self.transaction.status == "buyer_approval_pending" ||
+                            self.transaction.status == "capture_succeeded"
+                        ) {
+                            self.customPlaceOrder();
+                        } else {
+                            self.saveFailedOrder(payload);
+                        }
+                    }
+                ).fail(
+                    function (response) {
+                        errorProcessor.process(response);
+                        self.displayMessage(response);
+                        fullScreenLoader.stopLoader(true);
+                    }
+                );
+            },            /**
              * get and set increment id of the last placed order
              */
             setIncrementId: function (lastOrderId) {
@@ -281,7 +323,7 @@ define(
                 var data = {
                     method_id: transaction.paymentMethod.id,
                     buyer_id: transaction.buyer.id,
-                    service_id: transaction.paymentService.id,
+                    service_id: this.safeGetPaymentServiceId(transaction.paymentService, ""),
                     status: transaction.status,
                     amount: transaction.amount,
                     captured_amount: transaction.capturedAmount,
@@ -292,6 +334,13 @@ define(
                 }
 
                 return data;
+            },
+            safeGetPaymentServiceId: function(paymentService, defaultValue) {
+                if (paymentService) {
+                    return paymentService.id;
+                } else {
+                    return defaultValue;
+                }
             },
             /**
              * @returns {Object}
@@ -313,14 +362,23 @@ define(
              * @returns {Object}
              */
             getGr4vyPaymentServiceData: function (service) {
-                var data = {
-                    service_id: service.id,
-                    method: service.method,
-                    payment_service_definition_id: service.payment_service_definition_id,
-                    display_name: service.type
-                };
+                if (service) {
+                    var data = {
+                        service_id: service.id,
+                        method: service.method,
+                        payment_service_definition_id: service.payment_service_definition_id,
+                        display_name: service.type
+                    };
 
-                return data;
+                    return data;
+                } else {
+                    return {
+                        service_id: '',
+                        method: '',
+                        payment_service_definition_id: '',
+                        display_name: ''
+                    }
+                }
             },
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.gr4vy.mailingAddress;

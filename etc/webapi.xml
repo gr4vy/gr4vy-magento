@@ -37,6 +37,13 @@
             <resource ref="anonymous" />
 		</resources>
 	</route>
+	<!--custom save-failed-order-->
+	<route url="/V1/gr4vy-payment/save-failed-order" method="POST">
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="saveFailedOrder"/>
+		<resources>
+			<resource ref="anonymous" />
+		</resources>
+	</route>
 	<route url="/V1/gr4vy-payment/set-guest-email" method="POST">
 		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="setGuestEmail"/>
 		<resources>

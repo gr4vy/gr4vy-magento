@@ -23,7 +23,7 @@
         "magento/module-checkout": "100.*",
         "magento/module-config": ">=100 <103",
         "magento/module-payment": "100.*",
-        "psr/log": ">=3.0.0",
+        "psr/log": "*",
         "gr4vy/gr4vy-php": ">=0.21.0"
     },
     "autoload": {

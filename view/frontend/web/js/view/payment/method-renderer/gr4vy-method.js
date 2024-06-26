@@ -237,49 +237,6 @@ define(
                 });
             },
             /**
-             * Cancel order in Magento if gr4vy transaction fails
-             */
-            cancelCustomOrder: function (lastOrderId) {
-                let formKeyVal = $('input[name="form_key"]').val();
-                let params = {orderId: lastOrderId, form_key: formKeyVal};
-                $.ajax({
-                    url: BASE_URL + 'gr4vy/checkout/cancelorder',
-                    type: 'POST',
-                    data: params,
-                    async: false,
-                    success: function (data) {
-                    }
-                });
-            },
-            /**
-             * Process gr4vy response after successful gr4vy transaction
-             */
-            processGr4vyResponse: function() {
-                let params = {orderId: this.orderId};
-                $.ajax({
-                    url: BASE_URL + 'gr4vy/checkout/process',
-                    type: 'POST',
-                    data: params,
-                    success: function (data) {
-                        if (data && data.success) {
-                            window.location.replace(url.build(
-                                config.successPageUrl
-                            ));    
-                        }
-                        else {
-                            window.location.replace(url.build(
-                                config.successPageUrl.replace("success", "failure")
-                            ));
-                        }
-                    },
-                    error: function (data, textStatus, errorThrown) {
-                        window.location.replace(url.build(
-                            config.successPageUrl.replace("success", "failure")
-                        ));
-                    }
-                });
-            },
-            /**
              * @returns {Object}
              */
             getPaymentMethodData: function () {

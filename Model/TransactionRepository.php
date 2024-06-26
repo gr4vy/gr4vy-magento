@@ -408,7 +408,14 @@ class TransactionRepository implements TransactionRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set Payment Information - Associate transaction payment detail with magento payment object
+     * @param string
+     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
+     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function setPaymentInformation(
         $cartId,

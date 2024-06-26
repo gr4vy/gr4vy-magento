@@ -24,24 +24,6 @@ interface TransactionRepositoryInterface
     );
 
     /**
-     * Set Payment Information - Associate transaction payment detail with magento payment object
-     * @param string
-     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
-     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
-     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
-     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
-     * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    public function setPaymentInformation(
-        $cartId,
-        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
-        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
-        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
-        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
-    );
-
-    /**
      * Lock the basket before processing payment
      * @param string cartId
      * @return bool

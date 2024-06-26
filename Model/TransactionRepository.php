@@ -229,13 +229,6 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function lockBasket($cartId) {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function processTransaction(
         $cartId,
         $transactionId,

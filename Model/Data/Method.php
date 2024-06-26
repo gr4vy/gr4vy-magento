@@ -61,7 +61,7 @@ class Method extends \Magento\Framework\Api\AbstractExtensibleObject implements 
      * {@inheritdoc}
      */
     public function getMethod() {
-        return $this->_get(self::STATUS);
+        return $this->_get(self::METHOD);
     }
 
     /**

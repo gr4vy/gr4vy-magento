@@ -19,6 +19,9 @@
     </type>
 
     <!--plugins-->
+    <type name="Magento\Sales\Model\Order\Email\Sender\OrderSender">
+        <plugin name="disable_order_email" type="Gr4vy\Magento\Plugin\OrderEmailPlugin" />
+    </type>
 	<type name="Magento\Quote\Api\CartRepositoryInterface">
 		<plugin name="Gr4vy_Magento_Plugin_Magento_Quote_Api_CartRepositoryInterface" type="Gr4vy\Magento\Plugin\Magento\Quote\Api\CartRepositoryInterface" sortOrder="10" disabled="false"/>
 	</type>

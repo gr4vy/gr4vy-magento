@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Gr4vy\Magento\Model;
 
+use Gr4vy\Magento\Model\Payment\Gr4vy;
 use Gr4vy\Magento\Api\Data\TransactionInterfaceFactory;
 use Gr4vy\Magento\Api\Data\TransactionSearchResultsInterfaceFactory;
 use Gr4vy\Magento\Api\TransactionRepositoryInterface;
@@ -14,6 +15,8 @@ use Gr4vy\Magento\Model\ResourceModel\Transaction as ResourceTransaction;
 use Gr4vy\Magento\Model\ResourceModel\Transaction\CollectionFactory as TransactionCollectionFactory;
 use Gr4vy\Magento\Helper\Logger as Gr4vyLogger;
 use Gr4vy\Magento\Helper\Data as Gr4vyHelper;
+use Gr4vy\Magento\Helper\Order as OrderHelper;
+use Gr4vy\Magento\Model\Client\Transaction as Gr4vyTransaction;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -28,9 +31,14 @@ use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Gr4vy\Magento\Helper\Order as OrderHelper;
 use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Quote\Model\QuoteManagement;
+use Magento\Sales\Model\Order;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\JsonFactory;
+
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
@@ -58,6 +66,15 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     protected $extensibleDataObjectConverter;
 
+    private $orderManagement;
+
+    protected $quoteManagement;
+
+    /**
+     * @var JsonFactory
+     */
+    private $resultJsonFactory;
+
     /**
      * @var Gr4vyLogger
      */
@@ -67,6 +84,11 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @var Gr4vyHelper
      */
     protected $gr4vyHelper;
+
+    /**
+     * @var Gr4vyTransaction
+     */
+    public $transactionApi;
 
     /**
      * @var PaymentMethodManagementInterface
@@ -111,13 +133,18 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param CollectionProcessorInterface $collectionProcessor
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
+     * @param JsonFactory $resultJsonFactory
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
+     * @param Gr4vyTransaction $transactionApi
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param PaymentMethodManagementInterface $paymentMethodManagement
      * @param CartRepositoryInterface $cartRepository
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param OrderHelper $orderHelper
+     * @param OrderFactory $orderFactory
+     * @param QuoteManagement $quoteManagement
+     * @param OrderManagementInterface $orderManagement
      */
     public function __construct(
         ResourceTransaction $resource,
@@ -131,14 +158,18 @@ class TransactionRepository implements TransactionRepositoryInterface
         CollectionProcessorInterface $collectionProcessor,
         JoinProcessorInterface $extensionAttributesJoinProcessor,
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
+        JsonFactory $resultJsonFactory,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
+        Gr4vyTransaction $transactionApi,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         PaymentMethodManagementInterface $paymentMethodManagement,
         CartRepositoryInterface $cartRepository,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         OrderHelper $orderHelper,
-        OrderFactory $orderFactory
+        OrderFactory $orderFactory,
+        QuoteManagement $quoteManagement,
+        OrderManagementInterface $orderManagement
     ) {
         $this->resource = $resource;
         $this->transactionFactory = $transactionFactory;
@@ -152,13 +183,17 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->extensionAttributesJoinProcessor = $extensionAttributesJoinProcessor;
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
         $this->paymentMethodManagement = $paymentMethodManagement;
+        $this->resultJsonFactory = $resultJsonFactory;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
+        $this->transactionApi = $transactionApi;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->cartRepository = $cartRepository;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->orderHelper = $orderHelper;
         $this->orderFactory = $orderFactory;
+        $this->orderManagement = $orderManagement;
+        $this->quoteManagement = $quoteManagement;
     }
 
     /**
@@ -189,6 +224,187 @@ class TransactionRepository implements TransactionRepositoryInterface
             ));
         }
         return $transactionModel->getDataModel();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function lockBasket($cartId) {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processTransaction(
+        $cartId,
+        $transactionId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
+        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+    ) {
+        $transaction = $this->transactionApi->getTransactionDetail($transactionId);
+        $this->parseGr4vyRawData($paymentMethod, $methodData, $serviceData, $transactionData, $transaction);
+        $this->setPaymentInformation($cartId, $paymentMethod, $methodData, $serviceData, $transactionData);
+    
+        $statuses = $this->orderHelper->getGr4vyTransactionStatuses();
+
+        if (in_array($transactionData->getStatus(), $statuses['cancel'])) {
+            $result = $this->saveFailedOrder($cartId, $paymentMethod, $methodData, $serviceData, $transactionData);
+            return json_encode($result);
+        } else if (
+            in_array($transactionData->getStatus(), $statuses['processing']) ||
+            in_array($transactionData->getStatus(), $statuses['success']) 
+        ){
+            $result = [];
+            $result['success'] = true;
+            return json_encode($result);
+        }
+    
+        $result = [];
+        $result['success'] = false;
+        return json_encode($result);
+    }
+
+    /**
+     * Set the PaymentMethod Data with the data received from Gr4vy
+     *
+     * @param \Magento\Quote\Api\Data\PaymentInterface paymentMethod
+     * @param array rawData
+     */
+
+    private function parseGr4vyRawData($paymentMethod, $methodData, $serviceData, $transactionData, $transactionRawData) {
+        $paymentMethodRawData = $transactionRawData["payment_method"];
+        $paymentServiceRawData = $transactionRawData["payment_service"];
+
+        $paymentMethod->setMethod("gr4vy");
+
+        $paymentMethodType = "";
+        $paymentMethodExpYear = "";
+        $paymentMethodExpMonth = "";
+        $paymentMethodLast4 = "";
+
+        if ($paymentMethodRawData["scheme"] != null) {
+            $paymentMethodType = $paymentMethodRawData["scheme"];
+            $methodData->setScheme($paymentMethodRawData["scheme"]);
+        } else if ($paymentMethodRawData["method"] != null){
+            $paymentMethodType = $paymentMethodRawData["method"];
+        }
+
+        if ($paymentMethodRawData["expiration_date"] != null) {
+            $paymentMethodExpYear = substr($paymentMethodRawData["expiration_date"], -2);
+            $paymentMethodExpMonth = substr($paymentMethodRawData["expiration_date"], 0, 2);
+            $methodData->setExpirationDate($paymentMethodRawData["expiration_date"]);
+        }
+
+        if ($paymentMethodRawData["label"] != null) {
+            $paymentMethodLast4 = $paymentMethodRawData["label"];
+            $methodData->setLabel($paymentMethodRawData["label"]);
+        }
+
+        $additionalData = (object)[
+            "cc_type" => $paymentMethodType,
+            "cc_exp_year" => $paymentMethodExpYear,
+            "cc_exp_month" => $paymentMethodExpMonth,
+            "cc_last_4" => $paymentMethodLast4
+        ];
+        $paymentMethod->setAdditionalData(json_encode($additionalData));
+
+        if ($paymentMethodRawData["id"] != null) {
+            $methodData->setMethodId($paymentMethodRawData["id"]);
+        }
+
+        if ($paymentMethodRawData["method"] != null){
+            $methodData->setMethod($paymentMethodRawData["method"]);
+        } 
+
+        if ($paymentMethodRawData["external_identifier"] != null){
+            $methodData->setExternalIdentifier($paymentMethodRawData["external_identifier"]);
+        } 
+
+        if ($paymentMethodRawData["approval_url"] != null){
+            $methodData->setApprovalUrl($paymentMethodRawData["approval_url"]);
+        }
+
+        if ($paymentServiceRawData != null) {
+            $serviceData->setServiceId($paymentServiceRawData["id"]);
+            $serviceData->setMethod($paymentServiceRawData["method"]);
+            $serviceData->setPaymentServiceDefinitionId($paymentServiceRawData["payment_service_definition_id"]);
+            $serviceData->setDisplayName($paymentServiceRawData["display_name"]);
+        }
+
+        $transactionData->setStatus($transactionRawData["status"]);
+        $transactionData->setAmount($transactionRawData["amount"]);
+        $transactionData->setCapturedAmount($transactionRawData["captured_amount"]);
+        $transactionData->setRefundedAmount($transactionRawData["refunded_amount"]);
+        $transactionData->setCurrency($transactionRawData["currency"]);
+        $transactionData->setGr4vyTransactionId($transactionRawData["id"]);
+        $transactionData->setMethodId($methodData->getMethodId());
+        $transactionData->setServiceId($serviceData->getServiceId());
+        if ($transactionRawData["buyer"] != null) {
+            if ($transactionRawData["buyer"]["id"]) {
+                $transactionData->setBuyerId($transactionRawData["buyer"]["id"]);
+            }
+        }
+    }
+
+    private function saveFailedOrder(
+        $cartId,
+        \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
+        \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
+        \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
+        \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+    )
+    {
+        $this->gr4vyLogger->logMixed(['Going to save a failed tx as a cancelled Magento order.']);
+
+        try {
+            // Load the quote
+            $quote = $this->getQuoteModel($cartId);
+            $payment = $quote->getPayment();
+            $payment->setCcLast4($methodData->getLabel());
+            $additionalData = $paymentMethod->getAdditionalData();
+            $payment->setCcType($additionalData["cc_type"]);
+            $payment->setCcExpMonth($additionalData["cc_exp_month"]);
+            $payment->setCcExpYear($additionalData["cc_exp_year"]);
+            $gr4vy_transaction_id = $transactionData->getGr4vyTransactionId();
+            $payment->setData('gr4vy_transaction_id', $gr4vy_transaction_id)->save();
+            
+            // Saving the actual customer email 
+            $customerEmail = $quote->getCustomerEmail();
+            // Changing the customer email to a fake email to avoid sending order confirmation email for this order
+            $quote->setCustomerEmail("fake@email.com");
+            $quote->save();
+
+            // Create Order From Quote
+            $order = $this->quoteManagement->submit($quote);
+
+            if ($order) {
+                $this->orderManagement->cancel($order->getId());
+                // Setting the customer email back to the original value for both the quote and the stored order
+                $quote->setCustomerEmail($customerEmail);
+                $order->setCustomerEmail($customerEmail);
+                $quote->save();
+                $order->save();
+
+                $result = [];
+                $result['success'] = false;
+                return $result;
+            } else {
+                $this->gr4vyLogger->logMixed(['Failed to place an order! Please Try again.']);
+                $result = [];
+                $result['success'] = false;
+                $result['error_message'] = "Failed to place an order! Please Try again.";
+                return $result;
+            }
+        } catch (\Exception $e) {
+            $this->gr4vyLogger->logException($e);
+            $result = [];
+            $result['success'] = false;
+            $result['error_message'] = "Failed to place an order! Please Try again.";
+            return $result;
+        }
     }
 
     /**

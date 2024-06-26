@@ -31,6 +31,18 @@
 		</resources>
 	</route>
     <!--custom set-payment-information-->
+	<route url="/V1/gr4vy-payment/lock-basket" method="POST">
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="lockBasket"/>
+		<resources>
+            <resource ref="anonymous" />
+		</resources>
+	</route>
+	<route url="/V1/gr4vy-payment/process-gr4vy-transaction" method="POST">
+		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="processTransaction"/>
+		<resources>
+            <resource ref="anonymous" />
+		</resources>
+	</route>
 	<route url="/V1/gr4vy-payment/set-payment-information" method="POST">
 		<service class="Gr4vy\Magento\Api\TransactionRepositoryInterface" method="setPaymentInformation"/>
 		<resources>

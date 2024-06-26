@@ -86,7 +86,7 @@ define(
                                 form: config.form,
                                 amount: config2.total_amount,
                                 currency: config.currency,
-                                country: "AU",
+                                country: config.country,
                                 locale: config.locale,
                                 paymentSource: config.paymentSource,
                                 requireSecurityCode: config.requireSecurityCode,

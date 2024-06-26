@@ -284,7 +284,10 @@ class Customer extends AbstractHelper
             }
             $city = $billingAddress->getData('city');
             if ($city) {
-                $street = $billingAddress->getData('street');
+                $street = "";
+                if ($billingAddress->getData('street') != null) {
+                    $street = $billingAddress->getData('street');
+                }
                 $street2 = null;
                 if(strstr($street, "\n")) {
                     $streetArr = explode("\n", $street);

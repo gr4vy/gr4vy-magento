@@ -263,8 +263,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * Set the PaymentMethod Data with the data received from Gr4vy
      *
-     * @param \Magento\Quote\Api\Data\PaymentInterface paymentMethod
-     * @param array rawData
+     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
+     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
+     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
+     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
+     * @param object $transactionRawData
      */
 
     private function parseGr4vyRawData($paymentMethod, $methodData, $serviceData, $transactionData, $transactionRawData) {

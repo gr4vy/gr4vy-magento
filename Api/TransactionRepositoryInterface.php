@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gr4vy\Magento\Api;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Controller\Result\Json;
 
 interface TransactionRepositoryInterface
 {
@@ -23,17 +24,15 @@ interface TransactionRepositoryInterface
     );
 
     /**
-     * Set Payment Information - Associate transaction payment detail with magento payment object
-     * @param string
-     * @param \Magento\Quote\Api\Data\PaymentInterface $paymentMethod
-     * @param \Gr4vy\Magento\Api\Data\MethodInterface $methodData
-     * @param \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData
-     * @param \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
-     * @return \Gr4vy\Magento\Api\Data\TransactionInterface
+     * Process Gr4vy Tx and place an order in Magento
+     * @param string cartId
+     * @param string transactionId
+     * @return Json
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function setPaymentInformation(
+    public function processTransaction(
         $cartId,
+        $transactionId,
         \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
         \Gr4vy\Magento\Api\Data\MethodInterface $methodData,
         \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
@@ -44,7 +43,7 @@ interface TransactionRepositoryInterface
      * Set Guest Email - store a guest email against the session
      * @param string
      * @param string
-     * @return boolean
+     * @return bool
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function setGuestEmail(

@@ -96,64 +96,24 @@ define(
                                 cartItems: config2.items,
                                 metadata: config.metadata,
                                 onEvent: (eventName, data) => {
-                                     if (eventName === 'transactionCreated') {
-                                        console.log(data)
-                                         if (
-                                             (
-                                             data['intent']  === 'authorize'
-                                             && data['status'] !== 'authorization_succeeded'
-                                             ) ||
-                                             (
-                                                 data['intent']  === 'capture'
-                                                 && data['status'] !== 'capture_succeeded'
-                                             )
-                                         ) {
-                                             This.cancelCustomOrder(This.orderId);
-                                         }
-                                    }
-                                     if (
-                                         eventName === 'transactionFailed'
-                                         || eventName === 'apiError'
-                                         || eventName === 'argumentError'
-                                     ) {
-                                         This.cancelCustomOrder(This.orderId);
-                                         fullScreenLoader.stopLoader();
-                                         This.initEmbedPayment();
-                                         console.log(data)
+                                    if (
+                                        eventName === 'transactionFailed'
+                                        || eventName === 'apiError'
+                                        || eventName === 'argumentError'
+                                        || eventName === 'transactionCancelled'
+                                    ) {
+                                        This.processGr4vyOrder(data);
                                     }
                                 },
                                 onBeforeTransaction: async () => {
-                                    This.customPlaceOrder();
+                                    fullScreenLoader.startLoader();
                                     console.log('onBeforeTransaction');
                                     return {
                                         externalIdentifier: This.incrementId,
                                     }
                                 },
                                 onComplete: (transaction) => {
-                                    // send api requests to transaction web api
-                                    var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/set-payment-information', {});
-                                    //console.log(transaction);
-                                    var payload = {
-                                        cartId: quote.getQuoteId(),
-                                        paymentMethod: This.getPaymentMethodData(transaction.paymentMethod),
-                                        methodData: This.getGr4vyPaymentMethodData(transaction.paymentMethod),
-                                        serviceData: This.getGr4vyPaymentServiceData(transaction.paymentService),
-                                        transactionData: This.getGr4vyTransactionData(transaction)
-                                    };
-                                    return storage.post(
-                                        serviceUrl,
-                                        JSON.stringify(payload)
-                                    ).done(
-                                        function (response) {
-                                            This.processGr4vyResponse()
-                                        }
-                                    ).fail(
-                                        function (response) {
-                                            errorProcessor.process(response);
-                                            This.displayMessage(response);
-                                            fullScreenLoader.stopLoader(true);
-                                        }
-                                    );
+                                    This.processGr4vyOrder(transaction);
                                 }
                             });
                         }
@@ -174,7 +134,42 @@ define(
                     });
             },
             /**
-             * Place order in Magento before gr4vy transaction
+             * Process Gr4vy Transaction and Place an Order in Magento
+             */
+            processGr4vyOrder: function (transaction) {
+                var self = this;
+                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/process-gr4vy-transaction', {});
+                var payload = {
+                    cartId: quote.getQuoteId(),
+                    transactionId: transaction.id,
+                    paymentMethod: this.getPaymentMethodData(),
+                    methodData: this.getGr4vyPaymentMethodData(),
+                    serviceData: this.getGr4vyPaymentServiceData(),
+                    transactionData: this.getGr4vyTransactionData()
+                };
+                return storage.post(
+                    serviceUrl,
+                    JSON.stringify(payload)
+                ).done(
+                    function (data) {
+                        var response = $.parseJSON(data);
+                        if (response && response.success) {
+                            self.customPlaceOrder();
+                        }
+                        else {
+                            fullScreenLoader.stopLoader(true);
+                        }
+                    }
+                ).fail(
+                    function (response) {
+                        errorProcessor.process(response);
+                        This.displayMessage(response);
+                        fullScreenLoader.stopLoader(true);
+                    }
+                );
+            },
+            /**
+             * Place order in Magento
              */
             customPlaceOrder: function () {
                 var self = this;
@@ -193,6 +188,9 @@ define(
                             self.setIncrementId(orderId);
                             self.afterPlaceOrder();
                             fullScreenLoader.stopLoader();
+                            window.location.replace(url.build(
+                                config.successPageUrl
+                            ));
                         });
                 },
             /**
@@ -214,97 +212,51 @@ define(
                 });
             },
             /**
-             * Cancel order in Magento if gr4vy transaction fails
-             */
-            cancelCustomOrder: function (lastOrderId) {
-                let formKeyVal = $('input[name="form_key"]').val();
-                let params = {orderId: lastOrderId, form_key: formKeyVal};
-                $.ajax({
-                    url: BASE_URL + 'gr4vy/checkout/cancelorder',
-                    type: 'POST',
-                    data: params,
-                    async: false,
-                    success: function (data) {
-                    }
-                });
-            },
-            /**
-             * Process gr4vy response after successful gr4vy transaction
-             */
-            processGr4vyResponse: function() {
-                let params = {orderId: this.orderId};
-                $.ajax({
-                    url: BASE_URL + 'gr4vy/checkout/process',
-                    type: 'POST',
-                    data: params,
-                    success: function (data) {
-                        if (data && data.success) {
-                            window.location.replace(url.build(
-                                config.successPageUrl
-                            ));    
-                        }
-                        else {
-                            window.location.replace(url.build(
-                                config.successPageUrl.replace("success", "failure")
-                            ));
-                        }
-                    },
-                    error: function (data, textStatus, errorThrown) {
-                        window.location.replace(url.build(
-                            config.successPageUrl.replace("success", "failure")
-                        ));
-                    }
-                });
-            },
-            /**
              * @returns {Object}
              */
-            getPaymentMethodData: function (payment,service) {
-                // bypass error when there is no expirationDate
-                var expirationDate = payment.expirationDate ?? '12/25';
-                var data = {
-                    'method': this.getCode(),
+            getPaymentMethodData: function () {
+                // Data will be set on the server side
+                return {
+                    'method': "",
                     'additional_data': {
-                        'cc_type': payment.scheme,
-                        'cc_exp_year': expirationDate.substr(-2),
-                        'cc_exp_month': expirationDate.substr(0,2),
-                        'cc_last_4': payment.label
+                        'cc_type': "",
+                        'cc_exp_year': "",
+                        'cc_exp_month': "",
+                        'cc_last_4': ""
                     },
                 };
-
-                return data;
             },
             /**
              * @returns {Object}
              */
-            getGr4vyTransactionData: function (transaction) {
-                var data = {
-                    method_id: transaction.paymentMethod.id,
-                    buyer_id: transaction.buyer.id,
-                    service_id: transaction.paymentService.id,
-                    status: transaction.status,
-                    amount: transaction.amount,
-                    captured_amount: transaction.capturedAmount,
-                    refunded_amount: transaction.refundedAmount,
-                    currency: transaction.currency,
-                    gr4vy_transaction_id: transaction.id,
-                    environment: transaction.environment
+            getGr4vyTransactionData: function () {
+                // Data will be set on the server side
+                return {
+                    method_id: "",
+                    buyer_id: "",
+                    service_id: "",
+                    status: "",
+                    amount: "",
+                    captured_amount: "",
+                    refunded_amount: "",
+                    currency: "",
+                    gr4vy_transaction_id: "",
+                    environment: ""
                 }
-
-                return data;
             },
             /**
              * @returns {Object}
              */
-            getGr4vyPaymentMethodData: function (payment) {
-                var data = {
-                    method_id: payment.id,
-                    method: payment.method,
-                    label: payment.label,
-                    scheme: payment.scheme,
-                    external_identifier: payment.externalIdentifier,
-                    expiration_date: payment.expirationDate,
-                    approval_url: payment.approvalUrlc
+            getGr4vyPaymentMethodData: function () {
+                // Data will be set on the server side
+                return {
+                    method_id: "",
+                    method: "",
+                    label: "",
+                    scheme: "",
+                    external_identifier: "",
+                    expiration_date: "",
+                    approval_url: ""
                 };
 
                 return data;
@@ -312,15 +264,14 @@ define(
             /**
              * @returns {Object}
              */
-            getGr4vyPaymentServiceData: function (service) {
-                var data = {
-                    service_id: service.id,
-                    method: service.method,
-                    payment_service_definition_id: service.payment_service_definition_id,
-                    display_name: service.type
-                };
-
-                return data;
+            getGr4vyPaymentServiceData: function () {
+                // Data will be set on the server side
+                return {
+                        service_id: '',
+                        method: '',
+                        payment_service_definition_id: '',
+                        display_name: ''
+                }
             },
             getMailingAddress: function () {
                 return window.checkoutConfig.payment.gr4vy.mailingAddress;

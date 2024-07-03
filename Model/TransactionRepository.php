@@ -38,7 +38,8 @@ use Magento\Quote\Model\QuoteManagement;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Framework\Session\SessionManagerInterface;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
@@ -70,6 +71,8 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     protected $quoteManagement;
 
+    protected $session;
+
     /**
      * @var JsonFactory
      */
@@ -99,6 +102,11 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @var CartRepositoryInterface
      */
     private $cartRepository;
+
+    /**
+     * @var QuoteFactory
+     */
+    private $quoteFactory;
 
     /**
      * @var searchCriteriaBuilder
@@ -134,12 +142,14 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @param JoinProcessorInterface $extensionAttributesJoinProcessor
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      * @param JsonFactory $resultJsonFactory
+     * @param SessionManagerInterface $session
      * @param Gr4vyLogger $gr4vyLogger
      * @param Gr4vyHelper $gr4vyHelper
      * @param Gr4vyTransaction $transactionApi
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param PaymentMethodManagementInterface $paymentMethodManagement
      * @param CartRepositoryInterface $cartRepository
+     * @param QuoteFactory $quoteFactory
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param OrderHelper $orderHelper
      * @param OrderFactory $orderFactory
@@ -159,12 +169,14 @@ class TransactionRepository implements TransactionRepositoryInterface
         JoinProcessorInterface $extensionAttributesJoinProcessor,
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
         JsonFactory $resultJsonFactory,
+        SessionManagerInterface $session,
         Gr4vyLogger $gr4vyLogger,
         Gr4vyHelper $gr4vyHelper,
         Gr4vyTransaction $transactionApi,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         PaymentMethodManagementInterface $paymentMethodManagement,
         CartRepositoryInterface $cartRepository,
+        QuoteFactory $quoteFactory,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         OrderHelper $orderHelper,
         OrderFactory $orderFactory,
@@ -184,11 +196,13 @@ class TransactionRepository implements TransactionRepositoryInterface
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
         $this->paymentMethodManagement = $paymentMethodManagement;
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->session = $session;
         $this->gr4vyLogger = $gr4vyLogger;
         $this->gr4vyHelper = $gr4vyHelper;
         $this->transactionApi = $transactionApi;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->cartRepository = $cartRepository;
+        $this->quoteFactory = $quoteFactory;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->orderHelper = $orderHelper;
         $this->orderFactory = $orderFactory;
@@ -229,6 +243,31 @@ class TransactionRepository implements TransactionRepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function lockBasket($cartId) {
+        $originalQuote = $this->getQuoteModel($cartId);
+
+        $newQuote = $this->quoteFactory->create();
+        $newQuote->setStoreId($originalQuote->getStoreId());
+        $newQuote->setCustomer($originalQuote->getCustomer());
+        $newQuote->setCurrency($originalQuote->getCurrency());
+
+        foreach ($originalQuote->getAllVisibleItems() as $item) {
+            $newItem = clone $item;
+            $newQuote->addItem($newItem);
+        }
+        
+        $newQuote->collectTotals();
+        $this->cartRepository->save($newQuote);
+
+            $this->session->setData('locked_cart_id', $newQuote->getId());
+        $customValue = $this->session->getData('locked_cart_id');
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function processTransaction(
         $cartId,
         $transactionId,
@@ -237,6 +276,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         \Gr4vy\Magento\Api\Data\ServiceInterface $serviceData,
         \Gr4vy\Magento\Api\Data\TransactionInterface $transactionData
     ) {
+        $this->restoreBasket($cartId);
         $transaction = $this->transactionApi->getTransactionDetail($transactionId);
         $this->parseGr4vyRawData($paymentMethod, $methodData, $serviceData, $transactionData, $transaction);
         $this->setPaymentInformation($cartId, $paymentMethod, $methodData, $serviceData, $transactionData);
@@ -258,6 +298,28 @@ class TransactionRepository implements TransactionRepositoryInterface
         $result = [];
         $result['success'] = false;
         return json_encode($result);
+    }
+
+    private function restoreBasket($cartId) {
+        $originalQuote = $this->getQuoteModel($cartId);
+        $sessionCartId = $this->session->getData('locked_cart_id');
+        $sessionQuote = $this->getQuoteModel($sessionCartId);
+
+        $originalQuote->setStoreId($sessionQuote->getStoreId());
+        $originalQuote->setCustomer($sessionQuote->getCustomer());
+        $originalQuote->setCurrency($sessionQuote->getCurrency());
+
+        foreach ($originalQuote->getAllItems() as $item) {
+            $originalQuote->removeItem($item->getItemId());
+        }
+
+        foreach ($sessionQuote->getAllVisibleItems() as $item) {
+            $newItem = clone $item;
+            $originalQuote->addItem($newItem);
+        }
+        
+        $originalQuote->collectTotals();
+        $this->cartRepository->save($originalQuote);
     }
 
     /**

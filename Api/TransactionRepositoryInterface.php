@@ -24,6 +24,14 @@ interface TransactionRepositoryInterface
     );
 
     /**
+     * Lock the basket before processing payment
+     * @param string cartId
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function lockBasket($cartId);
+    
+    /**
      * Process Gr4vy Tx and place an order in Magento
      * @param string cartId
      * @param string transactionId

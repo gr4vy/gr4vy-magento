@@ -66,6 +66,7 @@ define(
                 }
             },
             initEmbedPayment: function () {
+                this.lockBasket();
                 var This = this;
                 // monitor & refresh Gr4vy embed config using ko.observable
                 config.reloadEmbed();
@@ -96,6 +97,7 @@ define(
                                 cartItems: config2.items,
                                 metadata: config.metadata,
                                 onEvent: (eventName, data) => {
+                                    console.log(eventName);
                                     if (
                                         eventName === 'transactionFailed'
                                         || eventName === 'apiError'
@@ -132,6 +134,30 @@ define(
                         // mark payment form rendered once after pageload
                         window.checkoutConfig.payment.gr4vy.rendered = true;
                     });
+            },
+            /**
+             * Lock the basket before initiating transaction
+             */
+            lockBasket: function () {
+                var serviceUrl = urlBuilder.createUrl('/gr4vy-payment/lock-basket', {});
+                var payload = {
+                    cartId: quote.getQuoteId()
+                };
+                return storage.post(
+                    serviceUrl,
+                    JSON.stringify(payload)
+                ).done(
+                    function (response) {
+                        if (response) {
+                            console.log("Basket is locked");
+                        } else {
+                            console.log("Basket is NOT locked");
+                        }
+                    }
+                ).fail(
+                    function (response) {
+                    }
+                );
             },
             /**
              * Process Gr4vy Transaction and Place an Order in Magento

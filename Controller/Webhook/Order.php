@@ -54,6 +54,7 @@ class Order extends Action implements HttpPostActionInterface, CsrfAwareActionIn
      * @var Gr4vyLogger
      */
     private $gr4vyLogger;
+
     /**
      * @var TransactionInterface
      */

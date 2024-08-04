@@ -4,31 +4,37 @@
         <policy id="script-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
         <policy id="style-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
         <policy id="font-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
                 <value id="gr4vy" type="host">*.gr4vy.app</value>
+                <value id="gr4vy.com" type="host">*.gr4vy.com</value>
             </values>
         </policy>
     </policies>

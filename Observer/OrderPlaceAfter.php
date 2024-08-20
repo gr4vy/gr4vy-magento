@@ -80,6 +80,8 @@ class OrderPlaceAfter implements ObserverInterface
 
             $orderAmount = intval(round(floatval($order->getGrandTotal()) * 100));
             $transactionAmount = intval($transaction->getAmount());
+            $transactionStatus = $transaction->getStatus();
+            $statuses = $this->orderHelper->getGr4vyTransactionStatuses();
 
             $remaining = $orderAmount - $transactionAmount;
             # allow order to be within 100 ($1.00)
@@ -111,6 +113,10 @@ class OrderPlaceAfter implements ObserverInterface
                     );
                 }
 
+                if (in_array($transactionStatus, $statuses['cancel']) || in_array($transactionStatus, $statuses['refund'])) {
+                    $newOrderStatus = $canceledStatus;
+                }
+
                 $this->orderHelper->generatePaidInvoice($order, $gr4vy_transaction_id);
                 $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);
             }
@@ -121,6 +127,11 @@ class OrderPlaceAfter implements ObserverInterface
                     $this->gr4vyHelper->formatCurrency($transaction->getAmount()/100),
                     strval($transaction->getGr4vyTransactionId())
                 );
+
+                if (in_array($transactionStatus, $statuses['cancel']) || in_array($transactionStatus, $statuses['refund'])) {
+                    $newOrderStatus = $canceledStatus;
+                }
+
                 $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);
             }
         }

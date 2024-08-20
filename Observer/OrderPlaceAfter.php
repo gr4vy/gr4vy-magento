@@ -82,12 +82,12 @@ class OrderPlaceAfter implements ObserverInterface
             $transactionAmount = intval($transaction->getAmount());
             $transactionStatus = $transaction->getStatus();
             $statuses = $this->orderHelper->getGr4vyTransactionStatuses();
+            $canceledStatus = \Magento\Sales\Model\Order::STATE_CANCELED;
 
             $remaining = $orderAmount - $transactionAmount;
             # allow order to be within 100 ($1.00)
             if ($remaining > 99 || $remaining < -99) {
                 $this->transactionApi->refund($gr4vy_transaction_id);
-                $canceledStatus = \Magento\Sales\Model\Order::STATE_CANCELED;
                 $this->orderHelper->updateOrderStatus($order, $canceledStatus);
 
                 $msg = __(

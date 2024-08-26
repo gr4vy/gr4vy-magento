@@ -80,9 +80,12 @@ class OrderPlaceAfter implements ObserverInterface
 
             $orderAmount = intval(round(floatval($order->getGrandTotal()) * 100));
             $transactionAmount = intval($transaction->getAmount());
-            $transactionStatus = $transaction->getStatus();
+            
             $statuses = $this->orderHelper->getGr4vyTransactionStatuses();
             $canceledStatus = \Magento\Sales\Model\Order::STATE_CANCELED;
+
+            $gr4vyTransaction = $this->transactionApi->getTransactionDetail($gr4vy_transaction_id);
+            $transactionStatus = $gr4vyTransaction->getStatus();
 
             $remaining = $orderAmount - $transactionAmount;
             # allow order to be within 100 ($1.00)
@@ -113,11 +116,16 @@ class OrderPlaceAfter implements ObserverInterface
                     );
                 }
 
+                $this->gr4vyLogger->logMixed(['Gr4vy Status' => $transactionStatus, 'Magento Status' => $transaction->getStatus()]);
+
                 if (in_array($transactionStatus, $statuses['cancel']) || in_array($transactionStatus, $statuses['refund'])) {
                     $newOrderStatus = $canceledStatus;
+                    $this->gr4vyLogger->logMixed(['Canceling the order as the payment failed.']);
+                } else {
+                    $this->gr4vyLogger->logMixed(['Generating paid invoice.']);
+                    $this->orderHelper->generatePaidInvoice($order, $gr4vy_transaction_id);
                 }
 
-                $this->orderHelper->generatePaidInvoice($order, $gr4vy_transaction_id);
                 $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);
             }
 
@@ -128,8 +136,11 @@ class OrderPlaceAfter implements ObserverInterface
                     strval($transaction->getGr4vyTransactionId())
                 );
 
+                $this->gr4vyLogger->logMixed(['Gr4vy Status' => $transactionStatus, 'Magento Status' => $transaction->getStatus()]);
+
                 if (in_array($transactionStatus, $statuses['cancel']) || in_array($transactionStatus, $statuses['refund'])) {
                     $newOrderStatus = $canceledStatus;
+                    $this->gr4vyLogger->logMixed(['Canceling the order as the payment authorization failed.']);
                 }
 
                 $this->orderHelper->updateOrderHistory($order, $msg, $newOrderStatus);

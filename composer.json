@@ -2,7 +2,7 @@
     "name": "gr4vy/magento",
     "description": "Magento 2 Payment module from Gr4vy",
     "type": "magento2-module",
-    "version": "1.0.33",
+    "version": "1.0.34",
     "license": [
         "OSL-3.0",
         "AFL-3.0"
@@ -24,7 +24,7 @@
         "magento/module-config": ">=100 <103",
         "magento/module-payment": "100.*",
         "psr/log": "^1.1",
-        "gr4vy/gr4vy-php": "0.18.2"
+        "gr4vy/gr4vy-php": "0.18.3"
     },
     "autoload": {
         "files": [
